@@ -63,6 +63,24 @@ def session():
     return sid
 
 
+def fermer(sid):
+    """Ferme une session MCP (25.09.2026, 20 h 50 ; Charles : « comment ça se fait que RPFM garde autant de mémoire ? »).
+    Chaque script ouvrait sa session sans la fermer ; rpfm_server (5.0.6) les garde sans délai d'expiration, avec la base
+    du jeu chargée et les packs OUVERTS (`/sessions` : pack_names) : ~1,5 à 2 Go par pack construit, 9,4 Go en une soirée
+    (erreurs 265, 275). Ferme les packs, puis termine la session par un DELETE (transport MCP « Streamable HTTP »).
+    Rend True si le serveur a accepté la fin de session."""
+    try:
+        call(sid, "close_all_packs", {}, 90)
+    except Exception:
+        pass
+    req = urllib.request.Request(URL, headers={"Mcp-Session-Id": sid}, method="DELETE")
+    try:
+        with urllib.request.urlopen(req, timeout=60) as r:
+            return 200 <= r.status < 300
+    except Exception:
+        return False
+
+
 def call(sid, tool, args, request_id=2):
     _, res = post({"jsonrpc": "2.0", "id": request_id, "method": "tools/call",
                    "params": {"name": tool, "arguments": args}}, sid)

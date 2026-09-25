@@ -24,7 +24,7 @@ intactes, le gameplay est celui de Warhammer III, et dix seigneurs légendaires 
 | **Le gameplay** | Celui de Warhammer III 9.0, en entier : lignées vampiriques et Décrets de sang, Forge de Daith, marmite de Grom, Chasse Sauvage, victoires de la 9.0. |
 | **Les seigneurs** | Dix, chacun avec une victoire courte et une longue qui lui sont propres, écrites d'après le lore. |
 | **Le ton** | Plus dur que le jeu de base, et grimdark : une menace du lore reste une menace. |
-| **État** | **Bêta privée, sur invitation.** Demandez sur le Discord indiqué par [bretonia.dev](https://bretonia.dev). |
+| **État** | **Bêta, sur le [Steam Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=3807973986).** Demande *Le Royaume des Elfes Sylvains*. Compatibilité avec les autres mods non testée : dites-nous ce qui casse. |
 
 <p align="center"><img src="docs/art/divider.svg" width="100%" alt=""></p>
 
@@ -85,9 +85,23 @@ Le schéma de la chaîne est dans le [README anglais](README.md#how-the-port-is-
 
 <p align="center"><img src="docs/art/divider.svg" width="100%" alt=""></p>
 
+## <img src="docs/art/seal-red.svg" height="34" alt=""> Participer
+
+C'est désormais un projet communautaire, et les collaborations sont ouvertes. Toute aide est bienvenue :
+
+- **Jouer la bêta** ([Steam Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=3807973986)) et signaler bugs et plantages, avec vos journaux (voir la page
+  Workshop).
+- **Lore** : relire textes et victoires d'après les sources ; le porteur du projet garde le dernier mot.
+- **Traductions** : tous les textes sont dans un seul fichier (`textes_gameplay.json`), en français et en anglais
+  aujourd'hui.
+- **Carte et code** : terrain, CAIME, Lua, données. Ouvrez une issue ou une pull request, ou venez en parler sur le
+  Discord indiqué par [bretonia.dev](https://bretonia.dev).
+
+<p align="center"><img src="docs/art/divider.svg" width="100%" alt=""></p>
+
 ## <img src="docs/art/seal-gold.svg" height="34" alt=""> Crédits
 
-Un projet de fan de **Charles (IMPERA)**, construit avec Claude Code. Outils : **CAIME** (Campaign Map Toolkit : MrJox,
+Un projet de fan de **LeyZee**, open source, par un passionné, pour d'autres passionnés, construit avec Claude Code. Outils : **CAIME** (Campaign Map Toolkit : MrJox,
 Maruka, Marthenil, ChaosRobbie, Celebdil, Leoman, Ophis, Causeless, PeteCA, Mitch, CharlesWoodhill, TadeoM, Frodo,
 Daniu, Ironic, OtherTomCA et ses testeurs ; notre fork : [LeyZee/CampaignMapToolkit](https://github.com/LeyZee/CampaignMapToolkit)),
 **RPFM** de Frodo45127, et l'**Assembly Kit** de Creative Assembly. *La Saison de la Révélation*, sa carte et son

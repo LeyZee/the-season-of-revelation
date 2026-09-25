@@ -442,7 +442,7 @@ def remplir_vides(m, n):
 # ESSAI : un fichier À NOUS (`CATALOGUE_SEPARE_CHEMIN`) qui ne porte que nos ajouts (clés wh1_* des trois espaces de texture
 # et clé du plan d'eau de notre carte), aucune entrée de CA ; la base de CA n'est plus remplacée. À juger EN JEU (sols de
 # WH1 et mer de notre carte présents) ; si le jeu ne le lit pas, retour à la copie (False).
-CATALOGUE_SEPARE = False
+CATALOGUE_SEPARE = True
 CATALOGUE_SEPARE_CHEMIN = "warscape_asset_variation_db/saison_des_revelations.assetdb"
 
 

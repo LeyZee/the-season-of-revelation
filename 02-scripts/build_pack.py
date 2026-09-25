@@ -701,13 +701,15 @@ def main():
         # Chaos). Copie de la base de CA, ses 440 entrées identiques à l'octet (contrôlé par la fonction), nos clés wh1_*
         # à la suite. Elle passe devant celle de CA tant que le mod est actif : à REFAIRE après toute mise à jour du jeu.
         paires = textures_sol_wh1.remplacements_base_variantes()
-        permis = {textures_sol_wh1.BASE_VARIANTES, textures_sol_wh1.BASE_VARIANTES + ".xml"}
+        # 25.09.2026, 22 h (compatibilité) : avec le catalogue séparé, seul notre fichier à nous part (plus de copie de CA).
+        base = textures_sol_wh1.CATALOGUE_SEPARE_CHEMIN if textures_sol_wh1.CATALOGUE_SEPARE else textures_sol_wh1.BASE_VARIANTES
+        permis = {base, base + ".xml"}
         if paires and {p for p, _ in paires} != permis:
             raise SystemExit(f"base de variantes hors de la liste permise : {sorted(p for p, _ in paires)}")
         if paires:
             res = call(sid, "add_packed_files", {"pack_key": key, "source_paths": [loc for _, loc in paires],
                                                  "destination_paths": json.dumps([{"File": p} for p, _ in paires])}, 18)
-            print(f"  base de variantes du sol (440 entrées de CA + groupes wh1_*) : {len(paires)} fichiers  "
+            print(f"  base de variantes du sol ({base}) : {len(paires)} fichiers  "
                   f"{'ok' if 'Success' in text(res) or '[' in text(res) else text(res)[:80]}")
 
     # Le terrain compilé (21.09.2026, journal de phase 3 § 7) : `compiler_terrain_bob.py` le fait

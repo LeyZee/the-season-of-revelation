@@ -273,10 +273,11 @@ TABLES_LOT9 = [STARTPOS_LOT9[3]]
 # 25.09.2026 (audit de compatibilité) : le filtre « faction = Mousillon » prenait aussi trois lignes que CA livre elle-même
 # en 9.0 (wh3_dlc29_vmp_additional_units, _raise_dead_faction, _raise_dead_province ; absentes du kit, présentes dans son
 # db) : doublons de clés de CA dans notre pack. Seule notre ligne, les régiments de renom, part désormais.
-TABLES_LOT13 = [
-    ('faction_to_mercenary_set_junctions', 'faction_to_mercenary_set_junctions_tables', 'faction',
-     lambda d: d.get('faction') == 'wh_main_vmp_mousillon' and d.get('mercenary_set') == 'wh_dlc04_vmp_units_of_renown_pool'),
-]
+# 25.09.2026, 21 h (première mise à jour de la bêta, compatibilité ; Charles : « que tout cohabite ») : la ligne sort du
+# pack. faction_to_mercenary_set_junctions n'a pas de colonne de campagne : elle donnait ces régiments à Mousillon AUX
+# EMPIRES aussi. Ils sont désormais donnés par script dans notre seule campagne (saison_duc.lua, section 9). La ligne
+# reste dans le kit (et dans zz_startpos_db.pack jusqu'à sa prochaine synchronisation, construction).
+TABLES_LOT13 = []
 
 
 # Lot 18 (23.09.2026, 16 h 30) : monuments ; gabarits à nous (clés wh_dlc05_mini_special_*, donnees_campagne.lot_etape18).

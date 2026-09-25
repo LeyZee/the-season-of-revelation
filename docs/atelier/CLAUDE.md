@@ -51,11 +51,17 @@ Décisions de Charles, à ne pas rediscuter :
   LUT, brouillard, soleil, ambiance), chacune montrée en image puis essayée en jeu (erreur 251).
 - **Rivières, deltas, côtes : « comme dans Warhammer 1 »** (25.09.2026) : correctifs C1 à C4 validés (matériau d'eau,
   lit sombre, berges basses, mer plus sombre près des côtes).
-- **LE PACK CONTIENT DES FICHIERS DE WH1.** Décision de Charles du 25.09.2026 : **bêta sur un Workshop MASQUÉ, réservé aux
-  amis**, lien donné seulement dans le fil Discord des volontaires ; jamais de Workshop public ni de lien public sans
-  nouvelle décision de sa part. Non commercial. Fiche des testeurs : `05-journal\2026-09-25-beta\FICHE-TESTEURS.md`.
-  Présentation publique (site, Discord dédié public créé par Charles) : « bêta privée, sur invitation : rejoignez le
-  Discord et demandez », sans lien Workshop ; relecteurs de lore bénévoles, Charles garde le dernier mot.
+- **LE PACK CONTIENT DES FICHIERS DE WH1.** Décision de Charles du 25.09.2026 : bêta sur le Workshop, lien donné
+  seulement dans le fil Discord des volontaires ; jamais de Workshop public ni de lien publié ailleurs sans nouvelle
+  décision de sa part. **Mise à jour du 25.09.2026, 21 h 30 (Charles)** : la page de la Saison
+  (id 3807973986) est **« Non classée »** (visible par qui a le lien, sans être ami ; absente des recherches et du
+  profil), car les moddeurs testeurs ne sont pas ses amis Steam ; DLC requis déclaré : Realm of the Wood Elves ;
+  descripteurs : violence fréquente ou gore. Expanded (id 3807968769) reste masqué. Charles est désabonné de ses deux
+  objets (sinon la copie du Workshop se mêle au pack de travail de `data\`). Non commercial. Fiche des testeurs : `05-journal\2026-09-25-beta\FICHE-TESTEURS.md`.
+  Présentation publique (site, Discord dédié public créé par Charles) : relecteurs de lore bénévoles, Charles garde le
+  dernier mot. **Nouvelle décision de Charles, 25.09.2026, 22 h 20** : « la bêta est out », le site de l'Atlas l'annonce
+  et donne le lien Workshop de la Saison pour tester (remplace « bêta privée, sur invitation, sans lien Workshop ») ;
+  Expanded reste masqué. Compatibilité avec les autres mods : toujours dite « non testée ».
 
 ## 3. Les sessions et leurs domaines (travail en parallèle)
 
@@ -73,36 +79,34 @@ Protocole : **préavis de 5 minutes avant toute écriture dans le kit** (`02-scr
 seulement à cette heure) ; jamais le jeu, Terry ni le startpos sans prévenir
 les autres ; **ne pas reconstruire le pack pendant un essai en jeu** ; ranger, jamais supprimer.
 
-## 4. État au 25.09.2026, 03 h 30 (jeu en 9.0)
+## 4. État au 25.09.2026, 20 h 15 (jeu en 9.0 ; version de 03 h 30 : `05-journal\historique-documents\CLAUDE-2026-09-25-2015-avant-maj-etat.md`)
 
-- **Jeu et kit en 9.0** depuis le 24.09 ; lignes de `raw_data\db` restaurées (erreur 206, GUIDE § 15 n° 142). Photo
-  8.1 : `03-references\instantane-wh3-8.1\` ; écart : `05-journal\2026-09-24-passations\comparaison-8.1-9.0.txt`.
-- **Dix seigneurs jouables** ; victoires 9.0 par seigneur (§ 2) ; Orion « recommandé » à la sélection (lot 36). Audit des
-  dix seigneurs : aucun défaut bloquant (`05-journal\2026-09-25-audits\audit-seigneurs.md`). **Duc écarlate** : duché
-  perdu, faveur d'Abhorash en trois degrés, impôt et serment du sang, traque de Richemont, 8 incidents illustrés
-  (`saison_duc.lua`, lots 33 à 37) ; à observer par Charles : `05-journal\2026-09-24-vampires-9.0\duc-ecarlate-a-observer.md`.
-- **Startpos du 25.09 à 03 h 54** (compteur 1, 0 anomalie). **Pack du 25.09 à 03 h 55**, non compressé (825 Mo) : chaîne
-  15, lots 10 à 39 (lot 40 en attente d'un essai dédié), 50 images d'évènement, 1 499 textes. **Essai de démarrage Duc
-  3 tours : 0 erreur, 0 blocage** ; écouteurs de CA retirés ; `FactionTurnStart` reçu à chaque tour ; duché « dépossédé » ;
-  Baiser d'Abhorash. Remis à Charles pour jouer. Ensuite : partie Drycha ou Orion de 30 tours (Bordeleaux après le
-  tour 15 ; Grom). `build_pack` : restes retirés par dossier source ; `SUBSTITUTS_CA_RETIRES` + `garde_substituts_ca()` (erreur
-  254) ; filtre par ligne dans `kit_rows` (fonction) ; compression explicite (`--zstd` : **non validée**, mise de côté le
-  temps d'isoler le plantage de 02 h 20) ; lookups de la minicarte ligne 0 = nord (erreur 253).
-- **Essais** : `FactionTurnStart` était coupé pour tous par trois écouteurs de CA (erreurs 230, 231, 252) ; `required.lua`
-  protège `core.event_callback`, `saison_start.lua` retire ces écouteurs (au prochain pack). Pilote : 30 clics de
-  notification (erreur 239) ; temps de tour réel ≈ 2 s, lu aux horodatages (erreur 232). Plantage de rendu du 25.09 à
-  02 h 20 (`Warhammer3.exe+0x1AC7576`, tuiles) pendant que Charles bougeait la caméra : non reproduit à 02 h 38
-  (5 tours) ; à surveiller (famille du plantage intermittent du 24.09).
-- **Carte** : chaînes 12, 13, 13 bis, 14 faites ; **chaîne 15 en cours depuis 03 h 21** (session du rendu : flatnormal à
-  nous, lit sombre, berges basses, bancs des deltas relevés, îlots des statues, étangs ; journal
-  `05-journal\2026-09-23-rendu-carte\chaine15-0321.log`). Matériau d'eau C1 et C4 écrit par l'IA (02 h 57). Stries des
-  montagnes : `lf_normal` lissée (02 h 37). **Charles attend ce cycle pour tout regarder en jeu** (rivières, deltas,
-  côtes, Winterheart, forêt, noms du Chêne et de Mousillon, Duc).
-- **Éclairage** : v3 « LSD » retirée ; Winterheart seule, à la manière de CA (erreur 251) ; les autres zones une à une.
-- **Illustrations** : 800 × 450 ; image clé du menu installée (Chêne enneigé) ; lots 4 à 6 en cours (`illustrations\SUIVI.md`).
-- **Ménage du 25.09** : `99-a-supprimer-20260925\` (61 Go, vérifié, à supprimer par Charles, `INDEX.md` dedans) ;
-  `05-journal\INDEX.md` ; bandeaux « périmé » sur 20 journaux ; audits des .md dans `05-journal\2026-09-25-audits\`.
-- **Point de reprise** : `05-journal\2026-09-25-passations\reprise-construction-0330.md`.
+- **Jeu et kit en 9.0** depuis le 24.09 ; lignes de `raw_data\db` restaurées (erreur 206, GUIDE § 15 n° 142).
+- **BÊTA : polish et revue avant la sortie** (Charles : « corrige tous les défauts avant la bêta »). Quatre revues en
+  lecture seule + audit des cartes de bataille : `05-journal\2026-09-25-revue-beta\` (scripts Lua : 0 bloquant, 4
+  importants corrigés par l'IA ; pack et données ; dossier de stabilité ; liste de sortie ; cartes de bataille).
+  Corrections faites : hordes, Pic d'Argent différé, journal des erreurs, écouteurs de CA d'Ostankya et Yuan Bo, lot 43
+  (nos régions hors des groupes de CA ; contrôle `verifier_groupes.py`), 86 textes, 10 scripts morts hors du pack
+  (`SCRIPTS_ECARTES`), minicarte (même teinte, contours lissés : `preparer_minicarte.SIGMA_CONTOURS`). Salles tombées :
+  éteintes pour la bêta (décision de Charles). Régiments de renom de Mousillon aux Empires : défaut connu (fiche).
+- **Pack du 25.09 à 19 h 05** (pack de zéro + startpos régénéré à 18 h 57, compteur 1, 0 anomalie). Essais des dix
+  seigneurs sur 10 tours en cours : Orion, Durthu, Albéric, Fée, Drycha 0 erreur ; Morghur battu au tour 8 (harde immobile
+  sous `all_players_ai`, erreur 210) ; Duc et Kemmler bloqués au tour 5 par le tutoriel vampire de CA (le pilote ne
+  ferme pas encore la bulle : correctif en essai ; erreur 270 pour la première tentative). Krell présent au départ.
+  Verrous des DLC éprouvés (menu grisé ; message et retour au menu en campagne).
+- **À faire avant la sortie** : recompilation des cartes de bataille (défilés corrigés par l'IA, erreur 271), pack final,
+  startpos, pack, dix seigneurs ; partie de Charles d'au moins une heure (Duc, caméra sur la falaise de Gransette :
+  plantage de rendu `+0x1AC7576` non élucidé, GUIDE § 15 n° 150) ; trois batailles jouées (forêt, siège breton,
+  montagne) ; accord d'un fondateur de CAIME ; Workshop « privé » (pages préparées par la session « Extension » ; pack
+  anglais pas encore). Fiche des testeurs réécrite : `05-journal\2026-09-25-beta\FICHE-TESTEURS.md`.
+- **Expanded** (`04-projets\saison-expanded\`, journal `JOURNAL.md`, plan `PLAN.md`) : carte `saison_expanded_map`
+  560 × 825 et campagne `saison_expanded` déclarées ; 76 régions et 21 provinces de l'Atlas déclarées (`saison_`,
+  décision : l'Atlas l'emporte sur WH1 ; Fort Solstice repris en `saison_glanborielle_fort_solstice`) ; grille CAIME :
+  régions, 121 villes, passage, climats, fil de rivière caché sous le voile (conseil de ChaosRobie) ; terrain Terry dans
+  le bac à sable (relief de l'Atlas autour de WH1, Bois Rêveur en miroir) ; minicarte (parchemin de l'Atlas + lookup).
+  Dépôt GitHub public (liste blanche, rien de WH1). Ni pack ni startpos d'Expanded encore.
+- **Éclairage** : Winterheart seule, à la manière de CA (erreur 251) ; les autres zones une à une.
+- **Point de reprise** : ce paragraphe, puis `05-journal\2026-09-25-revue-beta\liste-de-sortie.md`.
 
 ## 5. Recettes
 

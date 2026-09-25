@@ -24,7 +24,7 @@ gameplay is Warhammer III's, with ten legendary lords to play.
 | **The gameplay** | Warhammer III 9.0, whole: vampire bloodlines and Blood Decrees, the Forge of Daith, Grom's cauldron, the Wild Hunt, 9.0 victory conditions. |
 | **The lords** | Ten, each with a short and a long victory of their own, written from the lore. |
 | **The tone** | Harder than the base game, and grimdark. When the lore makes something a threat, we kept it a threat. |
-| **Status** | **Private beta, by invitation.** Ask on the Discord linked from [bretonia.dev](https://bretonia.dev). |
+| **Status** | **Beta, on the [Steam Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=3807973986).** Needs *Realm of the Wood Elves*. Compatibility with other mods is untested: tell us what breaks. |
 
 <p align="center"><img src="docs/art/divider.svg" width="100%" alt=""></p>
 
@@ -108,9 +108,21 @@ NOTICE.md  LICENSE                       legal notes, MIT licence for our code
 
 <p align="center"><img src="docs/art/divider.svg" width="100%" alt=""></p>
 
+## <img src="docs/art/seal-red.svg" height="34" alt=""> Join in
+
+This is a community project now, and collaboration is open. Welcome help:
+
+- **Play the beta** ([Steam Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=3807973986)) and report bugs and crashes, with your logs (see the Workshop page).
+- **Lore**: proofread texts and victories against the sources; the project lead has the final say.
+- **Translations**: every text lives in one file (`textes_gameplay.json`), French and English today.
+- **Maps and code**: terrain, CAIME, Lua, data. Open an issue or a pull request, or come and talk on the Discord
+  linked from [bretonia.dev](https://bretonia.dev).
+
+<p align="center"><img src="docs/art/divider.svg" width="100%" alt=""></p>
+
 ## <img src="docs/art/seal-gold.svg" height="34" alt=""> Credits
 
-A fan project by **Charles (IMPERA)**, built with Claude Code.
+A fan project by **LeyZee**, open source, by a fan for fellow fans, built with Claude Code.
 
 - **Campaign Map Toolkit (CAIME)**: MrJox (aka victimized.), Maruka and Marthenil (founders), ChaosRobbie, Celebdil,
   Leoman (aka justLeo), Ophis, Causeless, PeteCA, Mitch, CharlesWoodhill, TadeoM, Frodo, Daniu, Ironic, OtherTomCA, and

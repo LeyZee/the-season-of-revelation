@@ -2752,6 +2752,43 @@ marquée ‡, non relue par nous).]** [25.09.2026, ménage]
     contrôle = part de la terre franchissable en `_chokepoint` (quelques % au plus) ; toute nouvelle carte de captage se
     termine par une bataille rangée ET un siège chargés en jeu.**
 
+272. `[évitable]` (sessions « Extension » et construction, 25.09.2026, 19 h 14 - 19 h 28) **Clés de jeu d'Expanded
+    déclarées avant d'avoir appliqué la règle des noms abandonnés.** La table `expanded_declaration.json` affirmait « clés
+    stables, jamais dérivées d'un nom » ; or `CLAUDE.md` § 2 (décision de Charles du 25.09) veut que les clés aux noms
+    abandonnés soient renommées AVANT toute table. La construction a déclaré les 75 régions à 19 h 14 sans relire cette
+    règle : 9 clés fausses (Thurin, Portsall, Saint-Lambert…) ont dû être retirées du kit (`retirer_cles_renommees.py`)
+    et redéclarées. -> **Règle : avant toute déclaration de clés dans le kit, relire les décisions de Charles du § 2 ; la
+    clé de jeu suit le nom retenu (l'identifiant interne du site peut rester) ; pour retirer des lignes, un outil ciblé,
+    jamais `declare_map --undo`, qui retire aussi la carte et la campagne.**
+273. `[évitable]` (session « Extension », 25.09.2026, soir ; concerne le site) **Fichiers de carte publiables remis sans
+    leurs images** : 4 textures à empreinte citées avaient été remplacées par une construction d'aperçu ; la page
+    publiée aurait eu des trous (vu avant la construction). -> **Règle : restaurer aussi les images citées ; contrôle
+    `images_citees.py` (dossier de travail de la session).**
+274. `[découverte]` (session « Extension », 25.09.2026 ; concerne le site) Les 64 images des récits (`images_recit.mjs`)
+    peuvent dépasser 40 min sur une machine chargée : garde portée à 60 min ; ne relancer que les vues manquantes
+    (`python images_recit.py "<filtre>"`). Même soir : deux `python -c` composés et un `sed` à antislashs refusés par le
+    crochet (rechutes de 212 et 269, sans dégât) ; construction : un `sed` à antislashs refusé (19 h 25).
+275. `[évitable]` (construction, 25.09.2026, 20 h 44) **Mémoire de rpfm_server mal lue** : avant le pack final, `tasklist`
+    montrait 91 Mo pour rpfm_server (mémoire de TRAVAIL) ; `build_pack.garde_memoire_rpfm` mesure la mémoire PRIVÉE, qui
+    était de 9,4 Go, et a refusé le pack (sans dégât : rien n'était écrit). -> **Règle : avant un pack, lire la mémoire
+    privée (`Get-Process rpfm_server | PrivateMemorySize64`), ou relancer rpfm_server d'office avant la chaîne finale.**
+    Cause trouvée le même soir : chaque script ouvre sa session MCP chez rpfm_server et ne la ferme jamais ; le serveur
+    garde chaque session sans délai, avec la base du jeu et les packs OUVERTS (`/sessions`) ; un DELETE MCP est accepté
+    mais ne libère rien (`rpfm_mcp.fermer`, essai de 20 h 50). À traiter après la bêta (une seule session partagée, ou
+    relance du serveur par la chaîne).
+276. `[découverte]` (session « Extension », 25.09.2026, 21 h 15 ; concerne le Workshop) **Une « mise à jour » depuis le
+    lanceur de WH3 remet le titre de la page Workshop au nom du .pack et VIDE sa description** ; la visibilité reste. Le
+    lanceur n'offre le bouton d'envoi que pour un pack ACTIVÉ (penser à le désactiver ensuite). -> **Règle : après
+    chaque mise à jour par le lanceur, remettre titre et description (textes : scratchpad de la session « Extension »,
+    `est\workshop\description_*_en.txt`) ; la vignette d'Expanded vient de
+    `05-journal\2026-09-23-extension-carte\vignette-lanceur\vignette_expanded_fr_512.png` (`pack_demo_expanded.py`).**
+277. `[évitable]` (construction, 25.09.2026, 21 h 48) **Capture d'écran « témoin » qui ne montre pas le jeu** : pour
+    comparer les sols avant et après le catalogue séparé, `ImageGrab` a capturé l'écran au tour 1 ; les deux images
+    (`sol_avant.png`, `sol_apres.png`) montrent la fenêtre de Claude, le jeu étant derrière. Le témoin de 21 h 41 a été
+    tenu pour bon sans être regardé. -> **Règle : ouvrir toute capture avant de s'en servir comme témoin ; une capture
+    de l'écran ne prouve rien si le jeu n'est pas au premier plan, et le mettre devant, c'est piloter l'écran (accord de
+    Charles, erreur 108). Sinon, faire juger en jeu par Charles.**
+
 ## Comment tenir ce fichier
 
 - Une entrée par erreur, le jour même, avec la règle. Pas de justification, pas de récit.

@@ -817,6 +817,37 @@ local function trait_du_duc(f)
 end;
 
 
+-- 9. Les Régiments de Renom des Comtes vampires pour Mousillon, par script (première mise à jour de la bêta, 25.09.2026 ;
+-- Charles : « que tout cohabite »). Avant : une ligne de faction_to_mercenary_set_junctions (lot 13) donnait la réserve
+-- wh_dlc04_vmp_units_of_renown_pool à Mousillon dans TOUTES les campagnes, Empires compris. Désormais, dans notre seule
+-- campagne, une fois par partie, les dix groupes de cette réserve (mercenary_pool_to_groups_junctions de CA : unité,
+-- groupe, 1 exemplaire), avec la source et le réapprovisionnement de CA (mercenary_unit_groups : max 1, 0,1 par tour,
+-- 100 %), par la fonction que CA emploie pour ses propres réserves (wh3_campaign_kislev_motherland.lua l. 345,
+-- wh2_twa03_rakarth.lua l. 639). Le niveau de seigneur requis est porté par l'unité
+-- (campaign_mercenary_unit_character_level_restrictions) : il vaut toujours. À VOIR EN JEU : le panneau des Régiments de
+-- Renom du Duc joué (unités, coût, niveau requis).
+local RESERVE_RENOM = "wh_dlc04_vmp_units_of_renown_pool";
+local REGIMENTS_DE_RENOM = {
+	"wh_dlc04_vmp_cav_chillgheists_0", "wh_dlc04_vmp_cav_vereks_reavers_0", "wh_dlc04_vmp_inf_feasters_in_the_dusk_0",
+	"wh_dlc04_vmp_inf_konigstein_stalkers_0", "wh_dlc04_vmp_inf_sternsmen_0", "wh_dlc04_vmp_inf_tithe_0",
+	"wh_dlc04_vmp_mon_devils_swartzhafen_0", "wh_dlc04_vmp_veh_claw_of_nagash_0", "wh_dlc04_vmp_mon_direpack_0",
+	"wh2_dlc11_cst_mon_mournguls_ror_0",
+};
+
+local function regiments_de_renom(f)
+	if cm:get_saved_value(PREFIXE .. "regiments_de_renom") or f:is_dead() then
+		return;
+	end;
+	cm:set_saved_value(PREFIXE .. "regiments_de_renom", true);
+	for _, unite in ipairs(REGIMENTS_DE_RENOM) do
+		-- (faction, unité, source, nombre, chance de réapprovisionnement, maximum, par tour, restrictions de faction,
+		-- de sous-culture, de technologie, réapprovisionnement partiel, groupe) : ordre de CA
+		cm:add_unit_to_faction_mercenary_pool(f, unite, RESERVE_RENOM, 1, 100, 1, 0.1, "", "", "", true, unite);
+	end;
+	out("La Saison des Revelations : " .. #REGIMENTS_DE_RENOM .. " Regiments de Renom donnes a " .. MOUSILLON);
+end;
+
+
 -- Appelé par saison_start.lua à chaque chargement, après les systèmes vampires de la 9.0.
 function saison_duc_demarrer()
 	local f = cm:get_faction(MOUSILLON);
@@ -825,6 +856,7 @@ function saison_duc_demarrer()
 	end;
 	baiser_d_abhorash();
 	saison_sur("trait du Duc", trait_du_duc, f);
+	saison_sur("regiments de renom de Mousillon", regiments_de_renom, f);
 	-- le duché perdu : dès le chargement, puis à chaque changement de main d'un domaine d'Aquitaine
 	saison_sur("duche perdu", mettre_a_jour_duche, f);
 	saison_ecouteur(PREFIXE .. "duche_change", "RegionFactionChangeEvent",

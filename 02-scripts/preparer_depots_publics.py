@@ -48,6 +48,8 @@ DEPOTS = {
 }
 GITHUB = "https://github.com/LeyZee/"
 SITE = "https://bretonia.dev"
+# 25.09.2026, 22 h 45 (Charles : « la bêta est out », « j'ouvre les collaborations ») : lien de la page Workshop de la Saison
+WORKSHOP = "https://steamcommunity.com/sharedfiles/filedetails/?id=3807973986"
 
 # ---------------------------------------------------------------------------------------------------------------------
 # Anonymisation (copies seulement)
@@ -251,7 +253,7 @@ gameplay is Warhammer III's, with ten legendary lords to play.
 | **The gameplay** | Warhammer III 9.0, whole: vampire bloodlines and Blood Decrees, the Forge of Daith, Grom's cauldron, the Wild Hunt, 9.0 victory conditions. |
 | **The lords** | Ten, each with a short and a long victory of their own, written from the lore. |
 | **The tone** | Harder than the base game, and grimdark. When the lore makes something a threat, we kept it a threat. |
-| **Status** | **Private beta, by invitation.** Ask on the Discord linked from [bretonia.dev]({SITE}). |
+| **Status** | **Beta, on the [Steam Workshop]({WORKSHOP}).** Needs *Realm of the Wood Elves*. Compatibility with other mods is untested: tell us what breaks. |
 
 {SEPARATEUR}
 
@@ -326,9 +328,21 @@ NOTICE.md  LICENSE                       legal notes, MIT licence for our code
 
 {SEPARATEUR}
 
+{_h2("red", "Join in")}
+
+This is a community project now, and collaboration is open. Welcome help:
+
+- **Play the beta** ([Steam Workshop]({WORKSHOP})) and report bugs and crashes, with your logs (see the Workshop page).
+- **Lore**: proofread texts and victories against the sources; the project lead has the final say.
+- **Translations**: every text lives in one file (`textes_gameplay.json`), French and English today.
+- **Maps and code**: terrain, CAIME, Lua, data. Open an issue or a pull request, or come and talk on the Discord
+  linked from [bretonia.dev]({SITE}).
+
+{SEPARATEUR}
+
 {_h2("gold", "Credits")}
 
-A fan project by **Charles (IMPERA)**, built with Claude Code.
+A fan project by **LeyZee**, open source, by a fan for fellow fans, built with Claude Code.
 
 - **Campaign Map Toolkit (CAIME)**: MrJox (aka victimized.), Maruka and Marthenil (founders), ChaosRobbie, Celebdil,
   Leoman (aka justLeo), Ophis, Causeless, PeteCA, Mitch, CharlesWoodhill, TadeoM, Frodo, Daniu, Ironic, OtherTomCA, and
@@ -377,7 +391,7 @@ intactes, le gameplay est celui de Warhammer III, et dix seigneurs légendaires 
 | **Le gameplay** | Celui de Warhammer III 9.0, en entier : lignées vampiriques et Décrets de sang, Forge de Daith, marmite de Grom, Chasse Sauvage, victoires de la 9.0. |
 | **Les seigneurs** | Dix, chacun avec une victoire courte et une longue qui lui sont propres, écrites d'après le lore. |
 | **Le ton** | Plus dur que le jeu de base, et grimdark : une menace du lore reste une menace. |
-| **État** | **Bêta privée, sur invitation.** Demandez sur le Discord indiqué par [bretonia.dev]({SITE}). |
+| **État** | **Bêta, sur le [Steam Workshop]({WORKSHOP}).** Demande *Le Royaume des Elfes Sylvains*. Compatibilité avec les autres mods non testée : dites-nous ce qui casse. |
 
 {SEPARATEUR}
 
@@ -429,9 +443,23 @@ Le schéma de la chaîne est dans le [README anglais](README.md#how-the-port-is-
 
 {SEPARATEUR}
 
+{_h2("red", "Participer")}
+
+C'est désormais un projet communautaire, et les collaborations sont ouvertes. Toute aide est bienvenue :
+
+- **Jouer la bêta** ([Steam Workshop]({WORKSHOP})) et signaler bugs et plantages, avec vos journaux (voir la page
+  Workshop).
+- **Lore** : relire textes et victoires d'après les sources ; le porteur du projet garde le dernier mot.
+- **Traductions** : tous les textes sont dans un seul fichier (`textes_gameplay.json`), en français et en anglais
+  aujourd'hui.
+- **Carte et code** : terrain, CAIME, Lua, données. Ouvrez une issue ou une pull request, ou venez en parler sur le
+  Discord indiqué par [bretonia.dev]({SITE}).
+
+{SEPARATEUR}
+
 {_h2("gold", "Crédits")}
 
-Un projet de fan de **Charles (IMPERA)**, construit avec Claude Code. Outils : **CAIME** (Campaign Map Toolkit : MrJox,
+Un projet de fan de **LeyZee**, open source, par un passionné, pour d'autres passionnés, construit avec Claude Code. Outils : **CAIME** (Campaign Map Toolkit : MrJox,
 Maruka, Marthenil, ChaosRobbie, Celebdil, Leoman, Ophis, Causeless, PeteCA, Mitch, CharlesWoodhill, TadeoM, Frodo,
 Daniu, Ironic, OtherTomCA et ses testeurs ; notre fork : [LeyZee/CampaignMapToolkit]({GITHUB}CampaignMapToolkit)),
 **RPFM** de Frodo45127, et l'**Assembly Kit** de Creative Assembly. *La Saison de la Révélation*, sa carte et son
@@ -474,7 +502,7 @@ It is **built in public**: every step is logged in the [journal](docs/fr/JOURNAL
 | **Around** | New land from the Atlas: relief modelled from its heights, soils, forests, rivers and coasts, joined smoothly to Warhammer I's relief. |
 | **The Dreaming Wood** | A mirrored reflection of Athel Loren in a sea of aether, south of the forest. |
 | **Keys** | Map `saison_expanded_map`, campaign `saison_expanded`, new regions `saison_…`. The beta's keys are never reused. |
-| **Status** | Work in progress: phase 2 (declared in the Assembly Kit). See [PLAN](docs/fr/PLAN.md). |
+| **Status** | Work in progress, not playable yet: grid, regions, towns and minimap done; terrain of the extension under way (relief, rivers, the Dreaming Wood). See [PLAN](docs/fr/PLAN.md). Collaboration is open: issues, pull requests, and the Discord linked from [bretonia.dev]({SITE}). |
 
 {SEPARATEUR}
 
@@ -528,7 +556,7 @@ chantier est **construit en public** : chaque étape est dans le [journal](docs/
 | **Autour** | La terre de l'Atlas : relief modelé depuis ses altitudes, sols, forêts, rivières et côtes, raccordés en douceur au relief de Warhammer I. |
 | **Le Bois Rêveur** | Le reflet d'Athel Loren en miroir, dans une mer d'éther, au sud de la forêt. |
 | **Clés** | Carte `saison_expanded_map`, campagne `saison_expanded`, régions neuves `saison_…` ; jamais les clés de la bêta. |
-| **État** | En chantier : phase 2 (déclaration dans l'Assembly Kit). Voir le [PLAN](docs/fr/PLAN.md). |
+| **État** | En chantier, pas encore jouable : grille, régions, villes et minicarte faites ; terrain de l'extension en cours (relief, rivières, Bois Rêveur). Voir le [PLAN](docs/fr/PLAN.md). Les collaborations sont ouvertes : issues, pull requests, et le Discord indiqué par [bretonia.dev]({SITE}). |
 
 {SEPARATEUR}
 
@@ -556,7 +584,7 @@ et **SEGA**. Projet de fan non commercial, sans lien avec eux. Notre code : [lic
 
 LICENCE = """MIT License
 
-Copyright (c) 2026 Charles (IMPERA)
+Copyright (c) 2026 LeyZee
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
 documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
