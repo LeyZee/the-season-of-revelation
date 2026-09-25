@@ -24,7 +24,7 @@ intactes, le gameplay est celui de Warhammer III, et dix seigneurs légendaires 
 | **Le gameplay** | Celui de Warhammer III 9.0, en entier : lignées vampiriques et Décrets de sang, Forge de Daith, marmite de Grom, Chasse Sauvage, victoires de la 9.0. |
 | **Les seigneurs** | Dix, chacun avec une victoire courte et une longue qui lui sont propres, écrites d'après le lore. |
 | **Le ton** | Plus dur que le jeu de base, et grimdark : une menace du lore reste une menace. |
-| **État** | **Bêta, sur le [Steam Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=3807973986).** Demande *Le Royaume des Elfes Sylvains*. Compatibilité avec les autres mods non testée : dites-nous ce qui casse. |
+| **État** | **Bêta, sur le [Steam Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=3807973986)** (en anglais), avec la [traduction française](https://steamcommunity.com/sharedfiles/filedetails/?id=3808029376) en objet à part (activer les deux). Demande *Le Royaume des Elfes Sylvains*. Compatibilité avec les autres mods non testée : dites-nous ce qui casse. |
 
 <p align="center"><img src="docs/art/divider.svg" width="100%" alt=""></p>
 

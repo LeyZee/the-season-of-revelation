@@ -24,7 +24,7 @@ gameplay is Warhammer III's, with ten legendary lords to play.
 | **The gameplay** | Warhammer III 9.0, whole: vampire bloodlines and Blood Decrees, the Forge of Daith, Grom's cauldron, the Wild Hunt, 9.0 victory conditions. |
 | **The lords** | Ten, each with a short and a long victory of their own, written from the lore. |
 | **The tone** | Harder than the base game, and grimdark. When the lore makes something a threat, we kept it a threat. |
-| **Status** | **Beta, on the [Steam Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=3807973986).** Needs *Realm of the Wood Elves*. Compatibility with other mods is untested: tell us what breaks. |
+| **Status** | **Beta, on the [Steam Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=3807973986)** (English), with a [French translation](https://steamcommunity.com/sharedfiles/filedetails/?id=3808029376) as a separate item. Needs *Realm of the Wood Elves*. Compatibility with other mods is untested: tell us what breaks. |
 
 <p align="center"><img src="docs/art/divider.svg" width="100%" alt=""></p>
 

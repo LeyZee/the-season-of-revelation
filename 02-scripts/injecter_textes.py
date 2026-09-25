@@ -23,11 +23,12 @@ Le travail, revu le 21.09.2026 (journal `phase-2-startpos-temoin.md` § 22) :
    la langue du joueur. Liste des cles du jeu : `cles-vanilla-wh3.txt.gz` (`--vanilla` la refait
    depuis `local_en.pack` et `local_fr.pack`).
 
-3. **Deux langues, deux packs.** Ce qui reste est propre a la campagne. Le francais va dans le pack
-   principal, sous `text/db/saison_des_revelations.loc` ; l'anglais dans
-   `!saison_des_revelations_en.pack`, **sous le meme chemin** : quand ce petit pack est active, il
-   passe devant le pack principal (le « ! » le met en tete de l'ordre de chargement) et son fichier
-   masque le francais. Une cle absente d'une langue prend le texte de l'autre ; les textes
+3. **Deux langues, deux packs.** Ce qui reste est propre a la campagne. L'anglais va dans le pack
+   principal, sous `text/db/saison_des_revelations.loc` ; le francais dans
+   `!saison_des_revelations_fr.pack` (mod de traduction a part), **sous le meme chemin** : quand ce
+   petit pack est active, il passe devant le pack principal (le « ! » le met en tete de l'ordre de
+   chargement) et son fichier masque l'anglais. (Jusqu'au 25.09.2026, 23 h, c'etait l'inverse :
+   francais dans le principal, anglais dans `!saison_des_revelations_en.pack`.) Une cle absente d'une langue prend le texte de l'autre ; les textes
    « placeholder » ne sont pas repris.
 
 4. Quelques textes n'existaient pas dans Warhammer 1 : la phrase de depart des deux seigneurs de la
@@ -56,7 +57,11 @@ from rpfm_mcp import session, call, text                            # noqa: E402
 ATELIER = r"C:\TotalWar-CampaignMap"
 DATA = r"C:/Program Files (x86)/Steam/steamapps/common/Total War WARHAMMER III/data/"
 PACK = DATA + "saison_des_revelations.pack"
-PACK_EN = DATA + "!saison_des_revelations_en.pack"
+PACK_EN = DATA + "!saison_des_revelations_en.pack"         # jusqu'au 25.09.2026 (rangé)
+# 25.09.2026, 23 h (Charles : « le pack en anglais, et un autre mod avec la traduction française ») : l'ANGLAIS dans le
+# pack principal, le FRANÇAIS dans le pack de traduction, sous le même chemin (le « ! » le fait passer devant)
+PACK_FR = DATA + "!saison_des_revelations_fr.pack"
+LANGUE_PRINCIPALE, LANGUE_TRADUCTION = "en", "fr"
 KIT_ZONES = (r"C:\Program Files (x86)\Steam\steamapps\common\Total War WARHAMMER III\assembly_kit"
              r"\raw_data\db\campaign_map_playable_areas.xml")
 REFS = os.path.join(ATELIER, "03-references", "saison-des-revelations")
@@ -203,7 +208,7 @@ def lignes_loc(noms, textes):
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--pack", default=PACK)
-    ap.add_argument("--pack-en", default=PACK_EN)
+    ap.add_argument("--pack-traduction", default=PACK_FR)
     ap.add_argument("--apply", action="store_true")
     ap.add_argument("--vanilla", action="store_true", help="refaire la liste des cles du jeu")
     a = ap.parse_args()
@@ -286,7 +291,7 @@ def main():
         sid = session()
     c("set_game_selected", {"game_name": "warhammer_3", "rebuild_dependencies": True})
 
-    for pack, langue in ((a.pack, "fr"), (a.pack_en, "en")):
+    for pack, langue in ((a.pack, LANGUE_PRINCIPALE), (a.pack_traduction, LANGUE_TRADUCTION)):
         if not os.path.exists(pack):
             c("new_pack", {})
             lst = json.loads(c("list_open_packs", {}))

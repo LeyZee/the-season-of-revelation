@@ -586,7 +586,8 @@ def main():
     # Les fichiers d'affichage de la carte (22.09.2026, 23 h 40 ; `affichage_carte.py` de la session d'audit) : ciel
     # (`campaign_skybox.wsmodel` du prologue, maillage et textures de WH1), flèches, frontières, rivières, commerce,
     # tunnels, et la carte stratégique FRANÇAISE (local_fr.pack de WH1) : ajoutés après les fichiers de working_data,
-    # ils remplacent ceux de même chemin (l'anglaise de WH1 va dans le pack _en, `ajoute_affichage_en`).
+    # ils remplacent ceux de même chemin (depuis le 25.09.2026, 23 h, l'anglaise de WH1 les remplace à son tour dans le
+    # pack principal et la française part dans le pack de traduction : `ajoute_affichage_langues`).
     for dossier, quoi in (("fichiers-wh1", "objets de WH1"), ("textures-sol-wh1", "textures de sol de WH1"),
                           ("montagnes-wh1", "montagnes de WH1"), ("affichage-carte", "affichage de la carte"),
                           ("rivieres-wh1", "rivières de WH1"),
@@ -721,6 +722,8 @@ def main():
         ajoute_terrain(sid, key)
         ajoute_terrain_bataille(sid, key)
     ajoute_icones_monuments(sid, key)
+    if not a.no_files:
+        ajoute_affichage_langues(sid, key)
 
     # toujours explicite : le pack étant rouvert, il garderait sinon la compression de la construction précédente
     print("  compression :", text(call(sid, "change_compression_format",
@@ -733,12 +736,14 @@ def main():
     if '"Error"' in enregistrement:
         raise SystemExit("PACK NON ENREGISTRÉ : fermer Terry et le jeu, qui tiennent le fichier, puis relancer")
     print(f"{total} lignes de base écrites dans {a.pack}")
-    if not a.no_files:
-        ajoute_affichage_en(sid)
     return verifie_fichiers_declares(sid, key)
 
 
-PACK_EN = GAME_DATA + "/!saison_des_revelations_en.pack"
+# 25.09.2026, 23 h (décision de Charles : « le pack en anglais, et un autre mod avec la traduction française ») : le jeu
+# charge les textes d'un mod quelle que soit la langue du joueur (erreur 47) ; le pack principal porte donc l'ANGLAIS
+# (textes et images à noms), et `!saison_des_revelations_fr.pack`, objet Workshop à part, le français sous les mêmes
+# chemins (le « ! » le fait passer devant). Remplace `!saison_des_revelations_en.pack` (rangé).
+PACK_FR = GAME_DATA + "/!saison_des_revelations_fr.pack"
 
 
 def ajoute_icones_monuments(sid, key):
@@ -766,37 +771,57 @@ def ajoute_icones_monuments(sid, key):
     print(f"  icônes de monuments ajoutées : {len(rel)}")
 
 
-def ajoute_affichage_en(sid):
-    """Le pack des textes anglais (`injecter_textes.py`) reçoit aussi la carte stratégique ANGLAISE de WH1, au même
-    chemin que la française du pack principal : activé, il passe devant (22.09.2026, 23 h 40)."""
-    # la minicarte ANGLAISE aussi (`images-carte-en`, `preparer_minicarte.py --minicarte-seule`, 23.09.2026) : celle du
-    # pack principal est désormais faite sur le parchemin français
-    dossiers = [os.path.join(ATELIER, "04-projets", "saison-des-revelations", d)
-                for d in ("affichage-carte-en", "images-carte-en")]
-    dossiers = [d for d in dossiers if os.path.isdir(d)]
-    if not dossiers:
-        return
-    if not os.path.exists(PACK_EN):
-        print(f"  !! {PACK_EN} absent (lancer injecter_textes.py --apply) : carte anglaise non ajoutée")
+def paires_affichage_langues():
+    """[(chemin du pack, source anglaise, source française)] des images à noms écrits (carte stratégique et minicarte) :
+    l'anglaise de `affichage-carte-en` / `images-carte-en`, la française au même chemin dans `affichage-carte` ou, pour
+    les images de `images-carte` (posées à plat sous `campaign_maps/<carte>/`), sous le même nom."""
+    projet = os.path.join(ATELIER, "04-projets", "saison-des-revelations")
+    out = []
+    for d_en, d_fr in (("affichage-carte-en", "affichage-carte"), ("images-carte-en", "images-carte")):
+        racine = os.path.join(projet, d_en)
+        for root, _, names in os.walk(racine):
+            for n in names:
+                rel = os.path.relpath(os.path.join(root, n), racine).replace("\\", "/")
+                fr = os.path.join(projet, d_fr, *rel.split("/"))
+                if not os.path.isfile(fr):
+                    fr = os.path.join(projet, d_fr, n)
+                if not os.path.isfile(fr):
+                    raise SystemExit(f"affichage : pas de version française pour {rel}")
+                out.append((rel, os.path.join(root, n), fr))
+    return out
+
+
+def ajoute_affichage_langues(sid, key):
+    """Images à noms écrits : l'anglaise dans le pack principal (ajoutée après la française, elle la remplace) ; la
+    française dans le pack de traduction, au même chemin (22.09.2026 pour la carte anglaise de WH1 ; bascule de langue du
+    25.09.2026, 23 h)."""
+    paires = paires_affichage_langues()
+    if not paires:
         return
     from contenu_pack import chemins_du_jeu
-    rel, sources = [], []
-    for dossier in dossiers:
-        for root, _, names in os.walk(dossier):
-            for n in names:
-                rel.append(os.path.relpath(os.path.join(root, n), dossier).replace("\\", "/"))
-                sources.append(os.path.join(root, n))
-    collisions = sorted(set(r.lower() for r in rel) & chemins_du_jeu(GAME_DATA))
+    collisions = sorted({r.lower() for r, _, _ in paires} & chemins_du_jeu(GAME_DATA))
     if collisions:
-        raise SystemExit(f"affichage anglais : {len(collisions)} chemin(s) de WH3 seraient remplacés : {collisions[:5]}")
-    call(sid, "open_packfiles", {"paths": [PACK_EN]}, 30)
-    call(sid, "add_packed_files", {"pack_key": PACK_EN,
-                                   "source_paths": sources,
-                                   "destination_paths": json.dumps([{"File": r} for r in rel])}, 31)
-    res = text(call(sid, "save_packfile", {"pack_key": PACK_EN}, 32))
+        raise SystemExit(f"affichage : {len(collisions)} chemin(s) de WH3 seraient remplacés : {collisions[:5]}")
+    dest = json.dumps([{"File": r} for r, _, _ in paires])
+    call(sid, "add_packed_files", {"pack_key": key, "source_paths": [en for _, en, _ in paires],
+                                   "destination_paths": dest}, 30)
+    print(f"  affichage anglais dans le pack principal : {', '.join(r for r, _, _ in paires)}")
+    if not os.path.exists(PACK_FR):
+        call(sid, "new_pack", {}, 31)
+        lst = json.loads(text(call(sid, "list_open_packs", {}, 31)))
+        neuf = [e[0] if isinstance(e, list) else e for v in lst.values() for e in v][-1]
+        call(sid, "save_pack_as", {"pack_key": neuf, "path": PACK_FR}, 31)
+        cle_fr = neuf                      # un pack créé garde sa clé provisoire après « save_pack_as » (25.09, 23 h 05)
+        print(f"  pack de traduction créé : {PACK_FR}")
+    else:
+        call(sid, "open_packfiles", {"paths": [PACK_FR]}, 31)
+        cle_fr = PACK_FR
+    call(sid, "add_packed_files", {"pack_key": cle_fr, "source_paths": [fr for _, _, fr in paires],
+                                   "destination_paths": dest}, 32)
+    res = text(call(sid, "save_packfile", {"pack_key": cle_fr}, 33))
     if '"Error"' in res:
-        raise SystemExit(f"PACK ANGLAIS NON ENREGISTRÉ : {res[:200]}")
-    print(f"  pack anglais : {len(rel)} fichier(s) d'affichage ajoutés ({', '.join(rel)})")
+        raise SystemExit(f"PACK FRANÇAIS NON ENREGISTRÉ : {res[:200]}")
+    print(f"  pack français : {len(paires)} image(s) d'affichage")
 
 
 # `environment_collection.xml` : les zones d'éclairage de WH1, écrites par BOB d'après le calque `eclairage_wh1`

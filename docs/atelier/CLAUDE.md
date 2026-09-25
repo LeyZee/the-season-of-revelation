@@ -61,7 +61,10 @@ Décisions de Charles, à ne pas rediscuter :
   Présentation publique (site, Discord dédié public créé par Charles) : relecteurs de lore bénévoles, Charles garde le
   dernier mot. **Nouvelle décision de Charles, 25.09.2026, 22 h 20** : « la bêta est out », le site de l'Atlas l'annonce
   et donne le lien Workshop de la Saison pour tester (remplace « bêta privée, sur invitation, sans lien Workshop ») ;
-  Expanded reste masqué. Compatibilité avec les autres mods : toujours dite « non testée ».
+  Expanded reste masqué. Compatibilité avec les autres mods : toujours dite « non testée ». **Langues (Charles, 25.09.2026,
+  23 h)** : le jeu charge les textes d'un mod quelle que soit la langue (erreur 47), donc le pack principal est en
+  ANGLAIS et la traduction française est un mod à part (`!saison_des_revelations_fr.pack`, objet Workshop publié par
+  Charles) ; `!saison_des_revelations_en.pack` n'existe plus (erreur 278).
 
 ## 3. Les sessions et leurs domaines (travail en parallèle)
 

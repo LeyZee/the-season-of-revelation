@@ -50,6 +50,8 @@ GITHUB = "https://github.com/LeyZee/"
 SITE = "https://bretonia.dev"
 # 25.09.2026, 22 h 45 (Charles : « la bêta est out », « j'ouvre les collaborations ») : lien de la page Workshop de la Saison
 WORKSHOP = "https://steamcommunity.com/sharedfiles/filedetails/?id=3807973986"
+# 25.09.2026, 23 h 20 : traduction française, objet à part (le mod principal est en anglais)
+WORKSHOP_FR = "https://steamcommunity.com/sharedfiles/filedetails/?id=3808029376"
 
 # ---------------------------------------------------------------------------------------------------------------------
 # Anonymisation (copies seulement)
@@ -253,7 +255,7 @@ gameplay is Warhammer III's, with ten legendary lords to play.
 | **The gameplay** | Warhammer III 9.0, whole: vampire bloodlines and Blood Decrees, the Forge of Daith, Grom's cauldron, the Wild Hunt, 9.0 victory conditions. |
 | **The lords** | Ten, each with a short and a long victory of their own, written from the lore. |
 | **The tone** | Harder than the base game, and grimdark. When the lore makes something a threat, we kept it a threat. |
-| **Status** | **Beta, on the [Steam Workshop]({WORKSHOP}).** Needs *Realm of the Wood Elves*. Compatibility with other mods is untested: tell us what breaks. |
+| **Status** | **Beta, on the [Steam Workshop]({WORKSHOP})** (English), with a [French translation]({WORKSHOP_FR}) as a separate item. Needs *Realm of the Wood Elves*. Compatibility with other mods is untested: tell us what breaks. |
 
 {SEPARATEUR}
 
@@ -391,7 +393,7 @@ intactes, le gameplay est celui de Warhammer III, et dix seigneurs légendaires 
 | **Le gameplay** | Celui de Warhammer III 9.0, en entier : lignées vampiriques et Décrets de sang, Forge de Daith, marmite de Grom, Chasse Sauvage, victoires de la 9.0. |
 | **Les seigneurs** | Dix, chacun avec une victoire courte et une longue qui lui sont propres, écrites d'après le lore. |
 | **Le ton** | Plus dur que le jeu de base, et grimdark : une menace du lore reste une menace. |
-| **État** | **Bêta, sur le [Steam Workshop]({WORKSHOP}).** Demande *Le Royaume des Elfes Sylvains*. Compatibilité avec les autres mods non testée : dites-nous ce qui casse. |
+| **État** | **Bêta, sur le [Steam Workshop]({WORKSHOP})** (en anglais), avec la [traduction française]({WORKSHOP_FR}) en objet à part (activer les deux). Demande *Le Royaume des Elfes Sylvains*. Compatibilité avec les autres mods non testée : dites-nous ce qui casse. |
 
 {SEPARATEUR}
 

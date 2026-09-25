@@ -2788,6 +2788,13 @@ marquée ‡, non relue par nous).]** [25.09.2026, ménage]
     tenu pour bon sans être regardé. -> **Règle : ouvrir toute capture avant de s'en servir comme témoin ; une capture
     de l'écran ne prouve rien si le jeu n'est pas au premier plan, et le mettre devant, c'est piloter l'écran (accord de
     Charles, erreur 108). Sinon, faire juger en jeu par Charles.**
+278. `[évitable]` (construction, 25.09.2026, 22 h 30) **Contenu d'un objet Workshop affirmé sans vérification** : j'ai écrit
+    à la session « Extension » que la page de la Saison contenait « un seul objet qui contient les deux packs » ; le
+    lanceur publie UN pack par objet, et la taille affichée (825,519 Mo = pack de 20 h 47 + miniature, à l'octet)
+    prouvait que le pack anglais n'y était pas. Les joueurs non francophones n'avaient donc pas de textes anglais.
+    -> **Règle : ce qui est en ligne se vérifie avant de l'écrire (taille affichée comparée aux packs locaux, liste des
+    objets) ; un pack = un objet Workshop.** Suite : décision de Charles du 25.09, 23 h : pack principal en anglais,
+    traduction française en objet à part (`build_pack.PACK_FR`, `injecter_textes.LANGUE_PRINCIPALE`).
 
 ## Comment tenir ce fichier
 
