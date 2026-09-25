@@ -458,7 +458,8 @@ def readme_expanded_en():
 </p>
 
 **The Season of Revelation: Expanded** grows Warhammer I's mini-campaign map into **all of Bretonnia**. Warhammer I's
-map stays at the centre, identical to the last stone. Around it, the land of the extension is drawn from the
+map is the heart of it: its relief, props, trees and water are kept, while its provinces are redrawn after the Atlas
+(new towns, three coastline seams). Around it, the land of the extension is drawn from the
 [Atlas of Bretonnia]({SITE}): the dukedoms, the mountains, the coasts, and, far to the south, the Dreaming Wood.
 It is **built in public**: every step is logged in the [journal](docs/fr/JOURNAL.md).
 
@@ -469,7 +470,7 @@ It is **built in public**: every step is logged in the [journal](docs/fr/JOURNAL
 | | |
 |---|---|
 | **Grid** | 560 × 825 hexes. Warhammer I's map is placed at (+120, +250), and the offset is even, as CAIME requires. |
-| **Centre** | The original Season map, untouched (relief, props, trees, water). It stays the playable area for now. |
+| **Centre** | Warhammer I's terrain kept (relief, props, trees, water); provinces and three coastline seams follow the Atlas. It stays the playable area for now. |
 | **Around** | New land from the Atlas: relief modelled from its heights, soils, forests, rivers and coasts, joined smoothly to Warhammer I's relief. |
 | **The Dreaming Wood** | A mirrored reflection of Athel Loren in a sea of aether, south of the forest. |
 | **Keys** | Map `saison_expanded_map`, campaign `saison_expanded`, new regions `saison_…`. The beta's keys are never reused. |
@@ -511,7 +512,8 @@ def readme_expanded_fr():
 </p>
 
 **La Saison de la Révélation : Expanded** agrandit la carte de la mini-campagne de Warhammer I à **toute la Bretonnie**.
-Au centre, la carte de Warhammer I reste identique à la dernière pierre. Autour, la terre de l'extension est dessinée
+La carte de Warhammer I en est le cœur : son relief, ses objets, ses arbres et ses eaux sont gardés, tandis que ses
+provinces sont redessinées d'après l'Atlas (villes nouvelles, trois raccords de côte). Autour, la terre de l'extension est dessinée
 d'après l'[Atlas de Bretonnie]({SITE}) : les duchés, les montagnes, les côtes et, loin au sud, le Bois Rêveur. Le
 chantier est **construit en public** : chaque étape est dans le [journal](docs/fr/JOURNAL.md).
 
@@ -522,7 +524,7 @@ chantier est **construit en public** : chaque étape est dans le [journal](docs/
 | | |
 |---|---|
 | **Grille** | 560 × 825 hex. La carte de Warhammer I est placée en (+120, +250), un décalage pair comme CAIME l'exige. |
-| **Au centre** | La Saison originale, intacte (relief, objets, arbres, eaux) ; elle reste la zone jouable pour l'instant. |
+| **Au centre** | Le terrain de Warhammer I gardé (relief, objets, arbres, eaux) ; les provinces et trois raccords de côte suivent l'Atlas. Elle reste la zone jouable pour l'instant. |
 | **Autour** | La terre de l'Atlas : relief modelé depuis ses altitudes, sols, forêts, rivières et côtes, raccordés en douceur au relief de Warhammer I. |
 | **Le Bois Rêveur** | Le reflet d'Athel Loren en miroir, dans une mer d'éther, au sud de la forêt. |
 | **Clés** | Carte `saison_expanded_map`, campagne `saison_expanded`, régions neuves `saison_…` ; jamais les clés de la bêta. |
@@ -691,7 +693,9 @@ def generer(nom, apply):
         else:
             copies.append((cible, texte))
     en, fr = (readme_saison_en(), readme_saison_fr()) if nom == "saison" else (readme_expanded_en(), readme_expanded_fr())
-    produits = {"README.md": en, "README.fr.md": fr, "LICENSE": LICENCE, "NOTICE.md": NOTICE, ".gitignore": GITIGNORE}
+    produits = {"README.md": en, "README.fr.md": fr, "LICENSE": LICENCE, "NOTICE.md": NOTICE,
+                ".gitignore": GITIGNORE + f"# marque de ce générateur\n{MARQUE}\n",
+                ".gitattributes": "* text=auto eol=lf\n*.svg text eol=lf\n"}
     if nom == "saison":
         produits["atelier_local.json.example"] = EXEMPLE_LOCAL
     titres = {
@@ -736,8 +740,6 @@ def generer(nom, apply):
         with open(chemin, "w", encoding="utf-8", newline="\n") as f:
             f.write(texte)
     open(os.path.join(dossier, MARQUE), "w", encoding="utf-8").write("généré par 02-scripts/preparer_depots_publics.py\n")
-    with open(os.path.join(dossier, ".gitignore"), "a", encoding="utf-8") as f:
-        f.write(f"{MARQUE}\n")
     print(f"écrit : {dossier}")
     return dossier, copies, produits
 
