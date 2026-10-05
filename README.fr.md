@@ -13,6 +13,8 @@ automne à Athel Loren, pendant que les hardes de Morghur se rassemblent et que 
 Ce projet la porte dans **Total War: WARHAMMER III (patch 9.0)**. La carte et l'histoire sont celles de Warhammer I,
 intactes, le gameplay est celui de Warhammer III, et dix seigneurs légendaires sont jouables.
 
+<p align="center"><img src="docs/art/card-fr.svg" width="100%" alt="La Saison de la Révélation, à savoir : 10 seigneurs, 61 régions, bêta sur le Steam Workshop, mod en anglais avec une traduction française"></p>
+
 <p align="center"><img src="docs/art/divider.svg" width="100%" alt=""></p>
 
 ## <img src="docs/art/seal-green.svg" height="34" alt=""> D'un coup d'œil

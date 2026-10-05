@@ -13,6 +13,8 @@ Athel Loren while Morghur's herds gather and the Oak of Ages calls its lords. Th
 **Total War: WARHAMMER III (patch 9.0)**. The map is Warhammer I's, untouched, the story is Warhammer I's, and the
 gameplay is Warhammer III's, with ten legendary lords to play.
 
+<p align="center"><img src="docs/art/card.svg" width="100%" alt="The Season of Revelation at a glance: 10 lords, 61 regions, beta on the Steam Workshop, English mod with a French translation"></p>
+
 <p align="center"><img src="docs/art/divider.svg" width="100%" alt=""></p>
 
 ## <img src="docs/art/seal-green.svg" height="34" alt=""> At a glance

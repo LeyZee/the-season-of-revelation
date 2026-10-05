@@ -27,6 +27,7 @@ Usage :
 import argparse
 import base64
 import glob
+import html
 import io
 import os
 import re
@@ -170,6 +171,65 @@ def banniere(titre, rubrique, ligne, mention):
         '</svg>')
 
 
+def _lignes(texte, largeur=25):
+    """Coupe un libellé en lignes (mots entiers) pour la fiche."""
+    lignes, courante = [], ""
+    for mot in texte.split():
+        if courante and len(courante) + 1 + len(mot) > largeur:
+            lignes.append(courante)
+            courante = mot
+        else:
+            courante = (courante + " " + mot).strip()
+    return lignes + ([courante] if courante else [])
+
+
+def fiche(titre, rubrique, colonnes, pied):
+    """La fiche « à savoir » du README (05.10.2026, demande de Charles : un joli visuel pour les informations utiles) :
+    vélin, cadre orné du site, titre à lettrine rouge, quatre sceaux de cire avec un chiffre et son libellé, et une ligne
+    de pied. Rien que nos éléments (jamais d'image du jeu). colonnes = [(teinte, chiffre, libellé)] x 4."""
+    S, D = _atlas()
+    W, H = 1280, 500
+    x0, y0, x1, y1 = 34, 34, W - 34, H - 34
+    cadre = D.cadre_orne(x0, y0, x1, y1, (x1 - x0) / 60, (y1 - y0) / 18, prefixe="f")
+    taille = min(64, int(900 / (len(titre) * 0.40)))
+    defs = "".join(D.symbole_sceau(t) for t in dict.fromkeys(c[0] for c in colonnes))
+    corps = ""
+    centres = [250, 510, 770, 1030]
+    for cx, (teinte, chiffre, libelle) in zip(centres, colonnes):
+        relief, profond = S.TEINTES[teinte][4], S.TEINTES[teinte][3]
+        t, y_sceau = 92, 214
+        corps += (f'<g filter="drop-shadow(0 3px 2px rgba(40,14,4,.4))"><use href="#sceau-{teinte}" x="{cx - t / 2}" y="{y_sceau}" '
+                  f'width="{t}" height="{t}"/></g>'
+                  + _lys(cx + .6, y_sceau + t / 2 + 2.4, 2.1, profond, ' opacity=".6"') + _lys(cx, y_sceau + t / 2 + 1.8, 2.1, relief)
+                  + f'<text x="{cx}" y="352" text-anchor="middle" font-family="Grenze" font-weight="700" font-size="46" '
+                    f'fill="{ROUGE}">{html.escape(chiffre)}</text>')
+        for i, ligne in enumerate(_lignes(libelle)):
+            corps += (f'<text x="{cx}" y="{386 + i * 25}" text-anchor="middle" font-family="Fell" font-size="21" '
+                      f'fill="{ENCRE}">{html.escape(ligne)}</text>')
+    return (
+        f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {H}" width="{W}" height="{H}" role="img" '
+        f'aria-label="{html.escape(titre)}: {html.escape(rubrique)}">'
+        f'<defs><style>{_polices()}</style>{_grain("g")}{defs}'
+        '<radialGradient id="vignette" cx=".5" cy=".5" r=".75"><stop offset=".55" stop-color="#5a3a14" stop-opacity="0"/>'
+        '<stop offset="1" stop-color="#5a3a14" stop-opacity=".30"/></radialGradient></defs>'
+        f'<rect width="{W}" height="{H}" fill="{FOND}"/>'
+        f'<rect x="{x0}" y="{y0}" width="{x1 - x0}" height="{y1 - y0}" fill="{VELIN}"/>'
+        f'<rect width="{W}" height="{H}" filter="url(#g-taches)"/><rect width="{W}" height="{H}" filter="url(#g)"/>'
+        f'<rect width="{W}" height="{H}" fill="url(#vignette)"/>'
+        f'{cadre}'
+        f'<text x="640" y="112" text-anchor="middle" font-family="Grenze" font-weight="700" font-size="{taille}" fill="{ENCRE}">'
+        f'<tspan fill="{ROUGE}" font-size="{round(taille * 1.23)}">{html.escape(titre[0])}</tspan>{html.escape(titre[1:])}</text>'
+        f'<text x="640" y="154" text-anchor="middle" font-family="Fell" font-style="italic" font-size="27" '
+        f'fill="{ROUGE}">{html.escape(rubrique)}</text>'
+        f'<path d="M330 182H604M676 182H950" stroke="{ENCRE}" stroke-width="1.4"/>'
+        f'<path d="M330 187H604M676 187H950" stroke="{ENCRE}" stroke-width=".6" opacity=".7"/>'
+        f'{_lys(640, 187, 1.45, ROUGE)}'
+        f'{corps}'
+        f'<text x="640" y="446" text-anchor="middle" font-family="Fell" font-style="italic" font-size="19" fill="{ENCRE}" '
+        f'opacity=".8">{html.escape(pied)}</text>'
+        '</svg>')
+
+
 def separateur():
     """Filet gravé entre les parties du README : double trait d'encre, filet rouge, petit sceau fleurdelisé au centre."""
     S, D = _atlas()
@@ -243,6 +303,8 @@ In 2016, *Realm of the Wood Elves* shipped a small, beautiful campaign: **The Se
 Athel Loren while Morghur's herds gather and the Oak of Ages calls its lords. This project brings that campaign into
 **Total War: WARHAMMER III (patch 9.0)**. The map is Warhammer I's, untouched, the story is Warhammer I's, and the
 gameplay is Warhammer III's, with ten legendary lords to play.
+
+<p align="center"><img src="docs/art/card.svg" width="100%" alt="The Season of Revelation at a glance: 10 lords, 61 regions, beta on the Steam Workshop, English mod with a French translation"></p>
 
 {SEPARATEUR}
 
@@ -382,6 +444,8 @@ automne à Athel Loren, pendant que les hardes de Morghur se rassemblent et que 
 Ce projet la porte dans **Total War: WARHAMMER III (patch 9.0)**. La carte et l'histoire sont celles de Warhammer I,
 intactes, le gameplay est celui de Warhammer III, et dix seigneurs légendaires sont jouables.
 
+<p align="center"><img src="docs/art/card-fr.svg" width="100%" alt="La Saison de la Révélation, à savoir : 10 seigneurs, 61 régions, bêta sur le Steam Workshop, mod en anglais avec une traduction française"></p>
+
 {SEPARATEUR}
 
 {_h2("green", "D'un coup d'œil")}
@@ -493,6 +557,8 @@ map is the heart of it: its relief, props, trees and water are kept, while its p
 [Atlas of Bretonnia]({SITE}): the dukedoms, the mountains, the coasts, and, far to the south, the Dreaming Wood.
 It is **built in public**: every step is logged in the [journal](docs/fr/JOURNAL.md).
 
+<p align="center"><img src="docs/art/card.svg" width="100%" alt="Season Expanded where the map stands: 560 by 905 hexes, 131 settlements, 16 Atlas factions plus Tor Soleil, test build"></p>
+
 {SEPARATEUR}
 
 {_h2("green", "At a glance")}
@@ -546,6 +612,8 @@ La carte de Warhammer I en est le cœur : son relief, ses objets, ses arbres et 
 provinces sont redessinées d'après l'Atlas (villes nouvelles, trois raccords de côte). Autour, la terre de l'extension est dessinée
 d'après l'[Atlas de Bretonnie]({SITE}) : les duchés, les montagnes, les côtes et, loin au sud, le Bois Rêveur. Le
 chantier est **construit en public** : chaque étape est dans le [journal](docs/fr/JOURNAL.md).
+
+<p align="center"><img src="docs/art/card-fr.svg" width="100%" alt="Saison Expanded, où en est la carte : 560 par 905 hex, 131 colonies, 16 factions de l'Atlas plus Tor Soleil, version d'essai"></p>
 
 {SEPARATEUR}
 
@@ -740,8 +808,29 @@ def generer(nom, apply):
     }[nom]
     mention_en = "A fan project  ·  non-commercial  ·  not affiliated with Games Workshop or Creative Assembly"
     mention_fr = "Projet de fan  ·  non commercial  ·  sans lien avec Games Workshop ni Creative Assembly"
+    fiches = {
+        "saison": (("The Season of Revelation", "What to know",
+                    [("or", "10", "playable legendary lords"), ("vert", "61", "regions, on Warhammer I’s own map"),
+                     ("rouge", "BETA", "on the Steam Workshop"), ("bronze", "EN + FR", "English mod, French translation")],
+                    "Needs Total War: WARHAMMER III (patch 9.0) and the Realm of the Wood Elves DLC  ·  each lord also needs its own content"),
+                   ("La Saison de la Révélation", "À savoir",
+                    [("or", "10", "seigneurs légendaires jouables"), ("vert", "61", "régions, sur la carte de Warhammer I"),
+                     ("rouge", "BÊTA", "sur le Steam Workshop"), ("bronze", "EN + FR", "mod en anglais, traduction française")],
+                    "Demande Total War: WARHAMMER III (patch 9.0) et le DLC Le Royaume des Elfes Sylvains  ·  chaque seigneur demande aussi son contenu")),
+        "expanded": (("The Season of Revelation: Expanded", "Where the map stands",
+                      [("or", "560 × 905", "hexes: all of Bretonnia"), ("vert", "131", "settlements on one walkable landmass"),
+                       ("rouge", "16 + 1", "Atlas factions, plus Tor Soleil"),
+                       ("bronze", "TEST", "build: loads, first turn, no campaign scripts yet")],
+                      "Warhammer I’s map stays whole at the centre  ·  built in public  ·  collaboration is open"),
+                     ("La Saison de la Révélation : Expanded", "Où en est la carte",
+                      [("or", "560 × 905", "hex : toute la Bretonnie"), ("vert", "131", "colonies sur une seule terre franchissable"),
+                       ("rouge", "16 + 1", "factions de l’Atlas, plus Tor Soleil"),
+                       ("bronze", "ESSAI", "il charge, premier tour, pas de scripts")],
+                      "La carte de Warhammer I reste entière au centre  ·  construit en public  ·  collaborations ouvertes")),
+    }[nom]
     art = {"docs/art/banner.svg": banniere(*titres[0], mention_en), "docs/art/banner-fr.svg": banniere(*titres[1], mention_fr),
-           "docs/art/divider.svg": separateur()}
+           "docs/art/divider.svg": separateur(), "docs/art/card.svg": fiche(*fiches[0]),
+           "docs/art/card-fr.svg": fiche(*fiches[1])}
     for teinte, nom_fichier in (("rouge", "red"), ("vert", "green"), ("or", "gold"), ("gris", "grey"), ("bronze", "bronze")):
         art[f"docs/art/seal-{nom_fichier}.svg"] = sceau(teinte)
     produits.update(art)
