@@ -901,7 +901,17 @@ local function retirer_armee(cle)
 		return;
 	end;
 	local liste = cm:get_saved_value(A_RETIRER) or "";
-	if not (";" .. liste .. ";"):find(";" .. cle .. ";", 1, true) then
+	-- 03.10.2026 (passe de test des dix seigneurs, constat B-1) : JAMAIS string.find(s, motif, 1, true) dans le jeu 9.0.2 ;
+	-- le drapeau « texte brut » y rend nil à tort et corrompt la bibliothèque de chaînes de tout le processus (out() de CA
+	-- casse ensuite : plantage d'Albéric au tour 27). Comparaison élément par élément.
+	local deja = false;
+	for element in string.gmatch(liste, "[^;]+") do
+		if element == cle then
+			deja = true;
+			break;
+		end;
+	end;
+	if not deja then
 		cm:set_saved_value(A_RETIRER, liste == "" and cle or (liste .. ";" .. cle));
 	end;
 end;

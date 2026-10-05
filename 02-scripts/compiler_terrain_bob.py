@@ -59,6 +59,12 @@ VERSIONS_DLL = {
         "appel": 0x34099, "retour": 0x3409F,
         "octets": {0x34099: "ff1579081400", 0x3409F: "488bd8", 0x341F4: "f30f1083f4000000"},
         "constructeurs": {}},
+    # Kit de la 9.0.2 (relevé le 03.10.2026 par la construction, `decalages_bob.py` du scratchpad, lecture seule) : seule
+    # l'empreinte change ; même import (IAT 0x174918), même et seul appel indirect, mêmes octets aux trois adresses.
+    "49cabd4d17d158c4ddba768873b30108e22253ad3464121e5b18b06cd361c026": {
+        "appel": 0x34099, "retour": 0x3409F,
+        "octets": {0x34099: "ff1579081400", 0x3409F: "488bd8", 0x341F4: "f30f1083f4000000"},
+        "constructeurs": {}},
 }
 
 # Actions lourdes : adresse de l'appel de leur constructeur dans bob_terrain (fonction 0x282f0).

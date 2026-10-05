@@ -137,7 +137,7 @@ class SourcePacks:
         return decompresser(b) if p[3] else b
 
 
-def chemins_du_jeu(dossier_data, exclure=("saison_des_revelations", "zz_startpos_db")):
+def chemins_du_jeu(dossier_data, exclure=("saison_des_revelations", "zz_startpos_db", "saison_expanded")):
     """Ensemble des chemins internes (en minuscules, barres obliques) de tous les packs du jeu."""
     out = set()
     for nom in sorted(os.listdir(dossier_data)):

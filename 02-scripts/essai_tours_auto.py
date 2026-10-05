@@ -78,6 +78,7 @@ NEUTRE_VFX = False
 # --pause-tour N : au round N, la fin de tour automatique s'arrête et la caméra se pose sur le chef de la faction
 # locale ; le jeu reste ouvert pour que Charles regarde (le pilote attend --limite ; fermer le jeu termine l'essai)
 PAUSE_TOUR = 0
+BALAYAGE = False
 # --delai-fin S : secondes avant la fin de tour automatique de la faction locale à chaque round (24.09.2026, erreur 210 :
 # avec 5 s, la faction du joueur ne recrutait ni ne construisait sous `all_players_ai`)
 DELAI_FIN = 5
@@ -85,6 +86,23 @@ DELAI_FIN = 5
 # d'essai d'une autre session, par exemple essai-auto\transfert\script\campaign\mod\...) ; répétable
 AJOUTS = []
 VIDAGE_COMPLET = False
+# --packs-avant : packs de <jeu>\data\ chargés AVANT le pack de jeu (ex. !!essai_startpos_expanded.pack, startpos d'essai)
+PACKS_AVANT = []
+CDB_AVANT = None
+
+# (04.10.2026, accord de Charles : « adapte le pilote ») SAISON_CARTE=expanded : la campagne d'Expanded. Même pilote, même
+# menu ; ce qui change : pack de jeu, campagne, entrée de la zone jouable dans la liste des campagnes, identifiants de départ
+# des seigneurs (recopiés sous d'autres identifiants, `recopier_depart_expanded.py`), et, tant qu'Expanded n'a pas de scripts
+# de campagne, l'amorce et le journal de script mis dans le pack d'essai (`essai-auto\expanded\`).
+import carte_config                                                  # noqa: E402
+EXPANDED = not carte_config.EST_SOURCE
+ZONE_JOUABLE = "1758400002"
+if EXPANDED:
+    PACK_JEU = carte_config.PACK
+    CAMPAGNE = carte_config.CAMPAGNE
+    JOURNAL = os.path.join(ATELIER, "05-journal", "2026-10-04-essais-auto-expanded")
+    ZONE_JOUABLE = "1758400003"
+    AJOUTS = ["expanded"]
 
 # alias -> (faction, identifiant de départ du seigneur) ; identifiants : start_pos_characters, écrans de chargement de
 # `saison_ecrans_de_chargement.lua` (le bouton du seigneur porte cet identifiant, propriété `lord_key`)
@@ -100,6 +118,10 @@ SEIGNEURS = {
     "grom": ("wh2_dlc15_grn_broken_axe", "2140783823"),
     "soeurs": ("wh2_dlc16_wef_sisters_of_twilight", "2140784201"),     # 24.09.2026, dixième seigneur
 }
+if EXPANDED:
+    _corr = json.load(open(os.path.join(carte_config.PROJET_ATELIER, "depart", "correspondance_depart.json"), encoding="utf-8"))
+    SEIGNEURS = {k: (f, str(_corr["personnages"][fiche])) for k, (f, fiche) in SEIGNEURS.items()
+                 if fiche in _corr["personnages"]}
 
 # durée d'un tour : horodatage du journal (« <166.1s> »), pas os.time() du jeu (pas de 128 s, 23.09.2026)
 TOUR = re.compile(r"<([\d.]+)s>\s+\[ESSAI\] tour (\d+) ;")
@@ -150,6 +172,10 @@ def scripts_generes(dossier, faction, fiche, tours, ia=True):
             s, n = re.subn(r'seigneur = "[^"]*"', f'seigneur = "{fiche}"', s, count=1)
             if n != 1:
                 sys.exit(f"!! {rel} : seigneur introuvable dans le script")
+            s, n = re.subn(r'campagne = "[^"]*"', f'campagne = "{CAMPAGNE}"', s, count=1)
+            s, n2 = re.subn(r"CcoCampaignMapPlayableAreaRecord\d+", f"CcoCampaignMapPlayableAreaRecord{ZONE_JOUABLE}", s)
+            if n != 1 or n2 < 1:
+                sys.exit(f"!! {rel} : campagne ou zone jouable introuvable dans le script")
             if MENU_SANS_DLC:
                 s, n = re.subn(r"_G\.saison_essai_menu_sans_dlc = false;", "_G.saison_essai_menu_sans_dlc = true;", s,
                                count=1)
@@ -160,6 +186,10 @@ def scripts_generes(dossier, faction, fiche, tours, ia=True):
             s, n2 = re.subn(r"SAISON_ESSAI_PAUSE_TOUR = \d+", f"SAISON_ESSAI_PAUSE_TOUR = {PAUSE_TOUR}", s, count=1)
             if n2 != 1:
                 sys.exit(f"!! {rel} : SAISON_ESSAI_PAUSE_TOUR introuvable")
+            # 03.10.2026 (plantage de rendu, GUIDE § 15 n° 150) : balayage de caméra pendant la pause
+            s, n5 = re.subn(r"SAISON_ESSAI_BALAYAGE = \d+", f"SAISON_ESSAI_BALAYAGE = {1 if BALAYAGE else 0}", s, count=1)
+            if n5 != 1:
+                sys.exit(f"!! {rel} : SAISON_ESSAI_BALAYAGE introuvable")
             s, n3 = re.subn(r"SAISON_ESSAI_DELAI_FIN = \d+", f"SAISON_ESSAI_DELAI_FIN = {DELAI_FIN}", s, count=1)
             if n3 != 1:
                 sys.exit(f"!! {rel} : SAISON_ESSAI_DELAI_FIN introuvable")
@@ -235,7 +265,8 @@ def script_propre():
     if not os.path.exists(SCRIPT):
         return None
     lignes = open(SCRIPT, "rb").read().decode("utf-8", "replace").splitlines(keepends=True)
-    parasites = ("saison_essai_auto", "all_players_ai", "quit_after_campaign_processing", "process_campaign")
+    parasites = ("saison_essai_auto", "all_players_ai", "quit_after_campaign_processing", "process_campaign",
+                 "essai_startpos")
     return "".join(l for l in lignes if not any(p in l for p in parasites)).encode("utf-8")
 
 
@@ -283,7 +314,12 @@ def commandes_cdb(dossier):
               f'.catch {{ da @rcx+0xe80 L100 }}; .catch {{ du @rcx+0xe80 L80 }}; .catch {{ db @rcx+0xe80 L100 }}; '
               f'.kill; q')
     lignes = [f'sxd -c2 "{action}" {code}' for code in ("av", "sov", "eh", "dz", "ii", "c000041d", "c0000409")]
-    lignes += ["sxd ld", "sxd ud", "sxd ct", "sxd et", "sxd cpr", "sxd epr", "g"]
+    lignes += ["sxd ld", "sxd ud", "sxd ct", "sxd et", "sxd cpr", "sxd epr"]
+    # --cdb-avant <fichier> (04.10.2026, plantage du chargement d'Expanded) : commandes cdb à soi (points d'arrêt qui
+    # journalisent) posées avant le lancement
+    if CDB_AVANT:
+        lignes += open(CDB_AVANT, encoding="ascii").read().strip().splitlines()
+    lignes += ["g"]
     chemin = os.path.join(dossier, "commandes.cdb")
     with open(chemin, "w", encoding="ascii", newline="\n") as f:
         f.write("\n".join(lignes) + "\n")
@@ -375,7 +411,8 @@ def un_essai(alias, tours, gel_min, limite_h, essai_seul, ia=True):
         if os.path.exists(MENU):
             os.remove(MENU)
         with open(SCRIPT, "w", encoding="utf-8", newline="\n") as f:
-            f.write(f"    mod {PACK_JEU};\n    mod {PACK_ESSAI};\n" + ("    all_players_ai;\n" if ia else ""))
+            f.write("".join(f"    mod {p};\n" for p in PACKS_AVANT) +
+                    f"    mod {PACK_JEU};\n    mod {PACK_ESSAI};\n" + ("    all_players_ai;\n" if ia else ""))
         log_cdb = os.path.join(dossier, "cdb.log")
         proc = subprocess.Popen([cdb(), "-G", "-hd", "-logo", log_cdb, "-cf", cmd_cdb, EXE], cwd=JEU,
                                 stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
@@ -475,6 +512,9 @@ def main():
                     help="remplace des effets de WH1 par ceux du dossier essai-auto/<nom>/vfx (défaut : neutre-vfx, les 6 vides ; herbe-seule : l'herbe sans émetteur)")
     ap.add_argument("--pause-tour", type=int, default=0,
                     help="au round N, arrêter la fin de tour et poser la caméra sur le chef (Charles regarde)")
+    ap.add_argument("--balayage", action="store_true",
+                    help="avec --pause-tour : la caméra parcourt la carte (approche et recul toutes les 6 s), pour forcer "
+                         "le chargement des tuiles (plantage de rendu, GUIDE § 15 n° 150)")
     ap.add_argument("--delai-fin", type=int, default=5,
                     help="secondes avant la fin de tour automatique de la faction locale (défaut 5 ; plus long pour "
                          "laisser l'IA jouer la faction du joueur sous all_players_ai, erreur 210)")
@@ -483,6 +523,10 @@ def main():
     ap.add_argument("--prioritaire", action="store_true",
                     help="pack d'essai nommé !!saison_essai_auto.pack : il passe DEVANT notre pack (ordre alphabétique, "
                          "« ! » d'abord) et peut remplacer nos fichiers (variante de terrain dans --ajout)")
+    ap.add_argument("--packs-avant", action="append", default=[],
+                    help="pack de data\\ chargé avant le pack de jeu (ex. !!essai_startpos_expanded.pack) ; répétable")
+    ap.add_argument("--cdb-avant", default=None,
+                    help="fichier de commandes cdb (points d'arrêt journalisants) posées avant le lancement")
     ap.add_argument("--vidage-complet", action="store_true",
                     help="vidage /ma au plantage (plusieurs Go) pour nommer l'objet fautif")
     ap.add_argument("--armees", action="store_true",
@@ -498,7 +542,7 @@ def main():
                     help="pose _G.saison_essai_menu_sans_dlc au menu (plan B du verrou : bouton de lancement grisé)")
     a = ap.parse_args()
     sys.stdout.reconfigure(encoding="utf-8", line_buffering=True)
-    global ARMEES, NEUTRE_VFX, PAUSE_TOUR, AJOUTS, VIDAGE_COMPLET, PACK_ESSAI, DELAI_FIN, SANS_DLC, SANS_DLC_SEIGNEUR
+    global ARMEES, NEUTRE_VFX, PAUSE_TOUR, AJOUTS, VIDAGE_COMPLET, PACK_ESSAI, DELAI_FIN, SANS_DLC, SANS_DLC_SEIGNEUR, BALAYAGE
     global MENU_SANS_DLC
     SANS_DLC = a.sans_dlc
     MENU_SANS_DLC = a.menu_sans_dlc
@@ -508,8 +552,15 @@ def main():
     if a.prioritaire:
         # 23.09.2026, 22 h 30 : zz_ passe APRÈS notre pack (un required.lua du pack d'essai ne remplaçait pas le nôtre)
         PACK_ESSAI = "!!saison_essai_auto.pack"
-    AJOUTS = a.ajout
+    AJOUTS = (["expanded"] if EXPANDED else []) + a.ajout
+    global PACKS_AVANT, CDB_AVANT
+    PACKS_AVANT = a.packs_avant
+    CDB_AVANT = a.cdb_avant
+    for p in PACKS_AVANT:
+        if not os.path.exists(os.path.join(DATA, p)):
+            sys.exit(f"!! {p} absent de {DATA}")
     PAUSE_TOUR = a.pause_tour
+    BALAYAGE = a.balayage
     ARMEES = a.armees
     NEUTRE_VFX = a.neutre_vfx
     seigneurs = list(SEIGNEURS) if "tous" in a.seigneur else a.seigneur

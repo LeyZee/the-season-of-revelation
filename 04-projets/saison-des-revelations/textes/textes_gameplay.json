@@ -3023,5 +3023,33 @@
  "missions_localised_mission_completed_text_saison_duc_defi": {
   "fr": "{{tr:missions_localised_mission_completed_text_wh2_dlc14_mortal_empires_elixir_objective}}",
   "en": "{{tr:missions_localised_mission_completed_text_wh2_dlc14_mortal_empires_elixir_objective}}"
+ },
+ "frontend_factions_localised_mechanics_wh_main_vmp_mousillon": {
+  "fr": "[[img:bullet_vmp_dead]][[/img]]{{tr:campaign_playstyle_description_wh_main_sc_vmp_vampire_counts}}||[[img:bullet_vmp_units]][[/img]]{{tr:battle_playstyle_description_wh_main_sc_vmp_vampire_counts}}||[[img:bullet_vmp_corruption]][[/img]]Tyran d'Aquitanie : ses trois domaines d'Aquitanie perdus pèsent sur la faction tant qu'ils ne sont pas repris ; la faveur d'Abhorash, en trois degrés, récompense les victoires héroïques du Duc et le quitte s'il recule ; les seigneurs de Bretonnie le défient en duel.||[[img:bullet_vmp_dead]][[/img]]Impôt du sang et serment du sang : chaque terre bretonne prise peut payer en Sang et en cadavres, et ses seigneurs vaincus devenir vassaux ; en retour, la traque de Richemont lance des chevaliers de la Quête sur l'Aquitanie. Régiments de Renom des Comtes Vampires.",
+  "en": "[[img:bullet_vmp_dead]][[/img]]{{tr:campaign_playstyle_description_wh_main_sc_vmp_vampire_counts}}||[[img:bullet_vmp_units]][[/img]]{{tr:battle_playstyle_description_wh_main_sc_vmp_vampire_counts}}||[[img:bullet_vmp_corruption]][[/img]]Tyrant of Aquitaine: his three lost holdings of Aquitaine weigh on the faction until they are retaken; the Favour of Abhorash, in three degrees, rewards the Duke's heroic victories and leaves him if he retreats; the lords of Bretonnia challenge him to single combat.||[[img:bullet_vmp_dead]][[/img]]Blood Tax and Blood Oath: every Bretonnian land taken can pay in Blood and corpses, and its defeated lords can become vassals; in return, the hunt of Richemont sends Questing Knights against Aquitaine. Vampire Counts Regiments of Renown."
+ },
+ "frontend_factions_localised_info_wh_main_vmp_mousillon": {
+  "fr": "{{tr:frontend_factions_localised_info_wh2_dlc11_vmp_the_barrow_legion}}",
+  "en": "{{tr:frontend_factions_localised_info_wh2_dlc11_vmp_the_barrow_legion}}"
+ },
+ "effects_description_saison_duc_effect_diplomatie_bretonnie_dummy": {
+  "fr": "Relations diplomatiques : −20 avec la Bretonnie",
+  "en": "Diplomatic relations: −20 with Bretonnia"
+ },
+ "effects_description_saison_duc_effect_entretien_chevaliers_dummy": {
+  "fr": "Entretien : −10 % pour les Chevaliers Noirs et les Gardes des Cryptes",
+  "en": "Upkeep: −10% for Black Knights and Grave Guard"
+ },
+ "effects_description_saison_duc_effect_traquer_chauves_souris_dummy": {
+  "fr": "Attribut : Traquer pour les Charognards et les Chauves-souris Géantes",
+  "en": "Attribute: Stalk for Carrion and Fell Bats"
+ },
+ "effect_bundles_localised_title_saison_lord_trait_duc_selection": {
+  "fr": "{{tr:effect_bundles_localised_title_saison_lord_trait_duc}}",
+  "en": "{{tr:effect_bundles_localised_title_saison_lord_trait_duc}}"
+ },
+ "effect_bundles_localised_description_saison_lord_trait_duc_selection": {
+  "fr": "{{tr:effect_bundles_localised_description_saison_lord_trait_duc}}",
+  "en": "{{tr:effect_bundles_localised_description_saison_lord_trait_duc}}"
  }
 }

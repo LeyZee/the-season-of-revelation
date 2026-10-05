@@ -16,8 +16,8 @@ Pourquoi : le 20.09.2026 au soir, `build_starpos` de RPFM plante le jeu même su
 Deux emplacements du gabarit restent vides, dont celui de
 `add_working_directory assembly_kit\\working_data;` — et les tables `start_pos_*` ne vivent que
 dans l'Assembly Kit, jamais dans un pack. D'où l'essai : écrire le script **avec** cette ligne et
-lancer le jeu nous-mêmes, exactement comme RPFM le fait (`steam_appid.txt` posé à côté de
-`Warhammer3.exe`, puis l'exécutable lancé directement).
+lancer le jeu nous-mêmes, `steam_appid.txt` posé à côté de `Warhammer3.exe`, puis l'exécutable lancé
+directement. (04.10.2026, audit des guides : RPFM, lui, lance le jeu par Steam ; « comme RPFM » était faux.)
 
 Le script écrit est sauvegardé dans `05-journal\\<journal>\\` avec la sortie, pour que l'essai soit
 rejouable et comparable.

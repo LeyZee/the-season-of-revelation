@@ -252,6 +252,108 @@ def lod_fin_partout(b):
     return bytes(out)
 
 
+# LE MATÉRIAU DES OBJETS DE CA (03.10.2026 ; plantage de rendu `+0x1AC3FF2`, GUIDE § 15 n° 150, accord de Charles) : nos
+# maillages de montagne et de falaise de WH1 sont posés en OBJETS (ECMesh) mais au matériau 49 `rigid_default` des tuiles de
+# terrain (sommets de 36 octets, chemin de base de texture à +80) ; le moteur en fait des `TerrainCustomTile` et relit l'un
+# d'eux après l'avoir libéré (deux vidages complets : une falaise, puis une montagne). CA ne pose jamais de 49 en objet : ses
+# montagnes-objets v7 sont au matériau 68 `default_dry` (lzd_mountain_*, nur_*_mountain, hef_vauls_anvil). Chaque morceau est
+# réécrit à ce format, relevé sur `lzd_mountain_03` (en-tête de 2 248 octets pris pour gabarit ; seuls varient chez CA :
+# tailles et nombres, boîte, nom du morceau +82, dossier des textures +114, pivot +628 = centre de la boîte, chemins des
+# textures +944 + 260 k) : sommets de 32 octets (position f16 x 3 + w = 1, uv f16 x 2, uv2 nul, normale, tangente et
+# bitangente u8 dans l'ordre z, y, x comme chez nous, couleur 255) ; triangles retournés (notre sens est l'inverse du sien,
+# normales gardées) ; textures citées X_diffuse / X_normal / X_specular / X_gloss_map, le moteur prenant X_base_colour et
+# X_material_map à côté (GUIDE § 15 n° 103), masque de CA gardé.
+MATERIAU_OBJET = True
+GABARIT_68 = "rigidmodels/campaign/generic_props/mountains/lizardmen/lzd_mountain_03.rigid_model_v2"
+TETE_68 = 2248
+TEXTURES_68 = {0: "_diffuse.dds", 1: "_normal.dds", 2: "_specular.dds", 4: "_gloss_map.dds"}   # 3 : masque
+# le masque du gabarit cite `rigidmodels/campaign/settlements/textures/test_mask.dds`, texture d'attente de CA absente à ce
+# chemin (erreur 254, `build_pack.SUBSTITUTS_CA_RETIRES`) : notre copie, livrée par fichiers_wh1 (SUBSTITUTS_A_NOUS)
+MASQUE_68 = "rigidmodels/_wh1/campaign/settlements/textures/test_mask.dds"
+_GABARIT_68 = {}
+
+
+def gabarit_68():
+    """En-tête de morceau au matériau 68 (2 248 octets) du premier morceau de `GABARIT_68` (packs du jeu)."""
+    if "tete" not in _GABARIT_68:
+        from contenu_pack import SourcePacks
+        g = SourcePacks(DATA_WH3).lire(GABARIT_68)
+        if g is None:
+            raise SystemExit(f"{GABARIT_68} absent des packs du jeu")
+        off = struct.unpack_from("<I", g, 152)[0]
+        mat, _, _, voff = struct.unpack_from("<HHII", g, off)
+        if mat != 68 or voff != TETE_68:
+            raise SystemExit(f"gabarit {GABARIT_68} : matériau {mat}, en-tête {voff} (attendus 68, {TETE_68})")
+        types = [struct.unpack_from("<I", g, off + 940 + 260 * k)[0] for k in range(5)]
+        if types != [0, 1, 11, 3, 12]:
+            raise SystemExit(f"gabarit : types de textures {types}")
+        _GABARIT_68["tete"] = bytes(g[off:off + TETE_68])
+    return _GABARIT_68["tete"]
+
+
+def vers_materiau_68(b, nom):
+    """Le modèle `b` (RMV2 v7, morceaux au matériau 49, sommets de 36 octets) réécrit au matériau 68 des objets de CA."""
+    ver, nlod = struct.unpack_from("<II", b, 4)
+    if b[:4] != b"RMV2" or ver != 7:
+        raise ValueError("RMV2 v7 attendu")
+    gab = gabarit_68()
+    tete = bytearray(b[:140 + 28 * nlod])
+    corps = []
+    pos = len(tete)
+    for k in range(nlod):
+        nb, _, _, off = struct.unpack_from("<IIII", b, 140 + 28 * k)
+        debut, vsz, isz = pos, 0, 0
+        for j in range(nb):
+            mat, _, taille, voff, vc, ioff, ic = struct.unpack_from("<HHIIIII", b, off)
+            if mat != 49 or (ioff - voff) != 36 * vc or ic % 3:
+                raise ValueError(f"{nom} : morceau {k}/{j} matériau {mat}, pas {(ioff - voff) / max(vc, 1)}, indices {ic}")
+            base = b[off + 80:off + 336].split(b"\0")[0].decode("ascii").replace("\\", "/")
+            v = np.frombuffer(b, np.uint8, count=vc * 36, offset=off + voff).reshape(vc, 36)
+            p = np.ascontiguousarray(v[:, :12]).view(np.float32).reshape(vc, 3)
+            if np.abs(p).max() >= 65000:
+                raise ValueError(f"{nom} : position hors des demi-flottants ({np.abs(p).max()})")
+            s = np.zeros((vc, 32), np.uint8)
+            s[:, 0:6] = p.astype(np.float16).view(np.uint8).reshape(vc, 6)
+            s[:, 6:8] = np.frombuffer(np.float16(1.0).tobytes(), np.uint8)
+            s[:, 8:12] = v[:, 28:32]
+            for o in (16, 20, 24):
+                s[:, o:o + 3] = v[:, o:o + 3]
+            s[:, 28:32] = 255
+            idx = np.frombuffer(b, "<u2", count=ic, offset=off + ioff).reshape(-1, 3)[:, [0, 2, 1]]
+            h = bytearray(gab)
+            struct.pack_into("<HHIIIII", h, 0, 68, 0, TETE_68 + vc * 32 + ic * 2, TETE_68, vc, TETE_68 + vc * 32, ic)
+            h[24:48] = b[off + 24:off + 48]
+            bx = struct.unpack_from("<6f", b, off + 24)
+            struct.pack_into("<3f", h, 628, *[(bx[i] + bx[i + 3]) / 2 for i in range(3)])
+            nom_morceau = f"{nom}_lod{k}_{j}"[-31:].encode("ascii")
+            h[82:114] = nom_morceau + b"\0" * (32 - len(nom_morceau))
+            dossier = (base.rsplit("/", 1)[0] + "/").encode("ascii")
+            h[114:370] = dossier + b"\0" * (256 - len(dossier))
+            for slot, suffixe in TEXTURES_68.items():
+                c = (base + suffixe).encode("ascii")
+                if len(c) >= 256:
+                    raise ValueError(f"{nom} : chemin de texture trop long")
+                h[944 + 260 * slot:944 + 260 * slot + 256] = c + b"\0" * (256 - len(c))
+            h[944 + 260 * 3:944 + 260 * 3 + 256] = MASQUE_68.encode("ascii") + b"\0" * (256 - len(MASQUE_68))
+            morceau = bytes(h) + s.tobytes() + idx.astype("<u2").tobytes()
+            corps.append(morceau)
+            pos += len(morceau)
+            vsz += vc * 32
+            isz += ic * 2
+            off += taille
+        struct.pack_into("<IIII", tete, 140 + 28 * k, nb, vsz, isz, debut)
+    return bytes(tete) + b"".join(corps)
+
+
+def masque_68(b):
+    """Modèle au matériau 68 dont le masque (texture 3 de chaque morceau) est remis à `MASQUE_68` ; inchangé sinon."""
+    out = bytearray(b)
+    for off, mat, *_ in morceaux(b):
+        if mat == 68:
+            out[off + 944 + 260 * 3:off + 944 + 260 * 3 + 256] = MASQUE_68.encode("ascii") + b"\0" * (256 - len(MASQUE_68))
+    return bytes(out)
+
+
 def base_texture(b):
     """Chemin de base des textures cité par le premier morceau (champ de 256 octets à +80)."""
     off = struct.unpack_from("<I", b, 152)[0]
@@ -357,8 +459,11 @@ def surface(lf, pas, liste=None):
 
 def entite(ident, modele, x, y, z, ry):
     """Entité d'objet de montagne, réglée comme les montagnes des Empires (3 044 poses de
-    `generic_props/mountains/<culture>/`) : visible en vue tactique et sous le brouillard, forme reportée dans le relief
-    logique (`apply_height_patch`). `x, y, z` dans le repère des rasters : l'entité est écrite dans le monde de WH3
+    `generic_props/mountains/<culture>/`) : visible en vue tactique et sous le brouillard. NOS montagnes sont posées en
+    hauteur ABSOLUE avec `apply_height_patch="False"` (le relief de WH1 porte déjà leur forme) ; celles de CA, à l'inverse,
+    ont le patch, un y RELATIF (y = 0) et ne sont PAS inscrites dans full_height_map (le jeu et BOB drapent le maillage
+    sur le relief ; rapport de la session Expanded, 05-journal\\2026-10-04-montagnes-ca\\RAPPORT.md, GUIDE § 15 n° 96).
+    `x, y, z` dans le repère des rasters : l'entité est écrite dans le monde de WH3
     (z × Z_VERS_MONDE), étirée de Z_VERS_MONDE sur l'axe local qui y pointe vers le nord (x local si ry = ±90°, z local
     si ry = 0 ou 180° : convention monde = v @ (diag(échelle) · Ry(-ry)) + position)."""
     nord_local_x = abs(math.sin(math.radians(ry))) > 0.5
@@ -461,6 +566,8 @@ def construire(choisies=None, ecrire=False, mer=None):
                 brut = remplacer_base(brut, base, bases[base], barre="/" if TEXTURES_OBJET else "\\")
         drape, y0 = draper(brut, p, lf, R.PAS)
         drape = lod_fin_partout(drape)
+        if MATERIAU_OBJET:
+            drape = vers_materiau_68(drape, f"{p.nom.rstrip('/').rsplit('/', 1)[1]}_pose{p.k}")
         modele = f"{DOSSIER_MODELES}/{p.famille}/{p.nom.rstrip('/').rsplit('/', 1)[1]}_pose{p.k}.rigid_model_v2"
         if modele in jeu:
             raise SystemExit(f"{modele} existe dans WH3")

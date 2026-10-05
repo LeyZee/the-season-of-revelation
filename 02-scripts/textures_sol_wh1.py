@@ -62,7 +62,9 @@ import carte_config                                                  # noqa: E40
 CARTE = carte_config.CARTE                                           # la cible (kit)
 WH1 = os.path.join(ATELIER, "03-references", "saison-des-revelations", "terrain-wh1", "terrain", "campaigns",
                    carte_config.CARTE_SOURCE)
-SORTIE = os.path.join(ATELIER, "04-projets", "saison-des-revelations", "textures-sol-wh1")
+# 03.10.2026 : sorties dans le dossier d'atelier de la CARTE (profil carte_config) ; pour la Saison, chemin inchangé.
+# Avant, en dur : avec SAISON_CARTE=expanded, Expanded aurait réécrit les textures et la base de sols du pack de la bêta.
+SORTIE = carte_config.dans_projet("textures-sol-wh1")
 COMPILE = os.path.join(KIT, "working_data", "terrain", "campaigns", CARTE, "global_map")
 SAUVEGARDES = os.path.join(ATELIER, "05-journal", "terrain-backups")
 DOSSIER = "terrain/textures/campaign/wh1"
@@ -127,7 +129,8 @@ PENTE_PIEMONT, PENTE_ROCHE = 0.5, 1.0            # hauteur par unité du monde
 DISTANCE_PIEMONT = 2.5                           # unités autour des maillages de montagne de WH1
 SOUS_BOIS = ("underlay_forest0", "underlay_forest1")
 ROCHE_PIEMONT, ROCHE_PENTE = "scree_flowers0", "scree_mountain0"
-EMPRISE_MONTAGNES = os.path.join(ATELIER, "04-projets", "saison-des-revelations", "relief-wh1", "montagnes_wh1.npy")
+EMPRISE_MONTAGNES = (carte_config.SOURCE_MONDE or {}).get("MONTAGNES_WH1") or \
+    os.path.join(ATELIER, "04-projets", "saison-des-revelations", "relief-wh1", "montagnes_wh1.npy")
 # SOUS LES MONTAGNES (23.09.2026, 17 h 45 ; Charles : « des montagnes vertes, très vallonnées »). Aux distances de la
 # caméra, le jeu dessinait les niveaux de détail grossiers des montagnes de WH1, sous lesquels notre sol (2 cm sous le plus
 # fin) perçait sur 11 à 29 % de leur surface, avec le sous-bois vert de WH1 traduit. `montagnes_wh1.lod_fin_partout` garde le
@@ -143,7 +146,7 @@ def pentes_projet():
     if len(f) != 1:
         raise SystemExit(f"relief du projet introuvable ou ambigu : {f}")
     h = np.asarray(Image.open(f[0]), np.float64)
-    pas = h.shape[1] / float(TT.LARGEUR_MONDE)
+    pas = h.shape[1] / float(carte_config.LARGEUR_MONDE)     # 03.10.2026 : largeur de LA carte (266,53 pour la Saison)
     p = np.pad(h, 1, mode="edge")
     hs = sum(p[1 + dy:1 + dy + h.shape[0], 1 + dx:1 + dx + h.shape[1]] for dy in (-1, 0, 1) for dx in (-1, 0, 1)) / 9.0
     gy, gx = np.gradient(hs)
@@ -160,7 +163,7 @@ def piemonts(melange, idx):
     if not os.path.exists(EMPRISE_MONTAGNES):
         raise SystemExit(f"{EMPRISE_MONTAGNES} absent : lancer terrain_wh1_vers_terry.py --apply")
     montagnes = np.load(EMPRISE_MONTAGNES)
-    pas = melange.shape[1] / float(TT.LARGEUR_MONDE)
+    pas = melange.shape[1] / float(carte_config.LARGEUR_MONDE)
     pied = TT.distance_a(montagnes, int(DISTANCE_PIEMONT * pas) + 1) <= DISTANCE_PIEMONT * pas
     sous_bois = np.isin(melange, [idx[g] for g in SOUS_BOIS])
     piemont = TT.contour_naturel(pied & (pente > PENTE_PIEMONT), rayon=3, amplitude=0.2, echelle=12, graine=11)
@@ -295,7 +298,7 @@ PREFIXE_GROUPE = "wh1_"
 BASE_VARIANTES = "warscape_asset_variation_db/terrain_textures_campaign.assetdb"
 # la copie HORS du dossier embarqué en bloc par build_pack (`textures-sol-wh1`, dont le garde-fou refuse tout chemin de
 # WH3) : build_pack l'ajoute par son exception, `remplacements_base_variantes`, comme GLACE_WH1
-SORTIE_BASE = os.path.join(ATELIER, "04-projets", "saison-des-revelations", "base-variantes-sol")
+SORTIE_BASE = carte_config.dans_projet("base-variantes-sol")       # 03.10.2026 : par carte (voir SORTIE)
 # La clé du plan d'eau de NOTRE carte, comme CA en déclare une pour chacune de ses trois cartes (espace
 # `campaign_texture_terrain/campaigns/<carte>`, clé `water_plane_material`) ; notre carte n'en avait pas. Demande de la
 # session « IA et modding 3D » (23.09.2026, 23 h 45 : « le lien qui manquait sans doute au jeu » vers son matériau,
@@ -303,7 +306,10 @@ SORTIE_BASE = os.path.join(ATELIER, "04-projets", "saison-des-revelations", "bas
 ESPACE_EAU = f"campaign_texture_terrain/campaigns/{CARTE}"
 ESPACE_EAU_CA = "campaign_texture_terrain/campaigns/wh3_main_combi_map_1"
 CLE_EAU = "water_plane_material"
-EAU_CARTE = os.path.join(ATELIER, "04-projets", "saison-des-revelations", "eau-carte")
+EAU_CARTE = carte_config.dans_projet("eau-carte")                   # 03.10.2026 : par carte (Saison : inchangé)
+# (03.10.2026, crochet d'Expanded) le matériau d'eau de la carte : celui de la Saison (masques_eau_carte) ou celui que
+# SOURCE_MONDE donne (Expanded : outils\eau_materiau_expanded.py)
+MATERIAU_EAU = (carte_config.SOURCE_MONDE or {}).get("MATERIAU_EAU")   # None : masques_eau_carte.MATERIAU
 # Essai en deux temps : 1) groupes neufs dans notre liste seulement (si le jeu prend le chemin écrit quand la base ne
 # connaît pas le groupe, aucun fichier de CA n'est remplacé) ; 2) seulement si 1) échoue, la copie de la base de CA avec nos
 # clés (exception au garde-fou de build_pack à demander à la construction, comme GLACE_WH1).
@@ -442,8 +448,11 @@ def remplir_vides(m, n):
 # ESSAI : un fichier À NOUS (`CATALOGUE_SEPARE_CHEMIN`) qui ne porte que nos ajouts (clés wh1_* des trois espaces de texture
 # et clé du plan d'eau de notre carte), aucune entrée de CA ; la base de CA n'est plus remplacée. À juger EN JEU (sols de
 # WH1 et mer de notre carte présents) ; si le jeu ne le lit pas, retour à la copie (False).
+# VALIDÉ EN JEU par Charles (25.09.2026, 23 h 35, pack de 21 h 46, sols autour d'Orion : « rien d'anormal »).
 CATALOGUE_SEPARE = True
-CATALOGUE_SEPARE_CHEMIN = "warscape_asset_variation_db/saison_des_revelations.assetdb"
+# (03.10.2026) un nom par mod : saison_des_revelations.assetdb (inchangé) ou saison_expanded.assetdb ; Expanded ne
+# remplace donc pas non plus la base de CA, et les deux catalogues ne se couvrent pas
+CATALOGUE_SEPARE_CHEMIN = f"warscape_asset_variation_db/{os.path.splitext(carte_config.PACK)[0]}.assetdb"
 
 
 def catalogue_separe(local):
@@ -488,15 +497,16 @@ def remplacements_base_variantes():
 
     def permis(e):
         if e["espace"] == ESPACE_EAU:
-            return e["cle"] == CLE_EAU and [v["fichier"] for v in e["variantes"]] == [masques_eau_carte.MATERIAU]
+            return e["cle"] == CLE_EAU and [v["fichier"] for v in e["variantes"]] == [MATERIAU_EAU or masques_eau_carte.MATERIAU]
         return e["cle"].startswith(PREFIXE_GROUPE) and e["espace"] in ("campaign_base_colour", "campaign_material",
                                                                        "campaign_normal")
     if not all(permis(e) for e in ajouts):
         raise SystemExit("base de variantes : un ajout hors des clés wh1_* des trois espaces de texture et de la clé du "
                          "plan d'eau de notre carte")
     if any(e["espace"] == ESPACE_EAU for e in ajouts) and \
-            not os.path.exists(os.path.join(EAU_CARTE, *masques_eau_carte.MATERIAU.split("/"))):
-        raise SystemExit(f"base de variantes : la clé du plan d'eau cite {masques_eau_carte.MATERIAU}, absent de {EAU_CARTE}")
+            not os.path.exists(os.path.join(EAU_CARTE, *(MATERIAU_EAU or masques_eau_carte.MATERIAU).split("/"))):
+        raise SystemExit(f"base de variantes : la clé du plan d'eau cite {MATERIAU_EAU or masques_eau_carte.MATERIAU}, "
+                         f"absent de {EAU_CARTE}")
     if CATALOGUE_SEPARE:
         binaire, xml = catalogue_separe(local)
         dossier = os.path.join(SORTIE_BASE + "-separe", *CATALOGUE_SEPARE_CHEMIN.split("/")[:-1])
@@ -527,7 +537,7 @@ def base_variantes(neufs):
             BV.ajouter(base, espace, g, chemins[cle], g, COULEUR_EDITEUR + (1 + k,))
     import masques_eau_carte
     modele_eau = next(e for e in base["entrees"] if e["espace"] == ESPACE_EAU_CA and e["cle"] == CLE_EAU)
-    BV.ajouter(base, ESPACE_EAU, CLE_EAU, masques_eau_carte.MATERIAU, "", (0, 0, 0), modele=modele_eau)
+    BV.ajouter(base, ESPACE_EAU, CLE_EAU, MATERIAU_EAU or masques_eau_carte.MATERIAU, "", (0, 0, 0), modele=modele_eau)
     binaire = BV.ecrire(base)
     relue = BV.lire(binaire)
     if relue["entrees"][:n_ca] != BV.lire(ca)["entrees"] or len(relue["entrees"]) != n_ca + 3 * len(neufs) + 1:
@@ -550,7 +560,7 @@ def base_variantes(neufs):
     modele = re.search(rf"<entry>\s*<key serialise_version='1' namespace='{re.escape(ESPACE_EAU_CA)}' key='{CLE_EAU}'/>.*?"
                        r"</entry>", x, re.S).group(0)
     modele = modele.replace(f"namespace='{ESPACE_EAU_CA}'", f"namespace='{ESPACE_EAU}'", 1)
-    ajout.append(re.sub(r"filename='[^']*'", f"filename='{masques_eau_carte.MATERIAU}'", modele, count=1))
+    ajout.append(re.sub(r"filename='[^']*'", f"filename='{MATERIAU_EAU or masques_eau_carte.MATERIAU}'", modele, count=1))
     fin = x.rindex("</entries>")
     x = x[:fin] + "\t" + "\n\t\t".join(ajout) + "\n\t" + x[fin:]
     return {BASE_VARIANTES: binaire, BASE_VARIANTES + ".xml": x.encode("utf-8")}
@@ -581,11 +591,20 @@ def appliquer(ecrire, refaire=False):
     h, w = struct.unpack_from("<II", b, 12)
     ent = len(b) - h * w
     bob = np.frombuffer(bytes(b[ent:]), np.uint8).reshape(h, w)
-    wh1_blend = np.fromfile(os.path.join(WH1, "global_map", "global_blend.dds"), np.uint8, count=h * w, offset=128).reshape(h, w)[::-1]
-    # les textures que WH1 posait par ses tuiles (fond de mer, plages, lits de rivière) et que son mélange global
-    # ne porte pas (GUIDE § 15, n° 114)
-    import textures_tuiles_wh1
-    wh1_blend, bilan_tuiles = textures_tuiles_wh1.corriger(wh1_blend)
+    if carte_config.SOURCE_MONDE:
+        # Expanded (crochet du 03.10.2026) : la carte des textures de WH1 du monde entier, tuiles déjà corrigées aux
+        # dimensions de WH1 par projet_expanded.py
+        wh1_blend = np.load(carte_config.SOURCE_MONDE["BLEND_WH1"])
+        if wh1_blend.shape != (h, w):
+            raise SystemExit(f"BLEND_WH1 {wh1_blend.shape} différent du mélange compilé {(h, w)}")
+        bilan_tuiles = "corrigées par projet_expanded (aux dimensions de WH1)"
+    else:
+        wh1_blend = np.fromfile(os.path.join(WH1, "global_map", "global_blend.dds"), np.uint8, count=h * w,
+                                offset=128).reshape(h, w)[::-1]
+        # les textures que WH1 posait par ses tuiles (fond de mer, plages, lits de rivière) et que son mélange global
+        # ne porte pas (GUIDE § 15, n° 114)
+        import textures_tuiles_wh1
+        wh1_blend, bilan_tuiles = textures_tuiles_wh1.corriger(wh1_blend)
     print(f"  textures des tuiles de WH1 : {bilan_tuiles}")
     utilises = set(np.unique(bob).tolist())
     idx = {g: i for i, g in enumerate(groupes)}

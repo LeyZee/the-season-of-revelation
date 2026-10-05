@@ -15,6 +15,7 @@ au moins une erreur.
 
 import ctypes
 import os
+import re
 import sys
 
 DLL = (r"C:\Program Files (x86)\Steam\steamapps\common\Total War WARHAMMER III\assembly_kit\binaries"
@@ -45,6 +46,23 @@ def verifier(lua, L, chemin):
     return (msg or b"?").decode("utf-8", "replace")
 
 
+# Appels interdits dans le jeu, même syntaxiquement justes (03.10.2026, passe de test des dix seigneurs, constat B-1) :
+# string.find(s, motif, init, true), le « texte brut », rend nil à tort dans WH3 9.0.2 et corrompt la bibliothèque de
+# chaînes de tout le processus (string.len, out() de CA). Remplacer par string.gmatch ou une comparaison de string.sub.
+INTERDITS = [(re.compile(r"\bfind\s*\([^\n]*,\s*true\s*\)"), "string.find(..., true) interdit (texte brut, WH3 9.0.2)")]
+
+
+def appels_interdits(chemin):
+    """Messages « fichier:ligne: raison » pour chaque appel interdit hors commentaire."""
+    sortie = []
+    for n, ligne in enumerate(open(chemin, encoding="utf-8", errors="replace"), 1):
+        code = ligne.split("--", 1)[0]
+        for motif, raison in INTERDITS:
+            if motif.search(code):
+                sortie.append(f"{os.path.basename(chemin)}:{n}: {raison}")
+    return sortie
+
+
 def fichiers(cibles):
     for c in cibles:
         if os.path.isdir(c):
@@ -66,6 +84,9 @@ def main():
     erreurs = 0
     for f in fichiers(sys.argv[1:]):
         e = verifier(lua, L, f)
+        interdits = appels_interdits(f)
+        if interdits:
+            e = (e + "\n       " if e else "") + "\n       ".join(interdits)
         print(f"  {'ok ' if e is None else '!! '} {f}" + ("" if e is None else f"\n       {e}"))
         erreurs += e is not None
     lua.lua_close(L)

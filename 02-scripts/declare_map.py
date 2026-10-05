@@ -188,12 +188,18 @@ def build(spec):
     # (`wh_dlc05_wood_elves_lookup.tga`, `wh_dlc05_wood_elves_minimap.png`). C'est aussi le nom que
     # CAIME donne au lookup qu'il produit : `<campagne>_lookup.bmp`.
     stem = pa.get("stem", c["name"])
+    # (4.10.2026, erreur 332) l'aperçu de l'écran de sélection a le rapport du monde (CA : 750 × 600 ; Saison : 472 × 600) ;
+    # le 256 × 256 d'avant étirait la carte d'Expanded. Valeurs de la fiche d'abord, sinon hauteur 600 au rapport du monde.
+    largeur_monde = float(pa.get("maxx", 533.74)) - float(pa.get("minx", 0))
+    hauteur_monde = float(pa.get("maxy", 462.43)) - float(pa.get("miny", 0))
+    apercu_l = int(pa.get("preview_width", round(600 * largeur_monde / hauteur_monde)))
+    apercu_h = int(pa.get("preview_height", 600))
     out["campaign_map_playable_areas"].append((str(index), [
         plain("mapname", mapname), plain("index", index), plain("minx", pa.get("minx", 0)), plain("maxx", pa.get("maxx", 533.74)),
         plain("sea_trade", pa.get("sea_trade", 0)), approved("onscreen_name", pa.get("onscreen", c.get("onscreen", c["name"]))),
         plain("map_file", pa.get("map_file", f"{stem}_map.png")), plain("overlay_file", f"{stem}_lookup.tga"),
         plain("radar_file", f"{stem}_minimap.png"),
-        plain("meaningful_id", pa.get("meaningful_id", "main_rome_map")), plain("preview_width", 256), plain("preview_height", 256),
+        plain("meaningful_id", pa.get("meaningful_id", "main_rome_map")), plain("preview_width", apercu_l), plain("preview_height", apercu_h),
         plain("preview_border", 0), plain("minimap_lookup_file", f"{stem}_lookup_minimap.tga"),
         plain("is_available_in_custom_battle", 0), plain("terrain_folder", f"terrain/battles/{mapname}/"),
         plain("maxy", pa.get("maxy", 462.43)), plain("miny", pa.get("miny", 0)), plain("campaign_key", c["name"]),

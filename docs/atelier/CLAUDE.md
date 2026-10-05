@@ -8,21 +8,26 @@ recettes et les règles**. La chronique complète du 20 au 23.09.2026 (ancien `C
 
 1. Ce fichier en entier.
 2. `README.md` (organisation du dossier, rituel de séance, comment consigner une erreur).
-3. `ERREURS-ET-LECONS.md` : le sommaire « Règles vivantes » en tête, puis les entrées des deux derniers jours (200 et
-   plus : état 9.0) ; le reste à la demande.
-4. `GUIDE.md` : § 12.3 (terrain), § 15 (pièges connus, numérotés), le reste au besoin.
+3. `ERREURS-ET-LECONS.md` : le sommaire « Règles vivantes » en tête, puis les entrées depuis le n° 287 (jeu en 9.0.2) ;
+   le reste à la demande.
+4. Les guides de l'Atlas de l'étape du jour (`05-journal\2026-09-23-extension-carte\travail\site\atelier\`, § 6), puis
+   `GUIDE.md` : § 12.3 (terrain), § 15 (pièges connus, numérotés), le reste au besoin.
 5. `04-projets\saison-des-revelations\notes.md` (la fiche du projet : les demandes de Charles dans ses mots).
 6. `05-journal\INDEX.md` (ce qui est vivant, ce qui est remplacé), puis le journal de ton chantier. Les passations du
    23.09 (`05-journal\2026-09-24-passations\`) donnent l'origine des chantiers, **pas leur état** : l'état est au § 4.
 
 **À chaque reprise** : relire `%APPDATA%\The Creative Assembly\Warhammer3\crash_report\` et `save_games\` (erreur 69) ;
-vérifier que `user.script.txt` ne contient que `mod saison_des_revelations.pack;` (rien qui ferme le jeu).
+vérifier que `user.script.txt` ne contient que `mod !saison_des_revelations_fr.pack;` et `mod saison_des_revelations.pack;`
+(depuis le 25.09.2026, 23 h 58 : le principal est en anglais, Charles joue en français ; rien qui ferme le jeu).
 
 ## 2. Le projet
 
 Transposer dans Warhammer 3 la mini-campagne « La Saison des Révélations » de Warhammer 1 (campagne
 `wh_dlc05_wood_elves`, carte `wh_dlc05_wood_elves_map_1`, 400 × 440 hex, 61 régions), à l'échelle de la mini-campagne.
 Projet de Charles (francophone, joue et juge en jeu, captures WH1 / WH3 côte à côte = la référence).
+Second projet, **Saison Expanded** : toute la Bretonnie (carte `saison_expanded_map`, 560 × 905, WH1 en x + 120,
+y + 330 ; campagne `saison_expanded` ; profil `SAISON_CARTE=expanded` de `02-scripts\carte_config.py`) ; ses packs ne
+sont jamais chargés avec ceux de la Saison.
 
 Décisions de Charles, à ne pas rediscuter :
 - **Refusé** : découper la carte des Empires Immortels. On garde l'échelle et la géographie de WH1.
@@ -51,6 +56,11 @@ Décisions de Charles, à ne pas rediscuter :
   LUT, brouillard, soleil, ambiance), chacune montrée en image puis essayée en jeu (erreur 251).
 - **Rivières, deltas, côtes : « comme dans Warhammer 1 »** (25.09.2026) : correctifs C1 à C4 validés (matériau d'eau,
   lit sombre, berges basses, mer plus sombre près des côtes).
+- **Fleuves navigables d'Expanded (04.10.2026, confirmé par Charles)** : « il faut vraiment suivre le lore au niveau des
+  rivières et des voies navigables, même si ça embête, même si les découpages régionaux, c'est un carnage ». Brienne,
+  Grismerie, Sannez suivent le cours du lore (WH1, Atlas, `rivieres_lore.py`) ; villes et régions s'adaptent, jamais
+  l'inverse. Expanded seulement, jamais la carte de la Saison. Lot de données : session « Expanded map integration et
+  polish », après un démarrage de référence d'Expanded validé par Charles (`04-projets\banc-fleuve\`).
 - **LE PACK CONTIENT DES FICHIERS DE WH1.** Décision de Charles du 25.09.2026 : bêta sur le Workshop, lien donné
   seulement dans le fil Discord des volontaires ; jamais de Workshop public ni de lien publié ailleurs sans nouvelle
   décision de sa part. **Mise à jour du 25.09.2026, 21 h 30 (Charles)** : la page de la Saison
@@ -63,8 +73,16 @@ Décisions de Charles, à ne pas rediscuter :
   et donne le lien Workshop de la Saison pour tester (remplace « bêta privée, sur invitation, sans lien Workshop ») ;
   Expanded reste masqué. Compatibilité avec les autres mods : toujours dite « non testée ». **Langues (Charles, 25.09.2026,
   23 h)** : le jeu charge les textes d'un mod quelle que soit la langue (erreur 47), donc le pack principal est en
-  ANGLAIS et la traduction française est un mod à part (`!saison_des_revelations_fr.pack`, objet Workshop publié par
-  Charles) ; `!saison_des_revelations_en.pack` n'existe plus (erreur 278).
+  ANGLAIS et la traduction française est un mod à part (`!saison_des_revelations_fr.pack`, objet Workshop 3808029376,
+  « Non classée », objet requis : la Saison) ; `!saison_des_revelations_en.pack` n'existe plus (erreur 278). Publiés le
+  25.09 vers 23 h 15 : la version de 20 h 47 + textes anglais ; la mise à jour de compatibilité (pack de 21 h 46,
+  rangé dans `05-journal\verif-testeur-20260925-2236\`, dossier retiré au ménage du 03.10, remis dans `data\` à 23 h 21
+  pour l'essai de Charles) : SOLS
+  VALIDÉS par Charles (23 h 35, catalogue séparé) ; RÉGIMENTS DE RENOM du Duc validés par Charles (23 h 50, par
+  script, notre campagne seule). Manque trouvé par Charles : l'écran de sélection du Duc n'a pas d'effets de faction
+  (aucune ligne `frontend_factions` pour Mousillon) : lot demandé à la session IA. Ensuite reconstruction au format
+  anglais + traduction et envoi. Le lanceur cache un pack publié tant qu'on n'est pas abonné
+  (erreur 280) : Charles lance `Warhammer3.exe` directement (lit `user.script.txt`).
 
 ## 3. Les sessions et leurs domaines (travail en parallèle)
 
@@ -74,48 +92,59 @@ Décisions de Charles, à ne pas rediscuter :
 | **IA et modding 3D** | données de jeu (lots de `donnees_campagne.py`, `tables_gameplay.py`), scripts de campagne (`04-projets\...\scripts-campagne\`, dont le Duc écarlate : `saison_duc.lua`), textes (`textes\*.json`), masques et matériau d'eau (`masques_eau_carte.py`), mise des illustrations au format du jeu |
 | **Rendu de la carte** (à partir du 23.09) | peaufinage visuel, chaînes du terrain, éclairage (`eclairage_wh1.py`) ; journal et point de reprise : `05-journal\2026-09-23-rendu-carte\journal-rendu.md` |
 | **Illustrations** (à partir du 24.09) | prompts, guide de style et suivi des images (`04-projets\...\illustrations\`) ; les images vont dans le pack par la session « IA et modding 3D » |
-| **Extension carte Bretonnie est** | carte papier de l'extension et site public de l'Atlas (`05-journal\2026-09-23-extension-carte\`, source des guides : `travail\atelier_v2.py`) ; jamais le startpos ni le pack |
+| **Extension carte Bretonnie est** | carte papier de l'extension et site public de l'Atlas (`05-journal\2026-09-23-extension-carte\`, source des guides : `travail\atelier_v2.py`) ; jamais le startpos ni le pack. **Publication du site (Charles, 05.10)** : toute session peut publier, une à la fois, en le disant aux autres, et selon la règle de l'erreur 340 (partir de la liste complète du déploiement en ligne, comparer tous les fichiers dans les deux sens, avant et après) |
+| **Expanded map integration et polish** (03.10) | grille, terrain, kit et départ d'Expanded (`04-projets\saison-expanded\`, journal `JOURNAL.md`) ; factions de l'Atlas (confiées par Charles le 03.10) ; lot de données des fleuves (04.10) |
+| **Expanded map avec vaults et détails sud** (03.10) | Voûtes, minicarte d'Expanded, Bois Rêveur, site de l'Atlas pour ces parties |
+| **Recherche or et rivières navigables** (04.10) | banc des fleuves (`04-projets\banc-fleuve\`), mesures sur les cartes de CA ; jamais le kit |
+| **Lakemen** (deux sessions, 03.10) | passe de test et séries d'essais (`05-journal\2026-10-03-passe-test-dix-seigneurs\`), modèles et lore des Lakemen |
+| **Mise à jour miniatures Steam** (04.10) | images et envois du Workshop par le lanceur (`05-journal\2026-10-04-miniatures-steam\`) |
 
 La session « Mise à jour 9.0 et Duc Rouge » (24.09) a fini : suite dans `05-journal\2026-09-24-vampires-9.0\`.
+La « Construction » est la session « Saison des Révélations » (même session, deux noms). L'état du § 4 n'est écrit que par
+elle : les autres sessions lui envoient le leur.
 
 Protocole : **préavis de 5 minutes avant toute écriture dans le kit** (`02-scripts\preavis.py heure`, puis écrire
 seulement à cette heure) ; jamais le jeu, Terry ni le startpos sans prévenir
-les autres ; **ne pas reconstruire le pack pendant un essai en jeu** ; ranger, jamais supprimer.
+les autres ; **ne pas reconstruire le pack pendant un essai en jeu** ; ranger ; supprimer seulement avec l'accord de
+Charles, liste montrée d'abord, par la corbeille (jamais d'effacement définitif).
 
-## 4. État au 25.09.2026, 20 h 15 (jeu en 9.0 ; version de 03 h 30 : `05-journal\historique-documents\CLAUDE-2026-09-25-2015-avant-maj-etat.md`)
+## 4. État au 04.10.2026, 23 h (version du 25.09 : `05-journal\historique-documents\CLAUDE-20261004-2252-avant-nettoyage.md`)
 
-- **Jeu et kit en 9.0** depuis le 24.09 ; lignes de `raw_data\db` restaurées (erreur 206, GUIDE § 15 n° 142).
-- **BÊTA : polish et revue avant la sortie** (Charles : « corrige tous les défauts avant la bêta »). Quatre revues en
-  lecture seule + audit des cartes de bataille : `05-journal\2026-09-25-revue-beta\` (scripts Lua : 0 bloquant, 4
-  importants corrigés par l'IA ; pack et données ; dossier de stabilité ; liste de sortie ; cartes de bataille).
-  Corrections faites : hordes, Pic d'Argent différé, journal des erreurs, écouteurs de CA d'Ostankya et Yuan Bo, lot 43
-  (nos régions hors des groupes de CA ; contrôle `verifier_groupes.py`), 86 textes, 10 scripts morts hors du pack
-  (`SCRIPTS_ECARTES`), minicarte (même teinte, contours lissés : `preparer_minicarte.SIGMA_CONTOURS`). Salles tombées :
-  éteintes pour la bêta (décision de Charles). Régiments de renom de Mousillon aux Empires : défaut connu (fiche).
-- **Pack du 25.09 à 19 h 05** (pack de zéro + startpos régénéré à 18 h 57, compteur 1, 0 anomalie). Essais des dix
-  seigneurs sur 10 tours en cours : Orion, Durthu, Albéric, Fée, Drycha 0 erreur ; Morghur battu au tour 8 (harde immobile
-  sous `all_players_ai`, erreur 210) ; Duc et Kemmler bloqués au tour 5 par le tutoriel vampire de CA (le pilote ne
-  ferme pas encore la bulle : correctif en essai ; erreur 270 pour la première tentative). Krell présent au départ.
-  Verrous des DLC éprouvés (menu grisé ; message et retour au menu en campagne).
-- **À faire avant la sortie** : recompilation des cartes de bataille (défilés corrigés par l'IA, erreur 271), pack final,
-  startpos, pack, dix seigneurs ; partie de Charles d'au moins une heure (Duc, caméra sur la falaise de Gransette :
-  plantage de rendu `+0x1AC7576` non élucidé, GUIDE § 15 n° 150) ; trois batailles jouées (forêt, siège breton,
-  montagne) ; accord d'un fondateur de CAIME ; Workshop « privé » (pages préparées par la session « Extension » ; pack
-  anglais pas encore). Fiche des testeurs réécrite : `05-journal\2026-09-25-beta\FICHE-TESTEURS.md`.
-- **Expanded** (`04-projets\saison-expanded\`, journal `JOURNAL.md`, plan `PLAN.md`) : carte `saison_expanded_map`
-  560 × 825 et campagne `saison_expanded` déclarées ; 76 régions et 21 provinces de l'Atlas déclarées (`saison_`,
-  décision : l'Atlas l'emporte sur WH1 ; Fort Solstice repris en `saison_glanborielle_fort_solstice`) ; grille CAIME :
-  régions, 121 villes, passage, climats, fil de rivière caché sous le voile (conseil de ChaosRobie) ; terrain Terry dans
-  le bac à sable (relief de l'Atlas autour de WH1, Bois Rêveur en miroir) ; minicarte (parchemin de l'Atlas + lookup).
-  Dépôt GitHub public (liste blanche, rien de WH1). Ni pack ni startpos d'Expanded encore.
-- **Éclairage** : Winterheart seule, à la manière de CA (erreur 251) ; les autres zones une à une.
-- **Point de reprise** : ce paragraphe, puis `05-journal\2026-09-25-revue-beta\liste-de-sortie.md`.
+- **Jeu et kit en 9.0.2** ; kit réécrit par la mise à jour du 27.09, restauré le 03.10 (erreurs 290, 326). Le
+  « téléchargement » Steam du 04.10 à 17 h 16 était une mise à jour d'objets Workshop, pas du jeu (erreur 339).
+- **SAISON (bêta)** : `data\` = CANDIDAT du 03.10 (SHA-1 0F3D530A… / FR 1A9DC1A9…, accord de Charles à 13 h 50) ;
+  publiés = maj1 du 25.09, 23 h 55 (570C29A5… / 1620A33F…, dans `pack-backups\`). Rien envoyé depuis ; page de la
+  Saison en vérification Steam ; miniatures refusées (code Steam « #25 », erreur 339 ; 4 objets vides orphelins créés
+  par le lanceur, à supprimer par Charles). Ouverture publique : voulue (02.10), non
+  décidée. Bogue du `find` en texte brut corrigé (erreur 287).
+- **Plantage de rendu `+0x1AC3FF2`** : cause désignée, montagnes de WH1 au matériau 49 (erreur 327). Conversion au
+  matériau 68 FAITE DANS LE KIT (partagé avec Expanded) ; pack `essai68` : 15 parties, 0 plantage (≈ 30 pour trancher).
+  **NON validée par Charles : aucun pack de la Saison reconstruit ni envoyé avant sa décision** (décision A5 du
+  nettoyage) ; packs `essai68` encore dans `data\`.
+- **EXPANDED** (`saison_expanded_map`, 560 × 905, WH1 en x + 120, y + 330 ; session « Expanded map integration et
+  polish ») : grille, terrain (BOB du 04.10, 19 h 28 ; 75 tuiles de côte encore manquantes), 16 factions de l'Atlas +
+  `saison_hef_tor_soleil`, départ, tout dans le kit ; pack de 20 h 36 + `zz_startpos_db_expanded.pack` : **LA CAMPAGNE
+  CHARGE** (Orion, tour 1, aucun plantage ; causes trouvées : erreurs 329 à 338). Pack d'ESSAI : pas de scripts de
+  campagne, startpos sans `__save_counter`, rien d'éprouvé après le tour 1. Chaîne du kit relancée le 04.10 à 23 h 46
+  (« attaque tout ça » ; routes de l'Atlas, faune, fosses comblées) : startpos et pack à refaire ensuite
+  (`chaine_expanded.sh`). À faire : Charles valide le démarrage en jeu ; ambiance de Slaanesh (prête, éteinte :
+  `SAISON_ECLAIRAGE_REVES=1`) ; lot des fleuves. Jamais chargé avec la Saison.
+- **FLEUVES NAVIGABLES v3** (Brienne, Grismerie + Ois, Sannez) : validés par Charles pour Expanded seulement ; lot après
+  le démarrage de référence (`04-projets\banc-fleuve\RAPPORT_v3.md`).
+- **RÈGLE DU 04.10** : guides à la lettre dans l'ordre de vérité (§ 6) ; deux lignes du guide CAIME fausses (erreurs 336,
+  337), corrections envoyées à la session Extension.
+- **GRAND NETTOYAGE** (`05-journal\2026-10-04-grand-nettoyage\`, `RAPPORT.md`) : décisions A1 à A6 prises par Charles
+  (ports à la CA, la Saison gardant les siens ; BOB sous cdb assumé ; `tile_map.png` de la Saison laissée ; RPFM 5.1.1 à
+  essayer sur copie ; pas de pack de la Saison avant les montagnes ; packs d'essai rangés ensuite) ; corrections B en cours.
+- **Reprise** : Expanded → `04-projets\saison-expanded\JOURNAL.md` ; Saison → erreur 327 et
+  `05-journal\2026-10-03-passe-test-dix-seigneurs\bilan-serie-candidat-1250-1640.md` ; fleuves → `banc-fleuve\` ; essais
+  d'Expanded → `05-journal\2026-10-04-essais-auto-expanded\` (pilote `SAISON_CARTE=expanded`, option `--cdb-avant`).
 
 ## 5. Recettes
 
 Prérequis communs : **jeu et Terry fermés**, `rpfm_server` lancé (`02-scripts\lancer-outils.ps1 -Outil rpfm-server`)
-et **sous 8 Go** (il fuit à chaque pack ; `build_pack` refuse au-delà ; ce n'est pas la cause du plantage de rendu,
-erreur 265),
+et **sous 8 Go** (il fuit à chaque pack : le relancer avant chaque pack ; `build_pack` refuse au-delà ; ce n'est pas la
+cause du plantage de rendu, erreur 265 ; RPFM 5.1.x corrige cette fuite, à essayer sur copie, décision A4 du 04.10),
 Steam lancé (sinon le jeu sort en 6 s). **Prévenir Charles avant tout lancement du jeu** (il clique dedans, erreurs 124
 et 132) ; ne jamais piloter l'écran sans son accord du moment (erreur 108).
 
@@ -123,12 +152,18 @@ et 132) ; ne jamais piloter l'écran sans son accord du moment (erreur 108).
   régions = liste explicite, erreur 156), `python 02-scripts\build_pack.py`, puis
   `python 02-scripts\injecter_textes.py --apply`. Relire le journal :
   chaque table d'un lot neuf doit y figurer avec son nombre de lignes (erreur 131). `build_pack` s'arrête si un de nos
-  modèles cite encore un substitut de CA (`modeles_wh1.py --apply` d'abord, erreur 254).
+  modèles cite encore un substitut de CA (`modeles_wh1.py --apply` d'abord, erreur 254). **Décision A5 (04.10), codée** :
+  `build_pack` refuse le pack de jeu de la Saison tant que Charles n'a pas tranché sur les montagnes au matériau 68
+  (`SAISON_A5_LEVEE=1` ensuite) ; un pack d'essai sous un autre nom reste permis. **Exception assumée (Charles, 05.10)** :
+  `zz_startpos_db.pack` et `zz_startpos_db_expanded.pack` restent dans `data\` (les scripts y écrivent, les recettes les
+  y lisent, le jeu les ignore sans ligne `mod` ; le 03.10, `zz_startpos_db.pack` a sauvé 19 lignes de départ), contre le
+  guide des outils qui demande de les ranger.
 - **Tables de départ → startpos** :
   1. `synchroniser_pack_startpos.py --table <start_pos_...> --cle ID [--apply]` (kit → `zz_startpos_db.pack`) ;
   2. `valider_start_pos.py` (0 cellule à corriger) ;
   3. pack reconstruit (les tables hors `start_pos_*` que la génération lit y sont) ;
-  4. garder `user.script.txt` de Charles, puis `startpos_manuel.py --campagne wh_dlc05_wood_elves --pack
+  4. créer `data\campaigns\<campagne>\` et `data\campaign_maps\<carte>\` s'ils n'existent pas (sinon ni startpos ni
+     données de l'IA, erreur 331) ; garder `user.script.txt` de Charles, puis `startpos_manuel.py --campagne wh_dlc05_wood_elves --pack
      saison_des_revelations.pack --pack zz_startpos_db.pack --sans-working-dir --ai-map-data` (19 s) ; remettre
      `user.script.txt`, supprimer le `.bak` ;
   5. `verifier_compteur_startpos.py <startpos>` (`__save_counter` = 1) ; `comparer_structure_esf.py --esf <nouveau>
@@ -144,9 +179,49 @@ et 132) ; ne jamais piloter l'écran sans son accord du moment (erreur 108).
   journaux, `cdb.log`, vidages). Pack d'essai séparé, retiré à la fin ; `user.script.txt` remis. Sous `all_players_ai`,
   la faction du joueur ne joue pas (erreur 210) ; un changement du pilote se valide seul par 2 tours sur un pack éprouvé
   (erreur 239) ; le temps d'un tour se lit aux horodatages (erreur 232).
+  Expanded : `SAISON_CARTE=expanded` (sorties dans `05-journal\2026-10-04-essais-auto-expanded\`, amorce de scripts et
+  journal de script ajoutés au pack d'essai, `--packs-avant`, `--cdb-avant`). Pour l'instant, le pilote ne fait pas
+  passer les tours d'Expanded (pas de scripts de campagne) : il prouve le chargement, pas la suite.
+- **Expanded (campagne neuve), en plus des recettes ci-dessus** (erreurs 329 à 338) : `SAISON_CARTE=expanded` pour
+  `build_pack.py` et `injecter_textes.py` ; tables de départ par `startpos_db_expanded.py --apply` (→
+  `zz_startpos_db_expanded.pack`) puis `valider_start_pos.py --pack …` ; créer `data\campaigns\saison_expanded\` et
+  `data\campaign_maps\saison_expanded_map\` AVANT `startpos_manuel.py --campagne saison_expanded --pack saison_expanded.pack
+  --pack zz_startpos_db_expanded.pack --sans-working-dir --ai-map-data` (sinon ni startpos ni données de l'IA), puis
+  ranger startpos et données de l'IA dans `04-projets\saison-expanded\{startpos,ia-carte}\` ; `campaigns.mask` vide ;
+  aperçu au rapport du monde ; jamais de jonction de propriété de DLC pour nos clés ; modèles d'emplacement et bâtiments
+  pris tels quels chez CA pour la sous-culture du maître ; pas de colonie pour une faction que CA fait partir en horde ;
+  ports en 16 + 3 à la CA, cases de port [mer, mer, plage] (à défaut [mer, mer, mer]) ; CAIME : `generate-region-borders`
+  (fork) avant `validate --all` et `process`. Chaîne de la GRILLE d'Expanded (05.10, session Expanded, outils de
+  `04-projets\saison-expanded\outils\`) : `chaine_grille_expanded` → `ports_expanded --apply` →
+  `integrer_fleuves_expanded.py --apply` (depuis une grille SANS fleuves) → `routes_expanded --apply` → `cols_sprawl
+  --apply` → `retouches_cotes --apply` → CAIME `generate-region-borders` → `valider_caime.py` ; une grille changée = tables
+  de départ resynchronisées et startpos neuf. Chaîne du TERRAIN d'Expanded (session Expanded, tout avec
+  `SAISON_CARTE=expanded`) : `projet_expanded.py` (appelle lui-même `couches_a_jour` en tête, erreur 344,
+  `chenaux_fleuves` avant l'écriture du relief, `rivieres_maillages_expanded.ecrire()` à la fin, `camps_expanded` après
+  la vie) → `eau_materiau_expanded.py --apply` → (préavis) `kit_expanded.py
+  --apply` → CAIME `validate --all` → `process --all` (borné à 5 min, erreur 338) → `compiler_terrain_bob.py --carte
+  saison_expanded_map --apply` (contrôle du guide BOB : 12/12, 0 quadtree, trous de côte) → `shroud_heights`,
+  `camera_heightmap`, `lf_normal_depuis_relief`, `textures_sol_wh1`, `outils\textures_reves.py`,
+  `outils\arbres_expanded.py --apply`, `outils\controle_anomalies.py` ; script de la session :
+  `powershell -NoProfile -ExecutionPolicy Bypass -File 04-projets\saison-expanded\outils\chaine_kit_expanded.ps1` (après
+  `projet_expanded.py`, `eau_materiau_expanded.py --apply` et le préavis ; il appelle `outils\valider_caime.py`). Chaîne complète du pack
+  (rpfm relancé avant chaque pack, `relancer_rpfm.sh`) : `SAISON_ECLAIRAGE_REVES=1 SAISON_ECLAIRAGE_ARDEN=1 bash
+  02-scripts\chaine_expanded.sh` (ambiances de CA citées telles quelles : Slaanesh sur le Bois Rêveur, `woodelf` sur
+  l'Arden, 2 cylindres, demande de Charles du 05.10 ; éteintes sans ces variables ; à juger en jeu, erreur 251) (journaux dans
+  `05-journal\2026-10-04-essais-auto-expanded\`).
 - **Photo avant une mise à jour du jeu** : `instantane_jeu.py --etiquette <version>` ; après : `--comparer <version>`.
 
 ## 6. Règles non négociables
+
+- **Les guides d'abord (Charles, 04.10.2026 : « qu'on suive à la lettre »)** : avant chaque étape, relire la section du
+  guide de l'Atlas (`05-journal\2026-09-23-extension-carte\travail\site\atelier\<caime|terry|bob|rpfm|outils|ia>\index.md`,
+  bretonia.dev/atelier) et la documentation officielle de l'outil, et la suivre à la lettre ; tout écart se justifie et se
+  consigne (entrée d'`ERREURS-ET-LECONS.md` et liste du nettoyage, `05-journal\2026-10-04-grand-nettoyage\`). Ordre de
+  vérité quand ils divergent : documentation officielle et code de l'outil > fait prouvé en jeu > guides de l'Atlas > nos
+  fichiers de travail (nos guides ont déjà eu tort : erreurs 336, 337). Avant tout export CAIME : `validate --all`, Error ET Warning des villes lus et corrigés (ville 19 hex ; port
+  16 + 3 : 16 hex de terre, 3 hex de port consécutifs de l'anneau 2, deux en mer et un sur la plage, comme CA, erreur 337 ;
+  « un en mer » n'est que le minimum du validateur). Un guide qui décrit « ce que fait CA » se vérifie sur les fichiers de
+  CA. Le 04.10, des heures de débogueur ont retrouvé une règle déjà écrite dans notre guide CAIME (erreurs 334, 335).
 
 - Une erreur comprise se consigne tout de suite dans `ERREURS-ET-LECONS.md`, étiquetée `[évitable]` (avec la règle,
   codée si possible) ou `[découverte]` (avec la preuve, puis reportée dans `GUIDE.md` § 15).
@@ -171,12 +246,16 @@ et 132) ; ne jamais piloter l'écran sans son accord du moment (erreur 108).
 - Tables `start_pos_*` dans un pack de mod : le jeu nomme l'enregistrement fautif dans `crash_report\bad_mods_report.txt` ;
   `valider_start_pos.py` fait la même chose sans le jeu.
 - Plantage : `lire_vidage.py <.mdmp>` (sans débogueur), puis `cdb -z` ; jeu sous débogueur : `debug_chargement.py`
-  (adresses du patch 8.1 : **à revérifier après la 9.0**) ; lecteur ESF : `lire_esf.py` ; DLL : `lire_dll.py`.
+  (adresses du patch 8.1 : **à revérifier en 9.0.2**) ; lecteur ESF : `lire_esf.py` ; DLL : `lire_dll.py`. Plantage
+  d'un CHARGEMENT de campagne : `essai_tours_auto.py --cdb-avant <fichier>` avec un point d'arrêt qui journalise
+  (`dpa @rcx`) à l'entrée de la fonction fautive : il a nommé Bordeleaux, le Poste de la Pierre Noire et Tor Soleil
+  (erreur 334 ; fichiers dans `04-projets\saison-des-revelations\essai-auto\cdb\`).
 - Journaux du jeu : `script_log_JJMMAA_HHMM.txt` dans le dossier du jeu (les clics y sont journalisés avec leur chemin),
   `%APPDATA%\...\logs\mp_log.txt` (création / destruction de l'environnement de campagne).
 - **Écouteurs de script** : `required.lua` protège `core.event_callback` ; une condition ou un rappel qui plante est
   nommé une fois dans le `script_log` (« ecouteur [clé] en erreur sur <évènement> ») et n'arrête plus l'évènement pour
-  les autres (erreurs 213, 230, 231, 252 ; GUIDE § 15 n° 148). Adresses mémoire relevées avant le 24.09 à 16 h 07 : 8.1.
+  les autres (erreurs 213, 230, 231, 252 ; GUIDE § 15 n° 148). Adresses mémoire relevées avant le 24.09 à 16 h 07 : 8.1 ; depuis le ~01.10 : 9.0.2 (toute
+  adresse porte sa version).
 - **Ne pas refaire** : le « témoin campagne vanilla » n'est pas un contrôle valide ; sans `--sans-working-dir` la
   génération sort en 9 s sans rien faire (erreur 39) ; dans CAIME, `Impassable = 1` veut dire franchissable (erreur 40) ;
   `frontend.start_campaign` ne lance pas notre campagne (erreur 128).

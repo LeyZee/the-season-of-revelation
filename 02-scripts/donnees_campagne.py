@@ -3082,6 +3082,96 @@ def lot_etape43():
          "region_group_key", doubles)]
 
 
+def lot_etape44():
+    """Lot 44 (25.09.2026, 23 h 40 ; Charles a testé le Duc : à l'écran de sélection, pas de bloc des effets de
+    faction) : CA n'a jamais fait de Mousillon une faction sélectionnable, donc ni frontend_factions ni
+    frontend_faction_groups_to_factions n'ont de ligne pour elle (les neuf autres seigneurs en ont). Lignes neuves faites
+    sur celles de Kemmler (wh2_dlc11_vmp_the_barrow_legion) : puces des Comtes Vampires de CA par renvoi, et les nôtres
+    (textes_gameplay.json) ; liste détaillée de CA par renvoi ; groupe « destruction », invisible hors campagne
+    (show_in_frontend 0, comme Kemmler). Ces tables n'ont pas de colonne de campagne : aux Empires, Mousillon n'est pas
+    sélectionnable, la ligne n'y sert pas. frontend_factions : table NEUVE dans le pack, essai de démarrage (erreur
+    107). Rend ({table: TableKit}, [entrées])."""
+    from xml.sax.saxutils import escape
+    ff, fg = TableKit("frontend_factions"), TableKit("frontend_faction_groups_to_factions")
+    nos = json.load(open(TEXTES_GAMEPLAY, encoding="utf-8"))
+    duc, kemmler = "wh_main_vmp_mousillon", "wh2_dlc11_vmp_the_barrow_legion"
+    ff.ajouter_sur_modele(kemmler, {
+        "faction": duc,
+        "localised_mechanics": escape(nos["frontend_factions_localised_mechanics_" + duc]["en"]),
+        "localised_playstyle": "",
+        "localised_info": escape(nos["frontend_factions_localised_info_" + duc]["en"]),
+        "sort_order": "203"})
+    for k, c in list(fg.lignes):
+        if fg.valeurs(c).get("faction_key") == kemmler:
+            fg.ajouter_sur_modele(k, {"faction_key": duc, "sort_order": "203"})
+    return {"frontend_factions": ff, "frontend_faction_groups_to_factions": fg}, [
+        ("frontend_factions", "frontend_factions_tables", "faction", [duc]),
+        ("frontend_faction_groups_to_factions", "frontend_faction_groups_to_factions_tables", "faction_key", [duc])]
+
+
+# Trait VITRINE du Duc écarlate (lot 45, 25.09.2026, minuit ; Charles ne voit pas les effets de faction du Duc à
+# l'écran de sélection). Le bloc vient de faction_starting_general_effects (sous-type -> paquet) et des jonctions du
+# paquet dans la base. Le vrai trait, « Tyran d'Aquitanie » (lot 42, validé par Charles), est posé par script : aucune
+# jonction, donc rien à afficher. Mais faction_starting_general_effects est lue au LANCEMENT de chaque partie (preuve,
+# 25.09.2026 : notre startpos ne contient aucun trait de seigneur, même celui de Grom qu'on y trouve pourtant en jeu) :
+# une ligne vers le vrai trait l'aurait donné au Duc de l'IA aux Empires. Donc un paquet VITRINE, fait de lignes
+# descriptives seulement (effets factices, sans effet de jeu), à nos clés : l'écran de sélection montre le trait tel
+# qu'il est ; aux Empires, le Duc de l'IA reçoit des lignes sans effet ; dans la Saison, saison_duc.lua (section 8)
+# retire la vitrine et pose le vrai trait. effet -> (icône et priorité de l'effet de CA décrit, bonne valeur)
+EFFETS_VITRINE_DUC = {
+    "saison_duc_effect_diplomatie_bretonnie_dummy": ("diplomacy.png", "5", "0"),
+    "saison_duc_effect_entretien_chevaliers_dummy": ("wh_main_vmp_vampire_counts/military_spending.png", "105", "1"),
+    "saison_duc_effect_traquer_chauves_souris_dummy": ("attribute_stalk.png", "300", "1"),
+}
+VITRINE_DUC = "saison_lord_trait_duc_selection"
+# ordre de l'écran : comme le trait réel (saison_duc.lua, EFFETS_DU_TRAIT)
+LIGNES_VITRINE_DUC = ["wh3_main_vmp_effect_legendary_vampire_dummy", "saison_duc_effect_duche_perdu_dummy",
+                      "saison_duc_effect_faveur_abhorash_dummy", "saison_duc_effect_impot_du_sang_dummy",
+                      "saison_duc_effect_decret_de_richemont_dummy", "saison_duc_effect_diplomatie_bretonnie_dummy",
+                      "saison_duc_effect_entretien_chevaliers_dummy", "saison_duc_effect_traquer_chauves_souris_dummy"]
+
+
+def lot_etape45():
+    """Lot 45 (25.09.2026) : le trait vitrine du Duc (EFFETS_VITRINE_DUC) : effects (3 lignes neuves, faites sur
+    wh3_dlc29_effect_web_of_power_dummy), effect_bundles (1, faite sur le trait de Kemmler), effect_bundles_to_effects_
+    junctions (8, faites sur une jonction du trait de Kemmler : portée faction_to_faction_own_unseen, valeur 1),
+    faction_starting_general_effects (wh_dlc05_vmp_red_duke -> la vitrine ; aucune ligne de CA pour ce sous-type).
+    Jonctions et faction_starting_general_effects : TABLES NEUVES dans le pack, essai de démarrage (erreur 107).
+    Rend ({table: TableKit}, [entrées])."""
+    from xml.sax.saxutils import escape
+    te, tb = TableKit("effects"), TableKit("effect_bundles")
+    tj, tf = TableKit("effect_bundles_to_effects_junctions"), TableKit("faction_starting_general_effects")
+    nos = json.load(open(TEXTES_GAMEPLAY, encoding="utf-8"))
+
+    def en(cle):
+        v = (nos.get(cle) or {}).get("en")
+        if not v:
+            raise SystemExit(f"lot 45 : texte {cle} absent de textes_gameplay.json")
+        return escape(v)
+
+    for cle, (icone, priorite, bon) in EFFETS_VITRINE_DUC.items():
+        te.ajouter_sur_modele("wh3_dlc29_effect_web_of_power_dummy", {
+            "effect": cle, "icon": icone, "icon_negative": icone, "priority": priorite,
+            "description": en("effects_description_" + cle), "is_positive_value_good": bon})
+    tb.ajouter_sur_modele("wh_main_lord_trait_vmp_heinrich_kemmler", {
+        "key": VITRINE_DUC, "localised_title": en("effect_bundles_localised_title_" + VITRINE_DUC),
+        "localised_description": en("effect_bundles_localised_description_" + VITRINE_DUC)})
+    modele_j = tj.ou(effect_bundle_key="wh_main_lord_trait_vmp_heinrich_kemmler")[0][0]
+    for effet in LIGNES_VITRINE_DUC:
+        tj.ajouter_sur_modele(modele_j, {"effect_bundle_key": VITRINE_DUC, "effect_key": effet, "value": "1",
+                                         "effect_scope": "faction_to_faction_own_unseen"})
+    tf.ajouter_sur_modele("wh_main_vmp_heinrich_kemmler", {"agent_subtype": "wh_dlc05_vmp_red_duke",
+                                                           "effect_bundle": VITRINE_DUC})
+    return {"effects": te, "effect_bundles": tb, "effect_bundles_to_effects_junctions": tj,
+            "faction_starting_general_effects": tf}, [
+        ("effects", "effects_tables", "effect", list(EFFETS_VITRINE_DUC)),
+        ("effect_bundles", "effect_bundles_tables", "key", [VITRINE_DUC]),
+        ("effect_bundles_to_effects_junctions", "effect_bundles_to_effects_junctions_tables", "effect_bundle_key",
+         [VITRINE_DUC]),
+        ("faction_starting_general_effects", "faction_starting_general_effects_tables", "agent_subtype",
+         ["wh_dlc05_vmp_red_duke"])]
+
+
 # Tous les lots lot_etapeN présents dans ce fichier (25.09.2026 : liste calculée, plus de liste à tenir à jour)
 LOTS = {nom[4:]: f for nom, f in list(globals().items()) if re.fullmatch(r"lot_etape\d+", nom)}
 

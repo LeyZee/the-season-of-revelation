@@ -6,8 +6,18 @@ des cartes de campagne fonctionnelles, puis belles**. Tout ce qui suit a été l
 documentations officielles, dans le code source, ou vérifié sur cette machine ; ce qui ne l'a pas
 été porte la mention « à confirmer ». Une IA qui reprend commence par `CLAUDE.md` (point d'entrée), puis revient ici.
 
+**Corrigé le 04.10.2026 (grand nettoyage, accord de Charles : « applique B »)** d'après
+`05-journal\2026-10-04-grand-nettoyage\audit-GUIDE.md` : ordre de vérité = documentation officielle et code des outils >
+fait prouvé en jeu > guides de l'Atlas (`05-journal\2026-09-23-extension-carte\travail\site\atelier\<outil>\index.md`) >
+nos fichiers (`CLAUDE.md` § 6). Version d'avant : `05-journal\historique-documents\GUIDE-20261004-2252-avant-nettoyage.md`.
+**Versions au 04.10.2026** : jeu et kit en 9.0.2 ; CAIME amont 1.1.0 (29.09.2026 ; validateurs, `.hex_layer` et exports
+inchangés), notre fork compilé partant de la 1.0.1, installation officielle locale encore en 1.0.0 ; RPFM 5.1.0
+(28.09.2026) et 5.1.1 (04.10.2026, fuite de mémoire des sessions MCP corrigée), l'atelier encore en 5.0.6. Décision de
+Charles (A4) : RPFM 5.1.1 s'essaie sur une copie (le pack de la Saison doit sortir identique) avant adoption ; CAIME
+1.1.0 plus tard.
+
 Sources primaires :
-[documentation CAIME](https://tw-campaign-map-modding-team.github.io/CampaignMapToolkit/) (14 guides,
+[documentation CAIME](https://tw-campaign-map-modding-team.github.io/CampaignMapToolkit/) (12 guides `user-guide-*.md`,
 copie locale dans `01-outils\CampaignMapToolkit\docs\`), [dépôt CAIME](https://github.com/TW-Campaign-Map-Modding-Team/CampaignMapToolkit),
 [manuel RPFM](https://frodo45127.github.io/rpfm/manual/) et [son chapitre serveur](https://frodo45127.github.io/rpfm/manual/server/overview.html),
 [RPFM For Dummies](https://tw-modding.com/wiki/Tutorial:RPFM_For_Dummies),
@@ -27,13 +37,15 @@ copie locale dans `01-outils\CampaignMapToolkit\docs\`), [dépôt CAIME](https:/
   **Terry** (éditeur de terrain) et de **BOB** (le bâtisseur qui transforme les données brutes en
   fichiers du jeu).
 
-Autour : **Dave** ou **RPFM** pour les tables de la base de données, **RPFM** pour les packs, le
-startpos et la fin du pathfinding, un peu de **Lua** si la campagne le demande.
+Autour : **Dave** ou **RPFM** pour les tables de la base de données, **RPFM** pour les packs, le jeu lui-même pour le
+startpos et les données de carte de l'IA (`hlp_data.esf`, `spd_data.esf` ; chez nous par `startpos_manuel.py`, § 5
+étape 7), un peu de **Lua** si la campagne le demande.
 
 **Jeux couverts par CAIME** : tous les Total War depuis Rome II inclus (Rome 2, Attila, Thrones
 of Britannia, Warhammer 1/2/3, Three Kingdoms, Troy, Pharaoh, Pharaoh Dynasties). Shogun 2 : non.
 CAIME est **le seul moyen** de produire `map_data.esf`, `pathfinding.ppd`, `borders.pbd`,
-`dynamic_resources.esf`, `trade_routes.ptd` ; il aide à produire `tile_map.png` et les images
+`dynamic_resources.esf`, `trade_routes.ptd` ; il exporte `tile_map.png` (Tools → Export → Baseline Tilemap, ou verbe
+`export-tilemap` du fork ; sans peinture ni retouche manuelle, § 15 n° 81) et aide à produire les images
 `lookup_*` / `lookup_minimap_*`.
 
 **Licences.** Code de CAIME : « Non-Commercial Open Source License » (modification autorisée,
@@ -41,6 +53,10 @@ aucun usage commercial, partage à l'identique si redistribué, copyright conser
 CAIME : interdit « tout pipeline automatisé ou service produisant du contenu pour des tiers contre
 rémunération ». README de CAIME : « les fichiers générés par CAIME ne peuvent être donnés sans
 l'accord exprès d'un fondateur du projet » et usage commercial interdit « y compris les dons ».
+**L'EULA 1.1** (celle que CAIME fait accepter au premier lancement ; `01-outils\CampaignMapToolkit\EULA.txt` l. 2, 37,
+70) dit autre chose : l'auteur reste propriétaire des fichiers produits et peut les publier (Steam Workshop, Nexus Mods,
+ModDB) sans les monnayer ; les dons sont déconseillés, pas interdits. README et EULA 1.1 se contredisent : dans le doute,
+demander à l'équipe avant de publier (guide caime de l'Atlas, § « Avant de commencer »).
 RPFM : MIT. Outils CA : EULA du jeu. **Cet atelier est personnel et non commercial.**
 
 **Univers.** L'équipe CAIME demande, au titre de son EULA, de **ne pas faire de carte d'un
@@ -62,9 +78,9 @@ C:\TotalWar-CampaignMap\       (état au 23.09.2026 ; organisation : README.md �
 │   │   ├── CAIME\bin\Debug\CAIME.exe     ← L'EXÉCUTABLE CAIME À UTILISER (verbes ajoutés, correctif culture)
 │   │   ├── CAIME\Tools\Debug\MapDataBuilder.x64.exe   ← convertisseur C++ (aussi en Release\)
 │   │   ├── Templates\                    ← 15 gabarits (voir § 13)
-│   │   └── docs\                         ← les 14 guides officiels
-│   ├── RPFM\rpfm-v5.0.6-x86_64-pc-windows-msvc\   ← rpfm_ui.exe, rpfm_server.exe (MCP)
-│   └── caime-installeur-officiel\        ← CampaignMapToolkit-win-Setup.exe v1.0.0
+│   │   └── docs\                         ← les 12 guides officiels (user-guide-*.md)
+│   ├── RPFM\rpfm-v5.0.6-x86_64-pc-windows-msvc\   ← rpfm_ui.exe, rpfm_server.exe (MCP) ; 5.1.1 sortie, à essayer sur copie
+│   └── caime-installeur-officiel\        ← CampaignMapToolkit-win-Setup.exe v1.0.0 (amont : 1.1.0 depuis le 29.09.2026)
 ├── 02-scripts\                           ← un script = un travail, mode d'emploi en tête (≈ 85 scripts ; entrées
 │                                           principales : CLAUDE.md § 5 ; lancer-outils.ps1 -Outil terry|bob|dave|rpfm|rpfm-server|caime)
 ├── 03-references\saison-des-revelations\ ← couches, textes et fichiers de WH1 ; instantane-wh3-8.1\ (photo du jeu)
@@ -80,9 +96,9 @@ C:\TotalWar-CampaignMap\       (état au 23.09.2026 ; organisation : README.md �
 | Jeux Steam | `C:\Program Files (x86)\Steam\steamapps\common\` | Attila, Rome II, WARHAMMER III, PHARAOH DYNASTIES. Shogun 2 : hors périmètre |
 | Assembly Kit WH3 (Steam) | `...\Total War WARHAMMER III\assembly_kit\` | app 1880380. `binaries\bob.modder.x64.exe`, `binaries\tweak.modder.x64.exe` (Tweak **et Terry**), `dave\DaVE.retail.x64.exe`, `raw_data\`, `working_data\` |
 | Assembly Kit WH3 (Store) | `C:\Program Files\WindowsApps\18793CreativeAssemblyLtd.TotalWarWARHAMMERIII-Asse_1.3.4908.0_x64__ry6v8xxqmygx8\assembly_kit\` | paquet gratuit `9PBN49FBQX7S`, mêmes exécutables, **ses propres** `raw_data`/`working_data` (conteneur MSIX, non relocalisable). Lancement : `explorer.exe shell:AppsFolder\18793CreativeAssemblyLtd.TotalWarWARHAMMERIII-Asse_ry6v8xxqmygx8!Terry` (ou `!BOB`, `!DaVE`) |
-| RPFM 5.0.6 | `01-outils\RPFM\rpfm-v5.0.6-...\` | `rpfm_ui.exe` (interface), `rpfm_server.exe` (WebSocket + MCP). **Plus de `rpfm_cli.exe` depuis la 5.0.0** |
+| RPFM 5.0.6 | `01-outils\RPFM\rpfm-v5.0.6-...\` | `rpfm_ui.exe` (interface), `rpfm_server.exe` (WebSocket + MCP). **Plus de `rpfm_cli.exe` depuis la 5.0.0** (ni en 5.1). Sorties depuis : 5.1.0 (28.09.2026) et 5.1.1 (04.10.2026 : fuite de mémoire des sessions MCP corrigée ; clé de `twad_key_deletes` remise dans l'ordre après la 9.0) ; à essayer sur copie avant adoption (décision A4) |
 | RPFM 4.2.7 | **absent de l'atelier** (23.09.2026) | seul binaire (`rpfm_cli.exe`) que CAIME accepte comme « source RPFM » ; à réinstaller si ce besoin revient |
-| CAIME officiel | `%LOCALAPPDATA%\CampaignMapToolkit\` | v1.0.0, sans Templates ni MapDataBuilder, et **sans le correctif culture** (§ 15) |
+| CAIME officiel | `%LOCALAPPDATA%\CampaignMapToolkit\` | notre installation est encore en v1.0.0 (sans Templates ni MapDataBuilder, sans le correctif culture). Amont : le correctif culture et la lecture des mini-campagnes de WH1 sont dans la v1.0.1 (23.09.2026) ; la v1.1.0 (29.09.2026) livre MapDataBuilder et les gabarits, remet `tile_map.png` nord en haut, ajoute opacité et ordre des couches. Mise à jour : plus tard (décision A4) ; on travaille avec le fork compilé |
 | Préférences CAIME | `%APPDATA%\CampaignMapToolkit\Caime\preferences.json` | chemins d'Assembly Kit par jeu, posés par `config` |
 | Build Tools 2022 | `C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\` | ateliers .NET desktop + C++ ; MSBuild dans `MSBuild\Current\Bin\` |
 | Python 3.12 | `%LOCALAPPDATA%\Programs\Python\Python312\python.exe` | Pillow, numpy |
@@ -107,8 +123,9 @@ Pour un autre jeu : installer son Assembly Kit depuis Steam (Bibliothèque → O
 - **Hex** : case du damier. **Couche** : un type de donnée par hex. **Swatch** : valeur peignable.
   **`map.hex`** : projet CAIME. **`.hex_layer`** : une couche exportée/importable. **Gabarit** :
   dossier `Templates\<nom>\` avec un `map.hex` et ses fichiers d'appui.
-- **startpos** : `startpos.esf` (dans `campaigns\<campagne>\`), l'état de départ d'une campagne ; généré par BOB/Tweak ou par
-  RPFM (`build_starpos`), hors CAIME.
+- **startpos** : `startpos.esf` (dans `campaigns\<campagne>\`), l'état de départ d'une campagne, produit hors CAIME par le
+  jeu lui-même. Trois voies existent (BOB/Tweak, *Build Startpos* de RPFM, `user.script.txt` écrit à la main) ; chez nous,
+  seule la dernière a marché : `startpos_manuel.py --ai-map-data` (recette de `CLAUDE.md` § 5 ; § 5 étape 7 ci-dessous).
 - **pack** : le mod livré, posé dans `<jeu>\data\`.
 
 ---
@@ -124,8 +141,9 @@ l'ouverture du projet (ou via RPFM), **n'y écrit jamais**. Détails : § 8 (lig
 
 Règle d'or (doc « Modifying an Existing Map ») : repeindre avec des swatches existants ne touche
 pas la base ; **créer, renommer ou supprimer** un type de sol, un climat, une attrition, une région
-ou une zone d'intérêt depuis le panneau Actions exige la modification correspondante dans la base,
-puis **File → Reload** (Ctrl+R).
+ou une zone d'intérêt se fait en **deux gestes** : la modification correspondante dans la base (puis **File → Reload**,
+Ctrl+R, pour que CAIME la lise), **et** le bouton Create / Rename / Remove du panneau Actions de la couche. Reload jette
+ce qui n'est pas enregistré : enregistrer avant (guide caime de l'Atlas, l. 168 et 237).
 
 ### 4.2 RPFM
 
@@ -198,8 +216,10 @@ source prend effet à la prochaine ouverture.
 
 - **Dave** (`dave\DaVE.retail.x64.exe`) : édite les tables `raw_data\db\*.xml`. C'est ce que lit
   CAIME. Alternative sans fenêtre : éditer ces XML par script, ou passer par RPFM et un pack.
-- **Tweak** (`binaries\tweak.modder.x64.exe`) : doit être **fermé** pendant les exports Map Data
-  et Dynamic Resources de CAIME. Génère le startpos (doc CAIME : « BOB / Tweak.AssemblyKit »).
+- **Tweak** (`binaries\tweak.modder.x64.exe`) : Tweak **et Terry** doivent être **fermés** pendant les exports Map Data
+  et Dynamic Resources de CAIME ; l'alerte de CAIME ne les voit pas (elle cherche un processus nommé `Tweak.AssemblyKit`,
+  `ProcessMapData.cs:55`, pas `tweak.modder.x64.exe` du kit de WH3) : les fermer soi-même. La doc CAIME cite « BOB /
+  Tweak.AssemblyKit » pour le startpos ; chez nous, cette voie n'a pas marché (§ 5 étape 7).
 - **Terry** : `tweak.modder.x64.exe /standalone TerrainMetadataEditor` depuis `binaries\`
   (vérifié : fenêtre « TWeak - Terry », 490 Mo, en 25 s). Éditeur de terrain 3D : tuiles,
   relief, peinture de textures, végétation, objets, zones logiques, éclairage, sons. La doc CA
@@ -225,8 +245,8 @@ source prend effet à la prochaine ouverture.
   ```
   Les modules chargés par BOB dans l'AKit WH3 : `bob_terrain`, `bob_tile`, `bob_vegetation`,
   `bob_campaign`, `bob_texture`, `bob_pack`, `bob_dbexport`, `bob_lua`, `bob_localisation`…
-  Donc BOB sait traiter le **terrain de campagne** (module `bob_campaign`) ; le point d'entrée
-  côté données brutes reste à établir (§ 12).
+  Donc BOB sait traiter le **terrain de campagne** (module `bob_campaign`) ; pour une carte neuve, le point d'entrée est
+  notre `compiler_terrain_bob.py` (§ 12.3).
 
 **Piloter ces outils depuis une IA.** Dave, Tweak, Terry et BOB sont des applications à fenêtre :
 une IA les conduit par capture d'écran et clics (outils « computer-use » de Claude), ou évite la
@@ -262,6 +282,22 @@ entièrement en ligne de commande (§ 8).
    **Par script** : `02-scripts\declare_map.py --spec <projet>\map_spec.json --asskit <AKit> [--apply|--undo]`
    écrit ces neuf tables comme Dave (uuid, timestamp, clé), avec sauvegarde des XML dans
    `05-journal\db-backups\`, idempotent. Modèle de fiche : `04-projets\saison-des-revelations\map_spec.json` (le projet `ile_claude` n'est plus dans l'atelier).
+   **Pièges de cette étape (une campagne neuve) :**
+   - la ligne `campaigns` neuve se fait sur le gabarit de celle de la Saison, champ par champ ; **`campaigns.mask` reste
+     vide**, comme dans toutes les campagnes du kit : un masque non vide (32 recopié de WH1) fait planter la génération
+     du startpos (erreur 331, 9.0.2, `+0x2A588B2` ; § 15 n° 161 ; le masque de WH1 du `map.hex`, n° 15, ne se recopie
+     jamais dans la base de WH3) ;
+   - **aperçu de la zone jouable au rapport du monde** : `campaign_map_playable_areas.preview_width` ×
+     `preview_height` = rapport largeur / profondeur du monde, hauteur 600 (CA 750 × 600 ; Saison 472 × 600 ; Expanded
+     321 × 600) ; `declare_map.py` le calcule ou le prend dans la fiche ; une valeur carrée déforme la carte de l'écran de
+     sélection (erreur 332, § 15 n° 34) ;
+   - la zone jouable n'est jamais la **dernière ligne** de `campaign_map_playable_areas` (§ 15 n° 25,
+     `fix_playable_area_order.py`) ;
+   - **jamais de jonction de propriété de DLC sur une clé à nous** : aucune table `*_ownership_content_pack_junctions`
+     (faction, zone jouable, bataille…) recopiée d'un modèle de CA ; le jeu se ferme sans message en 9 à 13 s (erreurs
+     107 et 329, § 15 n° 106 et 160 ; codé : `build_pack.EXCLUES_EXPANDED`). Un verrou de DLC se fait par script ;
+   - un pack d'une autre carte ne garde que les lignes dont toutes les régions citées sont sur sa carte (erreur 330,
+     `build_pack.regions_absentes()`).
 3. **CAIME — créer le projet** : `create --name <carte> --game <Jeu> --width W --height H --out <AKit>\raw_data\EmpireDesignData\campaign_maps`
    (ou `--template <gabarit>`). Le nom du dossier = le nom de carte, à cet emplacement précis :
    c'est ce que Map Data exige. Puis **`sync-names -m <map.hex>`** : un `map.hex` neuf ne connaît
@@ -273,16 +309,39 @@ entièrement en ligne de commande (§ 8).
 4. **CAIME — remplir les couches** : à la souris, ou par script (§ 9) puis `import-layer`.
    Chaque hex a besoin d'une **région, d'un type de sol et d'un climat** ; `is_sea` de la région =
    catégorie du type de sol (terre/mer), sinon avertissement. Contrôle : `export-layer --format png`.
-5. **CAIME — valider** : `validate --all` (§ 10). Sauver.
+   **Après tout import ou toute retouche de la couche Regions : `generate-region-borders`** (verbe du fork, code du
+   bouton *Auto-generate* de la couche Region Borders), ou *Auto-generate* puis Ctrl+S dans l'éditeur, **avant
+   Pathfinding** : ni l'enregistrement, ni l'import, ni l'export Pathfinding ne recalculent les frontières (erreur 336,
+   § 9.1 et § 15 n° 165).
+   Villes : principal = disque de 19 hex de terre ; **port = 16 hex principaux de terre + 3 hex de Port consécutifs de
+   l'anneau 2, deux en mer et un sur la plage**, comme CA (erreur 337, § 10 et § 15 n° 166). Les modèles d'emplacement se
+   choisissent avec la base : trio (modèle primary, `primary_building`, `port_building`) tel quel chez CA pour la
+   sous-culture du maître (§ 15 n° 162 et 164). (Exception assumée : les ports de WH1 de la Saison, § 10.)
+5. **CAIME — valider** : `validate --all` (§ 10), Error **et** Warning des villes lus et corrigés (erreur 335,
+   `CLAUDE.md` § 6) ; en plus, compter soi-même les hex des ports (le validateur laisse passer 19 + 3 et 16 + 1, qui
+   font planter le chargement) et les degrés du graphe des routes (§ 15 n° 167). Sauver.
 6. **CAIME — exporter** (`process`) : `--pathfinding`, `--borders` (sans effet pour Troy et
-   Pharaoh), `--lookup`, `--trade-routes` (Rome 2, Attila, Thrones, 3K), `--dynamic-resources`,
+   Pharaoh), `--lookup`, `--trade-routes` (couche Trade Routes en Rome 2, Attila, Thrones, 3K ; en WH3 la couche n'existe
+   pas, mais `--all` produit quand même `trade_routes.ptd`, comme pour `ile_claude_map`, § 14), `--dynamic-resources`,
    `--map-data`. Les deux derniers exigent : projet enregistré sous
    `<AKit>\raw_data\EmpireDesignData\campaign_maps\<carte>\map.hex`, aucune modification en
-   attente, **Tweak fermé**, et les **fichiers d'appui dans le dossier projet** : `trees.png`,
+   attente, **Tweak et Terry fermés** (l'alerte de CAIME ne les détecte pas, § 4.3), et les **fichiers d'appui dans le
+   dossier projet** : `trees.png`,
    `tree_database.xml`, `dynamic_resources.png`, `dynamic_resources_database.xml` (§ 13 ; leur
    absence est la cause n° 1 d'échec). Sorties dans `<AKit>\working_data\campaign_maps\<carte>\`.
-7. **Startpos** : BOB/Tweak (doc CAIME) ou RPFM (`Build Startpos`, outils MCP `build_starpos*`).
-   RPFM finit aussi le pathfinding restant (info Charles, à confirmer sur pièce).
+   `process` se lance **borné dans le temps** : un export Pathfinding qui ne finit pas (22 min sur Expanded, contre 4 s
+   une fois les routes refaites en fils) désigne un réseau de routes trop maillé (erreur 338, § 15 n° 167).
+7. **Startpos et données de carte de l'IA** : la voie de l'atelier est la recette « Tables de départ → startpos » de
+   `CLAUDE.md` § 5 : `synchroniser_pack_startpos.py` (kit → `zz_startpos_db.pack`), `valider_start_pos.py`, pack
+   reconstruit, puis (jeu et Terry fermés, Charles prévenu, `user.script.txt` de Charles gardé puis remis sans
+   `quit_after_campaign_processing;`) `startpos_manuel.py --campagne <campagne> --pack <pack> --pack zz_startpos_db.pack
+   --sans-working-dir --ai-map-data` (le jeu génère `startpos.esf`, `hlp_data.esf` et `spd_data.esf` :
+   `process_campaign_startpos` et `process_campaign_ai_map_data`, § 15 n° 46, erreur 59), contrôle du compteur
+   (`verifier_compteur_startpos.py`, n° 117) et de la structure (`comparer_structure_esf.py`, n° 43), pack reconstruit
+   (n° 48). **Avant la génération, créer le dossier vide `<jeu>\data\campaign_maps\<carte>\`** : sans lui, ni
+   `hlp_data.esf` ni `spd_data.esf`, sans message, puis plantage au réglage du joueur (erreur 331, § 15 n° 161 ; *Build
+   Startpos* de RPFM le crée seul). Les deux autres voies (BOB/Tweak, *Build Startpos* de RPFM) ont échoué ici le
+   20.09.2026 (§ 14) ; guide outils de l'Atlas, § « La position de départ ».
 8. **Moitié visuelle** : Terry/BOB (§ 12), avec `tile_map.png` et `trees.png` comme calques.
 9. **Lua** si besoin, **pack** avec RPFM, test en jeu.
 
@@ -291,13 +350,13 @@ entièrement en ligne de commande (§ 8).
 | Export CAIME | Lit | Produit |
 |---|---|---|
 | Map Data | toutes les couches, base AKit, `binaries\` de l'AKit (MapDataBuilder), fichiers d'appui du projet, `caime_metadata.json` → `map_data_config.xml` si auto-patch | `map_data.esf` |
-| Pathfinding | Ground Types, Regions, Rivers, Roads, Bridges, Beaches, Impassable, Town Slots, Trade Routes | `pathfinding.ppd` (la doc dit parfois `.bin`) |
+| Pathfinding | Ground Types, Regions, **Region Borders telle quelle** (jamais recalculée par cet export : `generate-region-borders` avant, erreur 336), Rivers, Roads, Bridges, Beaches, Impassable, Town Slots, Trade Routes | `pathfinding.ppd` (la doc dit parfois `.bin`) |
 | Borders | Regions ; en interface, une matrice « Select borders to export » (Land–Land, Land–Sea, Sea–Sea…, TI = theatre island, MI = Mediterranean island) | `display\borders\borders.pbd` |
 | Dynamic Resources | `dynamic_resources.png` + `dynamic_resources_database.xml` du projet, base AKit | `dynamic_resources.esf` (pas pour 3K) |
 | Trade Routes | Trade Routes, Regions, terre/mer | `trade_routes.ptd` |
 | Lookup & Minimap | toutes, surtout Regions ; `campaigns` doit citer la carte | `lookup_*`, `minimap_*` (TGA : Rome 2, Attila, Thrones, Pharaoh ; BMP : Warhammer, 3K). **Warhammer III** (code de v1.0.1) : un seul `<campagne>_lookup.bmp`, sans minicarte |
 | SVG Borders | Regions | `.svg` |
-| Baseline Tilemap | Roads, Rivers, Cliffs, Beaches | `tile_map.png` |
+| Baseline Tilemap (ou `export-tilemap` du fork) | Mer, routes, falaises et plages (WH3 : rivières en `generic`, embouchures en plage) | `tile_map.png` (jusqu'à la 1.0.1, donc notre fork : sud en haut, à retourner verticalement et seulement cela ; nord en haut depuis la 1.1.0 ; § 15 n° 81) |
 
 ---
 
@@ -316,7 +375,7 @@ Borders → Trade Routes → Lookup, dans cet ordre quoi qu'on tape.
 | Créer / renommer / supprimer un climat | oui | `climates` (`climate_type`) | Map Data |
 | Créer / renommer / supprimer une attrition | oui | `campaign_map_attritions` (`key`, `type` ∈ {`terrain_land`, `terrain_sea`}) | Map Data |
 | Impassable, Restrictions | non | — | Pathfinding, Map Data |
-| Redessiner des frontières | non | — | Borders (sauf Troy/Pharaoh), Pathfinding, Map Data, Lookup |
+| Redessiner des frontières | non | — | d'abord *Auto-generate* de Region Borders (ou `generate-region-borders`) et Ctrl+S (erreur 336) ; puis Borders (sauf Troy/Pharaoh), Pathfinding, Map Data, Lookup |
 | **Ajouter une région** (base d'abord, puis Reload, puis peindre + sprawl + slot) | oui | `regions`, `campaign_map_regions`, `region_to_province_junctions`, `provinces` si neuve | tous |
 | **Supprimer une région** (CAIME d'abord : repeindre, effacer sprawl/slots, valider, sauver ; puis base ; Pharaoh : renuméroter `index`) | oui | `campaign_map_regions`, `region_to_province_junctions`, `regions` si non partagée | tous |
 | Renommer une région | oui | `regions.key`, `campaign_map_regions.region`, `region_to_province_junctions.region`, toute table du mod citant la clé | tous |
@@ -340,7 +399,7 @@ Borders → Trade Routes → Lookup, dans cet ordre quoi qu'on tape.
 | Region Borders (+ Auto-generate) | non | oui | oui | oui | oui | oui |
 | Areas of Interest | non | non | non | oui | oui | non |
 | `borders.pbd` | actif | actif | actif (WH), **sans effet** (Troy) | actif | actif | **sans effet** |
-| Taille des slots (validateur) | ≥ 7 hex + hex central à 6 voisins | idem | WH : slot 0 = 19 (intérieur) / 16 (port) ; Troy : libre | libre | 19/16 « non strict » (la doc se contredit ; croire le validateur) | libre |
+| Taille des slots (validateur) | ≥ 7 hex + hex central à 6 voisins | idem | WH : slot 0 = 19 (intérieur) / 16 (port) ; Troy : libre | libre | validateur : 19 ou 16 hex principaux, sans regarder s'il y a un port, et un seul hex de Port en mer exigé (`TownSlotsValidator.cs:192`, `:220`, Warning). **Règle de CA (mesurée, erreur 337)** : ville = disque de 19 ; port = 16 + 3 hex de Port consécutifs de l'anneau 2, deux en mer, un sur la plage (§ 10) | libre |
 | Index de régions combiné | non | non | non | non | non | **oui** |
 | Images lookup | TGA | TGA | BMP | BMP | BMP | TGA |
 | Map Data Editor (Ctrl+M) | oui | oui | refusé | refusé | refusé | refusé |
@@ -369,8 +428,25 @@ CAIME.exe import-layer --map <map.hex> (--layer <Couche> --file <x.hex_layer>)..
 CAIME.exe export-layer --map <map.hex> --out <dossier> (--all | --layer <Couche> ...) [--format png|binary]
 CAIME.exe info --map <map.hex> [--names]
 CAIME.exe sync-names --map <map.hex> [--no-save]
+CAIME.exe export-tilemap --map <map.hex> --out <tile_map.png>
+CAIME.exe generate-region-borders --map <map.hex> [--no-save]
 CAIME.exe --help
 ```
+
+Dix verbes (`CliRunner.Authoring.cs:49-56`). Les deux derniers (session Expanded, 04.10.2026) :
+- `export-tilemap` : Tools → Export → Baseline Tilemap sans fenêtre (même `BaselineTilemapExporter`), écrit dans
+  `--out`. Comme l'éditeur de la 1.0.1 dont part le fork, l'image sort **sud en haut** : la retourner verticalement,
+  et seulement cela (§ 15 n° 81).
+- `generate-region-borders` : le bouton *Auto-generate* de la couche Region Borders (mêmes appels que
+  `BorderActionsControlViewModel.AutoGenerateBorders`), puis la moitié « fichier » du Ctrl+S ; annonce « region border
+  hexes avant -> après ». **Obligatoire après tout import de la couche Regions, avant `validate` et `process`**
+  (erreur 336).
+
+**Ces deux verbes ne sont que dans un commit LOCAL** : `0f06478` (« Add export-tilemap and generate-region-borders CLI
+verbs »), branche `cli-tilemap-region-borders` du dépôt `01-outils\CampaignMapToolkit`, **non poussé** sur `fork`
+(`LeyZee/CampaignMapToolkit`) au 04.10.2026. Ne pas changer de branche ni réinitialiser ce dépôt sans l'avoir poussé ou
+sauvegardé ; pousser = accord de Charles (`CLAUDE.md` § 6). Non suivis dans le dépôt : `Templates\wh3_main_prologue_map\`,
+`debug_land_region_passable_edges.raw`.
 
 - `--game` (casse et séparateurs ignorés) : Rome2, Attila, Thrones_Of_Britannia, Warhammer,
   Warhammer2, Warhammer3, Three_Kingdoms, Troy, Pharaoh, Pharaoh_Dynasties.
@@ -407,11 +483,14 @@ $sln = "C:\TotalWar-CampaignMap\01-outils\CampaignMapToolkit\"
 & $msb "MapDataBuilder\MapDataBuilder.vcxproj" -p:Configuration=Debug -p:Platform=x64 "-p:SolutionDir=$sln"
 ```
 
-Le fork (branche `cli-create-import`) contient : les cinq verbes (`CAIME\Cli\CliRunner.Authoring.cs`),
-une surcharge sans boîte de dialogue de `ProjectManager.CreateProject`, et **la culture invariante
+Le fork (branche `cli-create-import`, puis `cli-tilemap-region-borders` pour les deux derniers verbes) contient : les
+verbes ajoutés (`CAIME\Cli\CliRunner.Authoring.cs`), une surcharge sans boîte de dialogue de
+`ProjectManager.CreateProject`, l'export `--borders` sans fenêtre (commit d18d90b, § 15 n° 156) et **la culture invariante
 posée dans `App.Main`** (sans elle, sur un Windows en français, la base refuse de charger et tout
-projet s'ouvre en lecture seule, éditeur officiel compris). Candidats à une pull request amont
-(README : brancher depuis `main`, relecteurs @victimized0, @robert-d-schultz, @MrJox).
+projet s'ouvre en lecture seule, éditeur officiel compris). La culture invariante est dans l'amont depuis la PR #10
+(fusionnée le 20.09.2026, livrée en v1.0.1) ; restent candidats à une pull request amont les seuls verbes du fork
+(README : brancher depuis `main`, relecteurs @victimized0, @robert-d-schultz, @MrJox ; rien n'est envoyé en amont sans
+l'accord de Charles).
 
 ---
 
@@ -429,12 +508,12 @@ N octets   1 octet par hex, ligne par ligne (index = ligne × largeur + colonne)
 | 0 | Impassable | **1 = franchissable**, 0 = infranchissable |
 | 1 | TradeRoutes | ≠ 0 = présent (masques **gardés tels quels** par CAIME v1.0.1, d'après son code ; relecture de la session de l'extension, 24.09.2026) |
 | 2 | Roads | ≠ 0 = présent (masques recalculés) |
-| 3 | TownSlots | index + 1 ; 0 = aucun. Index 0 = slot principal (« Main Settlement ») ; le port et les slots secondaires suivent l'ordre des swatches (« Port, Slot 2, Slot 3… ») ; à confirmer sur une carte vanilla avec `export-layer --format binary` |
+| 3 | TownSlots | index + 1 ; 0 = aucun, 1 = slot principal (« Main Settlement »), 2 = Port, 3 = Slot 2, et ainsi de suite, 12 index au plus (`Hex.cs:19-21` : MAIN = 0, PORT = 1) |
 | 4 | TownSprawl | 1 = oui |
 | 5 | Bridges | 1 = oui |
 | 6 | Rivers | ≠ 0 = présent (masques recalculés) |
 | 7 | Beaches | 1 = oui |
-| 8 | RegionBorders | 1 = oui ; **recalculé par CAIME depuis Regions** (v1.0.1) : ce qu'on y écrit est remplacé |
+| 8 | RegionBorders | 1 = oui. **Pas recalculé depuis Regions à l'enregistrement** : `CalculateRegionEdgeMasks` ne recalcule les masques que parmi les hex déjà marqués frontière (`MapHexFile.cs:783-791`). Régions posées par script : `generate-region-borders` (verbe du fork, = *Auto-generate*) avant `validate` et `process` (erreur 336 ; Expanded : 0 hex de frontière, 129 Info « 0 passable region edge hexes ») |
 | 9 | Regions | id + 1 sur 2 octets : `bas = (v & 0x1F) << 3`, `haut = v >> 5` |
 | 10 | Attritions | index + 1 |
 | 11 | Climates | index + 1 |
@@ -448,7 +527,9 @@ N octets   1 octet par hex, ligne par ligne (index = ligne × largeur + colonne)
 - Le drapeau terre/mer de l'hex, l'`is_sea` de la région et celui du type de sol doivent
   concorder ; le validateur signale chaque désaccord. L'action « Align Ground/Region Type » de
   l'éditeur déduit les types de sol des régions.
-- **bridge-cliff** est un **type de sol**, pas une couche : c'est l'hex de rive qui autorise un pont.
+- **bridge-cliff** n'est ni une couche ni un type de sol à peindre : CAIME calcule seul les hex bridge-cliff (terre
+  voisine d'un pont, `MapHexFile.cs:478-497`, `UpdateBridgeCliffs`) ; rien à peindre. (La doc officielle dit « ground
+  type » ; le code l'emporte.)
 
 ### 9.2 `02-scripts\caime_layers.py`
 
@@ -483,9 +564,10 @@ des centaines de Warning et son pathfinding s'exporte.
 **Chaque hex** : une région, un type de sol, un climat. Région vide (zéro hex) = Warning
 « startpos ». Hex de terre isolé entouré de mer = Warning.
 
-**Routes, rivières, routes commerciales : aucun anneau fermé.** Pas seulement le triangle : tout
-circuit sans extrémité (un périphérique de province, par exemple) fait **boucler l'export à
-l'infini**. Un réseau est un arbre avec des impasses ; couper tout anneau en un point.
+**Routes, rivières, routes commerciales : anneaux et triangles permis.** CAIME résout lui-même
+les triangles des routes et des rivières en retirant une liaison du masque
+(`MapHexFile.cs`, `WouldCloseTriangle` ; ChaosRobie, Discord CAIME, 26.09.2026). Permis ne veut pas dire maillé : un
+réseau de routes doit rester fait de fils, avec peu de carrefours (« Routes : des fils », plus bas ; erreur 338).
 
 **Rivières** : sur terre seulement, connectées, jamais un bord vers la mer ou hors carte ; une
 rivière isolée est probablement une erreur.
@@ -493,19 +575,26 @@ rivière isolée est probablement une erreur.
 **Routes** : connectées ; pas sur la mer sauf pont ; pas sur falaise ou plage sauf approche de
 pont ; route + infranchissable = Info ; carrefour en T = Info (moche en jeu).
 
-**Ponts** : **sur des hex de mer** (sur terre = Error) ; relient deux rives distinctes ; au moins
-un hex **bridge-cliff** sur l'approche de chaque rive ; une rivière (masque de bord sur terre) ne
+**Ponts** : **sur des hex de mer** (sur terre = Error) ; relient deux rives distinctes ; les hex
+**bridge-cliff** des rives sont calculés par CAIME (§ 9.1), rien à peindre ; une rivière (masque de bord sur terre) ne
 se ponte pas, un bras de mer oui. Plage + falaise sur le même hex = Warning.
 
 **Slots de ville** : chaque région franchissable a au moins un slot, sinon la marquer entièrement
-infranchissable (friche). Tailles : § 7. Un slot = un seul groupe connexe ; un slot non-port n'est
-pas en mer ; **le slot Port touche lui-même un hex de mer** ; index hors plage = Error.
+infranchissable (friche). Un slot = un seul groupe connexe ; un slot non-port n'est pas en mer ; index hors plage = Error.
+**Tailles et ports, règle de CA (mesurée sur 290 ports de CA, erreur 337)** : principal = disque parfait de 19 hex de
+terre ; colonie portuaire = **16 hex principaux de terre + 3 hex de Port consécutifs de l'anneau 2, deux en mer et un sur
+la plage** ; les hex de Port en mer gardent la région de MER. Le validateur n'exige qu'« au moins un hex dans une région
+de mer » (`TownSlotsValidator.cs:220`, Warning) : « un en mer » n'est que ce minimum, et ni 19 + 3 ni 16 + 1 / 16 + 2 ne
+sont refusés, alors qu'ils font planter le chargement (erreurs 334, 335 ; § 15 n° 163). Compter soi-même.
+**Exception assumée (décision A1 de Charles, 04.10.2026)** : la Saison garde ses ports de WH1 en [mer, mer, mer],
+validés en jeu ; Expanded et toute carte neuve suivent la règle de CA.
 
-**Sprawl** : **un seul blob par région**, sous le slot ; pas sur infranchissable, rivière ou
-falaise ; ne déborde pas dans une autre région terrestre (déborder sur une région de mer pour un
-port est admis) ; un terrain « hazard » (infranchissable, plage, rivière, falaise) doit **soit
-toucher le blob, soit rester à 3 hex ou plus** (à 2 hex = Warning) ; un blob touchant **plus d'un**
-patch de hazard = Warning (« pinch »). L'action « Align Town Sprawl/Slot » pose le sprawl sous
+**Sprawl** : **un seul blob par région**, sous le slot ; pas sur infranchissable (Error, `SprawlValidator.cs:25`) ;
+rivière ou falaise sous le sprawl : la doc l'interdit, le code ne le contrôle pas ; ne déborde pas dans une autre région
+terrestre (déborder sur une région de mer pour un port est admis) ; un terrain « hazard » (infranchissable, plage,
+rivière, falaise) doit **soit toucher le blob, soit rester à 3 hex ou plus** (à 2 hex = **Error**,
+`SprawlValidator.cs:296`) ; un blob touchant **plus d'un** patch de hazard = **Error** (« pinch »,
+`SprawlValidator.cs:304`). L'action « Align Town Sprawl/Slot » pose le sprawl sous
 chaque slot et, pour Warhammer, Troy et 3K, retire le sprawl hors slot.
 
 **Régions** : d'un seul tenant (morcelée = startpos en danger) ; une région de mer touche au plus
@@ -514,9 +603,10 @@ chaque slot et, pour Warhammer, Troy et 3K, retire le sprawl hors slot.
 **Infranchissable** : « Plug holes » bouche les trous ; laisser des cols si les armées doivent
 passer.
 
-**Géométrie** : largeur paire ; **2048 hex maximum par dimension** (au-delà, les fichiers
-hlp/spd du pathfinding ne se traitent pas, et CAIME refuse) ; le plafond de 731 520 hex de la doc
-n'est plus une limite dure mais tout ralentit au-delà ; le jeu est figé dans le `map.hex`.
+**Géométrie** : largeur paire ; **2048 hex au plus par dimension**, plafond cité par l'équipe CAIME (Discord,
+20.09.2026 : au-delà, les fichiers hlp/spd du pathfinding ne se traitent pas) ; CAIME ne le contrôle pas : sa seule
+borne est `MAX_HEX_COUNT = 731520` (`MapHexFile.cs:97`), qui n'est plus une limite dure mais tout ralentit au-delà ; le
+jeu est figé dans le `map.hex`.
 
 **Tout changement impose de tout retraiter** : un seul hex modifié = relancer les exports (seuls
 `borders.pbd` et les images lookup sont purement visuels et peuvent être refaits seuls). Un
@@ -525,8 +615,18 @@ par un script d'UI. Une région sans colonie devient une **friche** (à peindre 
 c'est la méthode pour resserrer une carte sur une zone. Source : Discord CAIME, 20.09.2026.
 
 **Exports Map Data / Dynamic Resources** : projet sous `raw_data\EmpireDesignData\campaign_maps\<carte>\map.hex`,
-rien en attente, Tweak fermé, fichiers d'appui présents (§ 13). Message de succès : « Finished
-creating map » ; refus : « Map Data Process denied », « Please close Tweak.AssemblyKit ».
+rien en attente, Tweak **et Terry** fermés, fichiers d'appui présents (§ 13). Succès dans le journal de CAIME :
+« MapDataBuilder exited with code 0 (Success) » (`ProcessMapData.cs:88`) ; « Finished creating map » vient de la sortie
+du kit. Refus : « Map Data Process denied », « Please close Tweak.AssemblyKit » ; cette alerte cherche un processus
+`Tweak.AssemblyKit` (`ProcessMapData.cs:55`) et ne voit donc ni Tweak ni Terry du kit de WH3 (`tweak.modder.x64.exe`) :
+les fermer soi-même.
+
+**Routes : des fils** (erreur 338) : `validate --roads` ne mesure pas le maillage. Un réseau trop maillé (Bois Rêveur
+reflété comme une image : 331 carrefours à 3 branches, 55 à 4) bloque l'export Pathfinding (22 min sans rien écrire) ;
+refait en fils (20 carrefours), il s'exporte en 4 s. Contrôler les degrés du graphe (peu de carrefours, comme CA et
+WH1), lancer `process` borné dans le temps ; un miroir de carte se fait dans le repère des hex, jamais de l'image.
+
+**Mer d'une carte agrandie** : CAIME ne contrôle pas la connexité de la mer (erreur 328, § 15 n° 159).
 
 ---
 
@@ -538,17 +638,21 @@ Jugement de conception, à valider projet par projet.
   d'invasion. Couloirs et bastions, pas une plaine uniforme.
 - Biomes par zones : massifs continus avec deux ou trois cols, forêts en bloc, un désert d'un
   tenant. Les types de sol pilotent les coûts de mouvement et l'aspect.
-- Rivières crédibles : source en montagne, confluences, delta ; un bras de mer avec pont et
-  bridge-cliff là où une route doit franchir.
-- Routes en arbre : villes d'une province reliées, puis provinces entre elles ; jamais de boucle,
-  peu de carrefours en T.
+- Rivières crédibles : source en montagne, confluences, delta ; un bras de mer avec pont là où une route doit
+  franchir (CAIME calcule les hex bridge-cliff des rives, § 9.1).
+- Relier les villes d'une province, puis les provinces entre elles ; anneaux et triangles permis,
+  peu de carrefours (en T ou plus) : des fils, comme CA et WH1 (erreur 338, § 10).
 - Régions compactes et de taille comparable ; ports là où le commerce a un sens ; mers découpées
   pour rester sous 5 voisins terrestres.
+- Des villes à plus de 5 hex l'une de l'autre : plus près, la garnison de l'une rejoint les sièges
+  de l'autre, un effet non voulu (ChaosRobie).
+- Une carte accessible : pas de coin loin de toute l'action.
 - Marges de mer ou d'infranchissable sur les bords ; rien ne pointe hors carte.
 - Prototyper petit (200 × 150), valider, exporter le pathfinding, **puis régénérer à la taille
   finale** : Resize ajoute du canevas vide, il n'agrandit pas le dessin.
-- Préparer la moitié visuelle dès maintenant : `tile_map.png`, PNG des couches, images de
-  référence à l'échelle exacte du damier (chargeables en fond dans l'éditeur, jamais exportées).
+- Préparer la moitié visuelle dès maintenant : exporter `tile_map.png` depuis CAIME (§ 15 n° 81), préparer les
+  PNG des couches et les images de référence à l'échelle exacte du damier (chargeables en fond
+  dans l'éditeur, jamais exportées).
 
 ---
 
@@ -560,7 +664,8 @@ lance et ouvre son éditeur. BOB charge un module `bob_campaign`. La carte de ca
 ajoute 184 colonies et 74 provinces avec de nouvelles terres. La faisabilité ne fait donc pas de
 doute.
 
-**Ce qui n'est pas documenté publiquement** : la méthode exacte pour le terrain de campagne. La
+**Ce qui n'est pas documenté publiquement** (état du 20.09.2026 ; notre méthode depuis : § 12.1 à 12.3) : la méthode
+exacte pour le terrain de campagne. La
 doc CA parle de tuiles de bataille ; `raw_data\terrain\` de l'AKit ne contient que `battles\` et
 `tiles\battle\` ; le `raw_data\EmpireDesignData\campaign_maps\<carte>\` vanilla ne contient que
 `map.hex` et les lookups. Lu sur le Discord CAIME le 20.09.2026 : pour **Rome 2**, l'auteur de
@@ -579,10 +684,9 @@ campaign-type Terry project », puis « Why yes that did take a while ». Trois 
 3. **C'est long.** Une personne seule y a passé un temps considérable, sans méthode publiée.
 
 Conséquence pour un projet : si la carte visée existe déjà dans un jeu dont l'Assembly Kit livre,
-lui, des données de terrain de campagne (à vérifier pour Warhammer 1, dont la documentation CA de
-l'époque présentait Terry comme éditant « height-map, lighting and props » de la carte de
-campagne), on part d'un projet Terry de campagne existant au lieu de le reconstruire. C'est le
-premier point à trancher dans l'inventaire du projet en cours.
+lui, des données de terrain de campagne, on part d'un projet Terry de campagne existant au lieu de le reconstruire.
+**Tranché pour Warhammer 1 : non** (§ 15 n° 62 : le kit de WH1 n'a pas de projet Terry de campagne ; la référence de
+WH1 est le jeu WH1, dont le terrain compilé se lit et se convertit, § 12.3).
 
 ### 12.1 Anatomie d'un projet Terry **de campagne** (établie le 20.09.2026)
 
@@ -657,10 +761,9 @@ Celui du dossier de la carte ne fait que recopier vers le kit :
 Noter `PrefabRoot = art\prefabs\campaign`, à comparer au `art/prefabs/battle` des tuiles de
 bataille : c'est ce qui distingue un projet de campagne d'un projet de bataille côté BOB.
 
-**Deux dépendances référencées mais absentes** de l'archive et du kit CA, à trouver ailleurs,
-sans doute à extraire des `.pack` du jeu : `terrain\tiles\campaign\_tile_database` (cité par
-`rules.bob`, et déjà vu cité par BOB à son démarrage) et le dossier `lighting\` contenant
-`default.environment` (cité par le `.terry`). **À confirmer.**
+**Deux dépendances référencées mais absentes** de l'archive et du kit CA : `terrain\tiles\campaign\_tile_database`
+(cité par `rules.bob` et par BOB à son démarrage) et le dossier `lighting\` contenant `default.environment` (cité par le
+`.terry`). Elles sont dans les packs de WH3 et ont été extraites le 20.09.2026 (§ 15 n° 18).
 
 **Dimensionner un projet pour une autre carte.** Les résolutions étant proportionnelles au
 nombre d'hex, pour la carte des Elfes sylvains de WH1 (400 × 440 hex) il faut :
@@ -708,14 +811,20 @@ script. Tout ce qui peut être préparé hors fenêtre doit l'être : `tile_map.
 
 ### 12.3 Compiler le terrain d'une carte de campagne **neuve** (établi le 21.09.2026)
 
-**La référence à jour est la chaîne automatisée** `02-scripts\chaine_terrain.ps1` (fin de cette section) ; les étapes
-numérotées ci-dessous expliquent ce qu'elle fait. Depuis la chaîne 12, `lf_normal.dds` est recalculée depuis notre
-relief par `lf_normal_depuis_relief.py --apply` (lissage de 12 px depuis le 25.09.2026 : stries des Montagnes Grises),
-dernière étape de chaque chaîne (§ 15 n° 139) ; `lf_normal_wh1_vers_wh3.py` et `lf_normal_a_la_taille_du_relief.py`
-(étapes 2 et 3 ci-dessous) ne servent plus.
+**La référence à jour est la chaîne réelle en 8 étapes** (`CLAUDE.md` § 5 « Terrain », et le paragraphe « La chaîne
+réelle » plus bas) : `modeles_wh1.py --apply`, générateur (`terrain_wh1_vers_terry.py --apply`), masques d'eau
+(`masques_eau_carte.py --apply`), BOB (`compiler_terrain_bob.py`), brouillard (`shroud_heights.py`), caméra
+(`camera_heightmap.py`), textures de WH1 (`textures_sol_wh1.py --apply`), `lf_normal_depuis_relief.py --apply` ; puis
+pack, startpos, pack. **`02-scripts\chaine_terrain.ps1` n'en a que 6 (ni `modeles_wh1` ni `lf_normal`) : ne pas s'en
+servir avant de l'avoir mis à jour** (`CLAUDE.md` § 5). Depuis la chaîne 12, `lf_normal.dds` est recalculée
+depuis notre relief (lissage de 12 px depuis le 25.09.2026 : stries des Montagnes Grises), dernière étape de chaque
+chaîne (§ 15 n° 139) ; `lf_normal_wh1_vers_wh3.py` et `lf_normal_a_la_taille_du_relief.py` ne servent plus. Les étapes
+numérotées de la « Recette complète » ci-dessous détaillent ce que fait chacune.
 
 « Process with BOB » dans Terry ne lance, pour une carte neuve, que **6 actions** (Terry file +
-5 masques) : ni relief, ni textures, ni carte logique, ni brouillard. Cause lue dans
+5 masques ; *Terry file* écrit tout de même `global_props.bin`) : ni relief, ni textures, ni carte logique, ni
+brouillard ; un passage complet qui aboutit en compte **12** (9.0 et 9.0.2 ; 15 au premier essai du 21.09.2026, avec
+*Initialise warscape* et *Generate Camera Height Map*, qui fait planter BOB). Cause lue dans
 `bob_terrain.modder.x64.dll` et vérifiée sous `cdb` : pour une campagne, BOB cherche **le nom du
 dossier de terrain** dans la table `campaign_map_playable_areas` de sa base, qui est celle du jeu
 (`db.pack`) ; une carte absente de `db.pack` ne reçoit qu'une action d'erreur muette. Rien de ce
@@ -723,7 +832,10 @@ qu'on ajoute au kit ou dans un pack n'y entre (journal de phase 3, § 7).
 
 Méthode qui marche : **`python 02-scripts\compiler_terrain_bob.py --carte <carte> --apply`**,
 Terry fermé. Le script lance BOB avec la commande exacte de Terry, sous `cdb`, et fournit à la
-recherche l'enregistrement de la carte (seuls `minx` et `maxx` sont lus, pris dans le kit). Il
+recherche l'enregistrement de la carte (seuls `minx` et `maxx` sont lus, pris dans le kit). **C'est une méthode de
+l'atelier, hors des voies officielles de CA, gardée et assumée** (décision A2 de Charles, 04.10.2026) : aucune voie
+officielle connue ne compile le terrain d'une carte absente de `db.pack` ; les guides de l'Atlas doivent la décrire
+franchement comme telle (session « Extension »). Il
 vérifie l'empreinte de la DLL (table `VERSIONS_DLL` : après chaque mise à jour du kit, relever les décalages de la
 nouvelle DLL et ajouter son empreinte avant la première chaîne ; § 15 n° 147) et garde les journaux dans `05-journal\2026-09-21-phase-3-terrain\
 compilations\`. Pour ouvrir le projet en vue 3D, Terry exige qu'un terrain compilé existe déjà
@@ -731,15 +843,18 @@ dans `working_data\terrain\campaigns\<carte>\` (sinon il plante) : compiler d'ab
 avec « 3D View » décoché.
 
 **Recette complète du terrain compilé (21.09.2026, 17 h 50)**, dans l'ordre :
+0. (Depuis la chaîne 13) `modeles_wh1.py --apply`, puis le générateur `terrain_wh1_vers_terry.py --apply` et les masques
+   d'eau `masques_eau_carte.py --apply` (voir « La chaîne réelle » plus bas).
 1. `compiler_terrain_bob.py --carte <carte> --apply` : relief (`full_height_map.dds` BC6H, rangé du
-   sud au nord), carte logique, textures, brouillard, tuiles, masques, liste d'arbres. La compilation
+   sud au nord), carte logique, textures, brouillard, tuiles, masques, liste d'arbres (12 actions). La compilation
    complète prend une minute (53 à 64 s le 22.09.2026 ; 25 min notées le 21.09.2026) ;
    `--sans full_height_map.dds,full_logic_map.compressed_map` saute le relief quand seul le reste a
    changé. L'étape « Generate Camera Height Map » est toujours sautée (elle plante).
    En amont, le relief vient de `relief_maillages_wh1.py --apply` (sol de WH1, § 15, n° 75).
 2. `lf_normal_depuis_relief.py --apply` (depuis la chaîne 12) : l'éclairage lointain du relief, recalculé depuis notre
    relief lissé (§ 15 n° 139). Jusqu'au 24.09 : normal map de WH1 au vert inversé
-   (`lf_normal_wh1_vers_wh3.py`), puis ramenée à la taille du relief (`lf_normal_a_la_taille_du_relief.py`).
+   (`lf_normal_wh1_vers_wh3.py`), puis ramenée à la taille du relief (`lf_normal_a_la_taille_du_relief.py`). **Dans la
+   chaîne réelle, cette étape se lance EN DERNIER**, après les étapes 4 à 6.
 3. (fusionnée dans l'étape 2)
 4. `shroud_heights.py --carte <carte> --apply` (22.09.2026) : BOB écrit le brouillard plat à 1,0 ;
    règle de CA : max 2 × 2 du relief + calque `HeightShroud` (§ 15, n° 72).
@@ -748,7 +863,9 @@ avec « 3D View » décoché.
    dans le mélange (§ 15, n° 79) ; BOB réécrit les deux à chaque compilation. Une fois pour toutes,
    avant : `textures_sol_wh1.py --convertir` (57 textures au format de CA, 3 min).
 7. `build_pack.py` : embarque le tout (liste des Empires, fichiers plus récents que le `.terry`) ; refuse
-   un terrain dont la liste compilée ne cite pas les textures de WH1.
+   un terrain dont la liste compilée ne cite pas les textures de WH1. **Pas de pack de la Saison avant la décision de
+   Charles sur les montagnes au matériau 68** (décision A5, 04.10.2026 : elles sont déjà converties dans le kit commun,
+   un pack reconstruit les embarquerait ; § 15 n° 150).
 
 L'éclairage (`eclairage_wh1.py`) est installé par `terrain_wh1_vers_terry.py --apply` : fichiers `.environment`
 dans `lighting\` ; éclairage global, plus des zones en cylindres remises **une à une, à la manière de CA** (25.09.2026 :
@@ -761,10 +878,12 @@ relief n'a pas changé, `--sans full_height_map.dds,full_logic_map.compressed_ma
 
 **La chaîne réelle (état du 25.09.2026, chaînes 13 à 15, session du rendu)** : `modeles_wh1.py --apply`, générateur,
 masques d'eau, BOB, brouillard, caméra, textures de WH1, `lf_normal_depuis_relief.py --apply` ; environ 30 min
-(générateur : 17 à 28 min) ; puis `build_pack.py`, `injecter_textes.py --apply`, et l'essai de démarrage
+(générateur : 17 à 28 min) ; puis `build_pack.py` (pour la Saison, pas avant la décision A5, étape 7 ci-dessus),
+`injecter_textes.py --apply`, et l'essai de démarrage
 `essai_tours_auto.py --seigneur orion --tours 3` (Charles prévenu). `chaine_terrain.ps1` est EN RETARD sur cette liste
 (ni `modeles_wh1` ni `lf_normal`) : le mettre à jour avant de s'en servir. Ce qui suit est l'état du 23.09 :
 
+**[Historique, état du 23.09.2026, dépassé par « La chaîne réelle » ci-dessus ; ne pas suivre tel quel.]**
 **La chaîne automatisée (état du 23.09.2026, 06 h 20)** : `powershell -File 02-scripts\chaine_terrain.ps1 -Journal
 <log> [-SansPack]`, Terry et le jeu fermés, `rpfm_server` lancé, en tâche de fond (moins de 12 min) : générateur
 (`terrain_wh1_vers_terry.py --apply` : projet Terry, rivières lisses, `relief-wh1\mer_finale.npy`, `eau_rivieres.npy`,
@@ -804,6 +923,11 @@ complet), ou depuis `_map_5` pour le `map.hex` actuel.
 ---
 
 ## 14. État des preuves de la chaîne CAIME (20.09.2026)
+
+**[Tableau historique, état du 20.09.2026, dépassé.]** Depuis : le startpos se génère par `startpos_manuel.py` (en
+service depuis le 21.09.2026 ; recette de `CLAUDE.md` § 5 ; § 5 étape 7) ; les lignes « RPFM : startpos… non abordés »
+et « la génération de startpos ne marche pas sur cette installation » ne valent plus ; les voies BOB/Tweak et
+*Build Startpos* de RPFM ont échoué le 20.09.2026 (lignes ci-dessous) et n'ont pas été rejouées depuis.
 
 | Étape | Résultat | Détail |
 |---|---|---|
@@ -845,6 +969,8 @@ Le journal complet des erreurs commises, avec la règle qui évite chacune, est 
 
 1. **Windows en français** : sans le correctif de culture du fork, la base ne charge pas et tout
    est en lecture seule, éditeur officiel compris.
+   **[Remplacée le 04.10.2026 : corrigé en amont depuis la v1.0.1 (PR #10, § 8) ; le piège ne vaut plus que pour notre
+   installation officielle locale, encore en 1.0.0 (§ 2).]**
 2. **L'installeur officiel ne livre ni `Templates\` ni `Tools\MapDataBuilder`**.
 3. **Ligne 0 en bas** ; retourner les images avant encodage.
 4. **Impassable = passabilité** : 1 signifie franchissable.
@@ -853,7 +979,8 @@ Le journal complet des erreurs commises, avec la règle qui évite chacune, est 
    et la base doit connaître le nouveau nom (`campaign_map_regions`, `campaigns`, `areas_of_interest`).
 6. **Gabarits WH3 périmés** (`_map_1` vs `_map_5`) et **sans fichiers d'appui**.
 7. **Un changement de base ou de chemin AKit** ne prend effet qu'après Reload / réouverture.
-8. **RPFM 5 n'a plus de CLI** : CAIME veut `rpfm_cli.exe` (4.2.7) ; les IA veulent le MCP (5.0.6).
+8. **RPFM 5 n'a plus de CLI** : CAIME veut `rpfm_cli.exe` (4.2.7) ; les IA veulent le MCP (5.0.6 dans l'atelier ; la
+   5.1 n'a pas non plus de `rpfm_cli`).
 9. **BOB n'a pas d'aide** en ligne de commande ; ses options inconnues ouvrent une boîte modale
    qui bloque le processus : ne jamais lancer BOB avec des arguments depuis un script sans
    surveiller.
@@ -865,6 +992,8 @@ Le journal complet des erreurs commises, avec la règle qui évite chacune, est 
     outil, pas avec `sed`.
 13. **La doc CAIME se contredit** par endroits (`.bin`/`.ppd`, tailles de slots WH3, couleurs
     des avertissements, `.json`/`.xml` du Map Data Editor) : croire le validateur et le disque.
+    **[Précisée le 04.10.2026 par n° 166 : pour ce que fait CA (ports, tailles), ni la doc ni le validateur ne suffisent ;
+    la mesure sur les fichiers de CA tranche (erreur 337).]**
 14. **Auto-mises à jour** : l'installation officielle (Velopack) se met à jour seule, le fork non ;
     refusionner `main` amont de temps en temps.
 15. **`map.hex` : le bloc entre les listes de noms et les couleurs n'est pas « 1, 0, 0 »** mais
@@ -872,6 +1001,9 @@ Le journal complet des erreurs commises, avec la règle qui évite chacune, est 
     hex, lignes complétées à l'octet. Les cartes vanilla ont une entrée, les mini-campagnes WH1
     en ont deux ; CAIME amont les lit de travers (« 20 × 0 hex », exception). Corrigé dans le fork
     (`MapHexFile.cs`, 20.09.2026) ; candidat à une PR amont.
+    **[Remplacée le 04.10.2026 : corrigé en amont depuis la v1.0.1 (lecture des cartes des mini-campagnes de WH1). Et
+    ce masque de WH1 (32 pour `wh_dlc05_wood_elves`) ne se recopie JAMAIS dans `campaigns.mask` de WH3 : plantage de la
+    génération du startpos (erreur 331, n° 161).]**
     **La chaîne est la valeur `campaigns.mask` de la campagne qui utilise la carte** (établi le
     20.09.2026 au soir dans `raw_data\db\campaigns.xml` du kit WH1 : `wh_dlc05_wood_elves` → `mask = 32`,
     `wh_dlc03_beastmen` → `mask = 8`, `main_warhammer` → vide). Chaque entrée porte donc un masque
@@ -884,7 +1016,8 @@ Le journal complet des erreurs commises, avec la règle qui évite chacune, est 
     - `wiki/Tutorial:Campaign_Map_Making_for_Warhammer_III` — la seule description publique de
       notre chaîne : carte « logique » dans CAIME, carte « visuelle » dans Terry, puis BOB. Elle
       dit que **« Build Startpos » de RPFM sert à produire `spd_data.esf` et `hlp_data.esf`**, les
-      fichiers de pathfinding d'une carte neuve, et que **`spd_data.esf` est critique dès qu'on
+      fichiers de pathfinding d'une carte neuve (chez nous : `startpos_manuel.py --ai-map-data`, n° 46), et que
+      **`spd_data.esf` est critique dès qu'on
       touche aux données de carte** (`hlp_data.esf` tolère d'être périmé, mais le pathfinding
       devient absurde). Elle donne aussi l'ordre de traitement BOB du terrain (hauteur d'abord,
       puis tuiles, puis `global_props.bin` — **à refaire à chaque région ajoutée ou retirée**).
@@ -922,6 +1055,10 @@ Le journal complet des erreurs commises, avec la règle qui évite chacune, est 
     comptés par région et sur la terre seulement (le type de sol décide, pas la région).
     `02-scripts\grow_town_slots.py` fait pousser l'emplacement en disque autour de son centre et
     étend l'étalement urbain, puis règle le contour du danger.
+    **[Remplacée le 04.10.2026 par n° 163 et 166 : une colonie portuaire ne se grossit JAMAIS (19 + 3 fait planter le
+    chargement, erreur 334) ; port = 16 + 3 hex de Port consécutifs de l'anneau 2, deux en mer, un sur la plage (erreur
+    337) ; après toute croissance, les colonies de WH1 reviennent à l'identique de la Saison
+    (`villes_expanded.villes_wh1_a_l_identique`).]**
 21. **Le validateur `town-sprawl` est plus strict que les données de CA** : un terrain difficile à
     deux hex d'une colonie doit la toucher, et une colonie ne peut toucher qu'une seule zone de
     terrain difficile. La carte des Empires Immortels de CA échoue sur 5 colonies. Un échec de ce
@@ -967,7 +1104,9 @@ Le journal complet des erreurs commises, avec la règle qui évite chacune, est 
     les tables `regions` / `provinces` / `campaign_map_regions` / `campaign_map_settlements`, les
     cinq fichiers produits par CAIME plus le lookup en `.tga` **et** `.dds`, le terrain compilé,
     les scripts, et **un seul `startpos.esf`** dans `campaigns\<campagne>\`. Aucune table
-    `start_pos_*` ne part dans le pack : ce sont des entrées de l'Assembly Kit.
+    `start_pos_*` ne part dans le pack joué : le jeu ne lit pas les XML du kit, ces tables lui sont servies pendant la
+    génération par le pack de génération `zz_startpos_db.pack` (n° 45 ; `CLAUDE.md` § 5).
+    **[Corrigée le 04.10.2026 : écrit d'abord « ce sont des entrées de l'Assembly Kit ».]**
 31. **L'écran « Nouvelle campagne » se lit dans sa mise en page**
     (`ui/frontend ui/campaign_select_new.twui.xml`, à extraire des fichiers du jeu) : fond plein
     écran = `frontend_image` ; bouton = même nom + **`_button`** (278 × 128) ; carte verticale =
@@ -988,15 +1127,19 @@ Le journal complet des erreurs commises, avec la règle qui évite chacune, est 
 34. **La génération du startpos grave un aperçu de la minicarte** (`SAVE_GAME_HEADER` > `MAPS`,
     RGBA) à la taille `preview_width` × `preview_height` de la zone jouable : régénérer le startpos
     après tout changement de minicarte ou de ces colonnes, et donner à l'aperçu les proportions de
-    la carte (472 × 600 ici, la valeur de Warhammer 1).
+    la carte (472 × 600 ici, la valeur de Warhammer 1). Règle : l'aperçu a le rapport largeur / profondeur du monde,
+    hauteur 600 (CA 750 × 600 ; Expanded 321 × 600) ; `declare_map.py` le calcule, jamais une valeur en dur (erreur 332,
+    § 5 étape 2).
 35. **Images de correspondance de Warhammer 3** : TGA à palette, **16 bits par pixel**, palette BGRA
     32 bits, origine en bas, une couleur par région ; la minicarte (`radar_file`) est un parchemin
     RGBA à la moitié de la résolution, la correspondance de la minicarte au quart. Script :
     `preparer_minicarte.py`.
     **[Précision du 25.09.2026 (erreur 253) : CA écrit ses lookups ligne 0 au NORD (octet 17 = 0x10) et le jeu lit les lignes dans l'ordre du fichier ; nos lookups sont écrits ainsi depuis (`preparer_minicarte.py`).]** [25.09.2026, ménage]
 36. **BOB ne compile le terrain d'une campagne que si sa base (`db.pack`) connaît la carte** (§ 12.3).
-    Symptôme : 6 actions au lieu de 15, aucune erreur. Le témoin qui le montre : le projet de
-    ChaosRobie copié sous un autre nom échoue pareil. Script : `compiler_terrain_bob.py`.
+    Symptôme : 6 actions au lieu de 12 (9.0 et 9.0.2 ; 15 au premier essai du 21.09.2026, avec *Generate Camera Height
+    Map*, qui plante), aucune erreur. Le témoin qui le montre : le projet de
+    ChaosRobie copié sous un autre nom échoue pareil. Script : `compiler_terrain_bob.py` (méthode de l'atelier hors des
+    voies officielles, gardée et assumée : décision A2, § 12.3).
 37. **Terry ouvert verrouille `working_data`** (les packs qu'on y pose, notamment) : le fermer avant
     d'y écrire ou d'y lancer BOB (erreur 51).
 38. **Quand un outil de CA ne fait rien sans erreur**, lire la condition dans sa DLL avant d'essayer
@@ -1006,6 +1149,8 @@ Le journal complet des erreurs commises, avec la règle qui évite chacune, est 
     `camera_heightmap.png` est indispensable : `camera_heightmap.py` le fabrique (§ 12.3).
 40. **`lf_normal.dds` de WH1 se reprend en inversant le vert** (Y de signe opposé entre WH1 et WH3) :
     `lf_normal_wh1_vers_wh3.py`. BOB n'en produit pas pour une campagne.
+    **[Remplacée le 24.09.2026 par n° 139 (annotée le 04.10.2026) : `lf_normal.dds` se recalcule depuis notre relief
+    (`lf_normal_depuis_relief.py`) ; `lf_normal_wh1_vers_wh3.py` ne sert plus.]**
 41. **Chaque fichier compilé a son sens de rangement** : `full_height_map.dds` du sud au nord,
     `lf_normal.dds` et `camera_heightmap.png` du nord au sud (comme les rasters de Terry). Le
     vérifier par corrélation avec les hauteurs, fichier par fichier, avant d'en fabriquer un.
@@ -1013,6 +1158,9 @@ Le journal complet des erreurs commises, avec la règle qui évite chacune, est 
     sans lui le startpos se génère quand même, et le jeu plante au tout début du chargement de la
     campagne (`Warhammer3.exe+0x27A7DFF`, lecture de 0x30). Les régions de forêt elfes de WH3 en
     ont un : `wh_main_special_waterfall_palace_primary` est le gabarit générique de CA (erreur 54).
+    **[Remplacée le 04.10.2026 par n° 162 et 164 : ce modèle n'est « générique » que pour une région tenue par les elfes
+    sylvains ; un modèle que CA n'emploie pas pour la sous-culture du maître fait planter le chargement (erreur 333 : 18
+    régions tenues par Slaanesh avec ces primaires elfes).]**
 43. **Un startpos se contrôle par sa structure** : `comparer_structure_esf.py --esf <le nôtre>
     --reference <un startpos qui charge>` décompresse les deux (LZMA) et signale les enfants ou
     les blocs que la référence a toujours et que nous n'avons pas. À passer après chaque
@@ -1056,9 +1204,12 @@ Le journal complet des erreurs commises, avec la règle qui évite chacune, est 
     `campaign_maps\<carte>\display\trees\trees.campaign_tree_list`. L'apparence d'une famille suit la
     culture qui possède la région (`campaign_tree_type_cultures` : elfes sylvains -> chênes
     `wef_tree_oak_*`). Le `trees.png` de WH1 se traduit famille par famille (`terrain_wh1_vers_terry.arbres`).
-55. **Routes dans `tile_map.png`** : chaque hex de route est un bloc 2 x 2 plein (grammaire des
-    Empires, 30 283 hex sur 30 400) ; un tracé aminci laisse des trous que BOB signale (erreur 63).
+55. **Routes dans `tile_map.png`** : exporter l'image depuis CAIME (Tools → Export → Baseline Tilemap),
+    sans la peindre ni la retoucher à la main. Pour WH3, CAIME produit un bloc 2 × 2 `roads`
+    (93, 66, 24) par hex de route, sauf si la mer ou une falaise côtière a priorité
+    (`BaselineTilemapExporter.cs`).
     Compter les « Failed to find tile » de `bob_warnings.log` après chaque compilation.
+    **[Précisée le 04.10.2026 : orientation et exception de la Saison, voir n° 81.]**
 56. **Rivières de WH3** : les Empires et Old World n'ont aucune tuile de rivière ; les grandes
     rivières sont des chenaux `sea` bordés d'un pixel `sea_coast` (255, 255, 0) ou `cliff_gen`
     (253, 3, 1), les autres des modèles posés comme objets (`models/river_*.wsmodel`). La base de
@@ -1152,6 +1303,8 @@ Le journal complet des erreurs commises, avec la règle qui évite chacune, est 
 73. **`lf_normal.dds` a la taille de `full_height_map.dds`** (4 × la carte de tuiles : Empires
     11 520 × 7 764, prologue 6 400 × 4 804). Celui repris de WH1 faisait le double :
     `lf_normal_a_la_taille_du_relief.py` garde son deuxième niveau comme niveau principal.
+    **[Remplacée le 24.09.2026 par n° 139 (annotée le 04.10.2026) : `lf_normal_a_la_taille_du_relief.py` ne sert plus ;
+    la taille reste celle de `full_height_map.dds`.]**
 74. **Les textures d'un décalque de campagne se trouvent par suffixe** (22.09.2026). Le modèle (RMV2 de
     576 octets, matériau 100 : une boîte de projection) ne cite aucune texture, seulement un chemin de
     base sans extension (champ de 256 octets). WH3 y ajoute `_base_colour` (DX10 BC3 sRGB, la forme du
@@ -1174,7 +1327,9 @@ Le journal complet des erreurs commises, avec la règle qui évite chacune, est 
     `<HHBBffHIB>` à la suite des noms, des climats et de l'en-tête : x, y en cases (**y compté depuis le
     sud**), code de rotation (0x10, 0x20, 0x40, 0x80), masque de climats, min et max du sol sur l'emprise
     élargie de 2 cases (coin sud-ouest, W × H cases), indice de tuile. Pose exacte des `custom_mesh` de
-    montagne : en cours (journal `2026-09-22-phase-4\relief-tuiles-wh1.md` § 6).
+    montagne : en cours (journal `2026-09-22-phase-4\relief-tuiles-wh1.md` § 6). **Lecture (05.10.2026)** :
+    `tuiles_wh1.lire` échoue sur le v2 de BOB (un octet de fin) ; `poses_bob.lire_tl`
+    (`05-journal\2026-10-05-tuiles-cote\`) le lit (n° 170).
 78. **Terry montre toutes les variantes de culture à la fois** : les éclats d'obsidienne, crânes et
     décors du Chaos (masque « Démons, Hommes-bêtes, Norsca, Chaos ») y apparaissent partout, alors qu'en
     jeu, comme dans WH1, ils n'apparaissent que dans les régions de ces cultures. Juger la fidélité en jeu,
@@ -1198,13 +1353,22 @@ Le journal complet des erreurs commises, avec la règle qui évite chacune, est 
     Terry = son nom affiché en minuscules, espaces -> `_` (« Lighting File » -> `lighting_file`, « Visible In
     Shroud » -> `visible_in_shroud`).
     **[Depuis le 23.09.2026, c'est `build_pack.py` qui écrit la collection (cylindres, format compilé de CA) ; n° 102 et 144.]** [25.09.2026, ménage]
-81. **La côte d'une carte de campagne se peint en types de côte** (22.09.2026). Aux Empires, toute la mer est
-    bordée, côté terre, d'une bande de 2 px de `tile_map.png` (un hex) : `cliff_gen` (253, 3, 1), `sea_coast`
-    (255, 255, 0), quelques blocs `cliff_gen_ends` (84, 230, 84) ; BOB en fait falaises et rivages. Sans elle,
-    côte en escalier d'hex. Types et couleurs : `working_data\terrain\tiles\campaign\_tile_database\
-    _settings.bin` (aussi `sea_rock_coast`, `sea_coast_sand`, `cliff_base`, `river_mesh*`, `canals`...) ; seules
-    les familles présentes dans `working_data\terrain\tiles\campaign\` ont des tuiles. Générateur :
-    `terrain_wh1_vers_terry.cotes` (falaise ou rivage selon la côte de WH1).
+81. **Les types de côte de `tile_map.png` viennent de l'export CAIME**, jamais d'une peinture
+    ou d'une retouche manuelle (Tools → Export → Baseline Tilemap). Pour WH3, l'export
+    donne priorité à la mer, puis aux falaises côtières, aux routes, aux rivières et aux plages.
+    Il place `cliff_gen` (253, 3, 1) sur la terre qui touche la mer, ou `cliff_gen_ends`
+    (84, 230, 84) si elle touche aussi une plage ; les plages sans route deviennent `sea_coast`
+    (255, 255, 0). Les routes retenues deviennent `roads` (93, 66, 24), les rivières ordinaires
+    `generic` et leurs embouchures en plage `sea_coast` : aucune tuile de rivière
+    (`BaselineTilemapExporter.cs`). Types et couleurs :
+    `working_data\terrain\tiles\campaign\_tile_database\_settings.bin` ; seules les familles présentes dans
+    `working_data\terrain\tiles\campaign\` ont des tuiles.
+    **[Précisée le 04.10.2026.] Orientation** : jusqu'à la v1.0.1, donc avec notre fork (verbe `export-tilemap`, § 8),
+    l'image sort **sud en haut** (retournement en commentaire, `BaselineTilemapExporter.cs:180`) : la retourner
+    verticalement, et seulement cela ; depuis la 1.1.0 (PR #14), elle sort nord en haut. Contrôle : la côte de l'image se
+    superpose à l'export PNG de Ground Types. **Exception assumée (décision A3 de Charles)** : la `tile_map.png` de la
+    Saison reste peinte par script (`terrain_wh1_vers_terry.py`, côtes validées en jeu, n° 84 et 97) ; toute carte neuve
+    (Expanded comprise) part de l'export CAIME.
 82. **Caméra de Terry au point près** : `CopyCamera` / `PasteCamera` (sans raccourci par défaut ; F9 / F10 dans
     `working_data\Terry\local\keyboard.xml`) échangent par le presse-papiers `camv3;œil x;y;z;cible x;y;z`, en
     coordonnées du monde (x est, y haut, z nord).
@@ -1213,8 +1377,10 @@ Le journal complet des erreurs commises, avec la règle qui évite chacune, est 
     sa boîte tournée et en cherchant un support parmi les autres objets (erreur 77).
 84. **`tile_list.bin` v1 de WH1** : [u16, u32 indice du nom, u8] puis [u16 x, u16 y (depuis le sud), u8 code,
     u8 climats, f32 min, f32 max] ; emprise [x, x + W) × [y, y + H), 0x20 et 0x80 échangent W et H ;
-    `02-scripts\tuiles_wh1.py`. La bande de côte se peint **par hex entiers** (hex de terre voisins d'un hex de
-    mer) : tracée en pixels, 148 « Failed to find tile » ; par hex, zéro.
+    `02-scripts\tuiles_wh1.py`. La bande de côte couvre des hex entiers (hex de terre voisins d'un hex de
+    mer) : l'ancien tracé en pixels donnait 148 « Failed to find tile » ; par hex, zéro.
+    Exporter `tile_map.png` depuis CAIME, sans peinture ni retouche manuelle (carte neuve ; exception de la Saison et
+    orientation : n° 81).
 85. **Feuillage de WH1 dans WH3** (RMV2 v7, matériau 97 : arbres, herbes) : la couleur doit être sous le type de
     texture **27** (`base_colour`), pas 0 (`diffuse`) ; sinon triangles plats sans texture, en jeu comme dans
     Terry. `fichiers_wh1.feuillage_wh3` change ce seul champ. Les matériaux 68, 86, 100 de WH1 s'affichent tels
@@ -1254,7 +1420,13 @@ Le journal complet des erreurs commises, avec la règle qui évite chacune, est 
     terre ; en mer vers −0,68 (−0,52 près des côtes). En mer, le sol visible d'un objet est `sea_height`.
 96. **Les montagnes des Empires sont des objets** (3 044 poses de `generic_props/mountains/<culture>/`, réglés
     `visible_in_tactical_view="True"`, `apply_height_patch="True"`, `visible_in_shroud="True"`) : poser celles de
-    WH1 en objets est la méthode de CA (§ 15, n° 88 et 89).
+    WH1 en objets est la méthode de CA (§ 15, n° 88 et 89). Précisé le 04.10.2026 (session Expanded, lecture du projet
+    Terry de CA `raw_data\terrain\campaigns\wh3_main_combi_map_1`, 635 calques, 3 014 montagnes retrouvées à 5 cm ;
+    `05-journal\2026-10-04-montagnes-ca\RAPPORT.md`) : avec `apply_height_patch="True"`, le y est RELATIF (posées à
+    y = 0) et la forme n'est PAS inscrite dans `full_height_map.dds` (relief des Voûtes de CA : plateau lisse de 2,9 à
+    4,8 u) ; le jeu et BOB drapent le maillage sur le relief (`camera_heightmap.png` = relief + maillage ; arbres compilés
+    posés dessus). Les montagnes de CA SANS patch (masquées, piliers de Cathay) sont en hauteur absolue, comme les nôtres
+    (`montagnes_wh1.entite` : patch à « False », relief de WH1 qui porte déjà la forme).
 97. **Les tuiles de côte de WH3 (`cliff_gen`, `sea_coast`) ne couvrent qu'une bande régulière** : chaque hex de terre
     de la bande doit avoir **une seule série de un à trois voisins de mer**. Une pointe de terre d'un hex (quatre ou
     cinq voisins de mer) ou un hex entre deux bras de mer donne « Failed to find tile » dans BOB, donc un trou dans
@@ -1314,7 +1486,9 @@ Le journal complet des erreurs commises, avec la règle qui évite chacune, est 
     (`campaign_map_playable_area_ownership_content_pack_junctions` verrouille la campagne à l'écran de sélection ; mise
     dans notre pack, le jeu se fermait au démarrage, erreur 107 ; hypothèse non prouvée de la session « IA et modding
     3D » : notre zone y avait deux paquets, `wh3_base_game` et `wh1_wood_elves`, quand CA n'en donne jamais qu'un par
-    zone jouable ni par bataille) ; en
+    zone jouable ni par bataille ; **[Remplacée le 04.10.2026 par n° 160 : toute table `*_ownership_content_pack_junctions`
+    sur une clé à nous ferme le jeu sans message, quel que soit le nombre de paquets (erreur 329) ; jamais dans un pack
+    pour nos clés]**) ; en
     script, `cm:is_dlc_flag_enabled(produit, faction)`. Une erreur Lua dans un rappel du premier tick saute tous les
     suivants (mods et déblocage de l'interface compris) : chaque démarrage sous `pcall`. L'ambre ne vient que des
     incidents des Chemins-racines. `script/startpos.lua` existe dans `data_script.pack`. `cm:get_campaign_name()` rend
@@ -1530,14 +1704,18 @@ Le journal complet des erreurs commises, avec la règle qui évite chacune, est 
     relevé par la session « IA et modding 3D »). Un `required.lua` du pack d'essai ne remplace pas celui de notre pack
     (19 h 54, essai perdu).
 
-137. **Ce que le moteur lit de la mer** (erreur 155, session « Rendu de la carte ») : le niveau de l'eau est 0
-    (matériau d'eau : `sea_height_min` -2, `sea_height_max` 0, comme chez CA) ; l'eau ne se dessine que là où le fond
-    (`sea_height`, canal G de `full_height_map.dds`) est sous 0 : il doit l'être partout, même sous la terre (Empires
-    -0,91). `tile_mask.dds` : 16 terre, 32 mer (tuiles `sea_coast` et `cliff_gen` comprises), 0 routes, 64 cases noires
+137. **Ce que le moteur lit de la mer** (erreur 155, session « Rendu de la carte ») : dans WH3,
+    toute l'eau visible vient des maillages posés. Le niveau des plans de mer est 0 (matériau
+    d'eau : `sea_height_min` -2, `sea_height_max` 0, comme chez CA). `sea_height` (canal G de
+    `full_height_map.dds`) doit rester sous 0 là où il y a de la mer : s'il dépasse les plans
+    d'eau, il les masque. Sous la terre, il n'y a pas de tuile de fond marin et sa valeur ne
+    change rien (ChaosRobie). Le code `FOND_SOUS_ZERO` peut rester tel quel. `tile_mask.dds` :
+    16 terre, 32 mer (tuiles `sea_coast` et `cliff_gen` comprises), 0 routes, 64 cases noires
     hors carte. Le relief a une passe terre (R) et une passe fond marin (`ps_sea_geom`, G). `tile_list.bin` : noms, puis
     une pose par enregistrement de 21 octets, bornes de hauteur calculées par BOB sur le fond ; contrôle : aucune tuile de
-    mer au maxi au-dessus de 0. `terrain_textures_campaign.assetdb` (FASTBIN0, `02-scripts\base_variantes_ca.py`) associe
-    chaque groupe de sol à ses fichiers de CA pour toutes les campagnes (d'où l'erreur 114). Contrôle des textures des
+    mer au maxi au-dessus de 0 là où il y a de la mer. `terrain_textures_campaign.assetdb`
+    (FASTBIN0, `02-scripts\base_variantes_ca.py`) associe chaque groupe de sol à ses fichiers de CA
+    pour toutes les campagnes (d'où l'erreur 114). Contrôle des textures des
     modèles après un pack : `02-scripts\controle_textures_objets.py`.
 
 138. **La surface de la mer = des plans d'eau** (erreurs 163 et 164, session « Rendu de la carte ») : les Empires posent
@@ -1552,7 +1730,9 @@ Le journal complet des erreurs commises, avec la règle qui évite chacune, est 
     déclaré dans `warscape_asset_variation_db/terrain_textures_campaign.assetdb` (espaces `campaign_base_colour`,
     `campaign_material`, `campaign_normal`, dans l'ordre de la liste compilée de BOB) ; sinon il prend la dernière
     texture du tableau. Notre copie de la base (440 entrées de CA identiques à l'octet + nos clés `wh1_*` + la clé du plan
-    d'eau) est embarquée par l'exception de `build_pack` ; **à refaire après toute mise à jour du jeu**. `lf_normal.dds`
+    d'eau) est embarquée par l'exception de `build_pack` ; **à refaire après toute mise à jour du jeu**. [Remplacée le
+    25.09.2026 (consigné le 04.10.2026, erreur 341, n° 169) : catalogue SÉPARÉ à nous par mod, plus de copie de la base de
+    CA.] `lf_normal.dds`
     (éclairage du relief lointain) n'est pas faite par BOB pour une campagne : la recalculer depuis notre relief
     (`lf_normal_depuis_relief.py`) après chaque changement de relief.
 140. **Le canal rouge du `_material_map` est du MÉTAL dans WH3** (erreur 202, agent de recherche de la session
@@ -1609,7 +1789,35 @@ Le journal complet des erreurs commises, avec la règle qui évite chacune, est 
     déjà libéré (`rax = 0x20`, lecture de 0x24), au premier tour ou pendant que la caméra bouge ; l'objet est une de nos
     falaises de WH1 (`montagnes/cliff_inland_custom_passable`). Apparu après la chaîne 14 (objets reposés sur les
     montagnes) ; cause en cours d'essai (chaîne 16 sans ces règles). La piste mémoire est RÉFUTÉE (plantage sur un PC
-    redémarré). À part : `rpfm_server` garde la mémoire de chaque pack (69,7 Go après une nuit) :
+    redémarré). **03.10.2026 (9.0.2, `+0x1AC3FF2`, même instruction `mov ecx,[rax+4]` après `rax = [r14+0x20]`)** :
+    reproduit en ~5 min d'attente au tour 1 du Duc ; 4 plantages sur 8 parties (Orion t. 26, Fée t. 19, Duc t. 1). Le
+    vidage COMPLET (`05-journal\2026-10-03-passe-test-dix-seigneurs\20261003-130034-duc\plantage.dmp`, analyse
+    `cdb_rendu*.py` du scratchpad de construction) montre `r14` pointant dans un bassin de petits blocs d'un autre usage
+    (objet libéré puis réutilisé) et, autour de `rcx`, plusieurs objets `TerrainCustomTile` du MÊME modèle
+    `rigidmodels/_wh1/campaign/montagnes/cliff_inland_custom_passable/2x2_lb_rt_a_pose66457.rigid_model_v2` (et
+    `…_b_pose66944`), textures `badlands_mountain_small_01`. Cette entité est un `ECPropMesh` du calque
+    `…127f49bb43a37ba.layer` (position 14,3 / 256,2, échelle 0,0026) : 441 falaises `custom_passable` sur 1 149 entités.
+    Essai décisif à faire : terrain compilé SANS ces falaises (ou sans la seule famille `custom_passable`), puis 2 × 10 min
+    au tour 1 du Duc. **Témoin du 03.10, 13 h 15 - 13 h 46 (packs publiés, `essai_tours_auto --pause-tour 1
+    [--balayage]`) : AUCUN plantage en 10 min caméra fixe ni en 15 min de balayage (145 déplacements, falaise fautive
+    comprise)** : le pilote de la construction ne le reproduit pas à volonté ; l'essai « sans falaises » ne vaut qu'avec
+    un témoin qui plante (parties longues avec des tours qui passent, ou le pilote MCP de la session « Lakemen »).
+    **Second vidage complet (03.10, Albéric, tour 7, 3 min de jeu, pilote MCP ; `20261003-141422-alberic\plantage.dmp`) :
+    même instruction, mais l'objet voisin est une MONTAGNE de WH1 (`montagnes/empire_mountains/
+    21x11_empire_triangle_mirror_01_pose71652`), pas une falaise.** Le point commun des deux vidages : nos maillages de
+    montagnes et falaises de WH1 (`montagnes_wh1.FAMILLES`), posés en OBJETS (`ECMesh` d'un calque) avec le matériau 49
+    `rigid_default` (celui des tuiles de terrain) en RMV2 v7, que le moteur instancie en `TerrainCustomTile`. Relevé du
+    24.09 (journal du rendu § 3 decies) : CA ne pose JAMAIS de maillage au matériau 49 en objet (ses 49 sont des tuiles de
+    falaise en RMV2 v8 ; ses objets de montagne sont aux matériaux 68, 86, 97). Hypothèse : objet et tuile n'ont pas la
+    même durée de vie, d'où la relecture d'un `TerrainCustomTile` libéré. Piste : convertir ces maillages au matériau 68
+    des objets de CA (`montagnes_68.py` du 24.09, sur le modèle de `lzd_mountain_03`, jamais appliqué). **FAIT le 03.10
+    (erreur 327)** : `montagnes_wh1.MATERIAU_OBJET` et `vers_materiau_68` (morceau au matériau 68 `default_dry` : en-tête de
+    2 248 octets pris sur `lzd_mountain_03` ; varient seulement tailles, boîte +24, nom +82, dossier des textures +114, pivot
+    +628 = centre de la boîte, chemins de textures +944 + 260 k de types 0 / 1 / 11 / 3 / 12 ; sommets de 32 octets :
+    position f16 x 3 + w = 1, uv f16 x 2 à +8, uv2 nul, normale / tangente / bitangente u8 en z, y, x à +16 / +20 / +24,
+    couleur 255 ; triangles retournés ; masque `rigidmodels/_wh1/campaign/settlements/textures/test_mask.dds`) ; table des
+    LOD recalculée. Série de preuve en cours. **04.10.2026 : ces montagnes au matériau 68 sont déjà converties dans le kit
+    commun ; pas de pack de la Saison avant la décision de Charles (A5), qui les verra en jeu.** À part : `rpfm_server` garde la mémoire de chaque pack (69,7 Go après une nuit) :
     `build_pack.garde_memoire_rpfm` refuse au-delà de 8 Go.
     **Bandeaux des colonies** (même nuit) : leur hauteur est globale (`_kv_ui_tweakers.campaign_citybar_height`) ;
     `campaign_map_settlements.citybar_height_offset` vaut 0 chez CA partout ; un modèle haut se règle par
@@ -1623,6 +1831,142 @@ Le journal complet des erreurs commises, avec la règle qui évite chacune, est 
     `wh3_main_macro_old_world_mountains` (17 variantes), les collines bretonnes `wh3_main_macro_brt_grasslands`.
     Autre relevé : WH3 n'a ni carte de bataille de neige ni de marais pour ces biomes ; une seule carte de siège par
     culture, comme chez CA.
+152. **Workshop et langues** (erreurs 278 et 280, 25.09.2026) : le lanceur publie UN pack par objet (taille affichée =
+    pack + vignette, à l'octet) ; il ne liste un pack publié que si l'on est abonné à son objet (mise à jour : s'abonner,
+    bouton dossier -> « MISE À JOUR », se désabonner ; un objet neuf abonne son auteur). Le jeu charge les textes d'un
+    mod quelle que soit la langue (erreur 47) : mod principal en anglais, traduction française en objet à part
+    (`!saison_des_revelations_fr.pack`, mêmes chemins, le « ! » passe devant ; ids 3807973986 et 3808029376).
+153. **Cases vides dans le panneau d'une province étrangère** (erreur 282, essai du 27.09.2026) :
+    dans la même campagne du Duc écarlate, le panneau du duché de Gisoreux montre des cases vides,
+    alors que `slot_list()` donne les bâtiments principaux `wh_main_brt_settlement_major_2` (Gisoreux),
+    `wh_main_brt_settlement_minor_1` (Fort Bergres) et `wh_main_brt_settlement_minor_2` (Château des
+    Desfleuves). La révélation des régions fait apparaître des silhouettes ; après transfert temporaire
+    de Fort Bergres au joueur, sa case principale apparaît sans changement de clé. Une case vide dans
+    une province étrangère ne prouve donc pas une chaîne manquante. Comparer le panneau et `slot_list()`
+    dans la même partie. Le gel signalé par le joueur n'a pas été reproduit dans cet essai.
+
+154. **Essai par le mod MCP de WH3** (Workshop 3786971022, `wh3_mcp_server.pack` ; erreurs 281, 283, 285 ; essai du
+    02.10.2026, jeu 9.0.2.0). Charger le mod : deux lignes en tête de `user.script.txt`
+    (`add_working_directory "<workshop>\content\1142710\3786971022";` puis `mod wh3_mcp_server.pack;`), original gardé
+    puis remis (vérifier par empreinte), `Warhammer3.exe --feature disable_intro_videos` lancé directement. Protocole :
+    `wh3_mcp_command.json` (UTF-8 sans BOM, au moins une clé dans `params`) -> `wh3_mcp_result.json` dans le dossier
+    du jeu ; `ping` jusqu'à 240 s (le mod n'est prêt qu'après le menu). Utile : `load_campaign` (sauvegarde par nom),
+    `get_situation`, `eval` (Lua brut, `cm:make_region_seen_in_shroud` existe), `soak_turns` + `soak_status`,
+    `list_ui` (l'arbre va dans `wh3_mcp_debug.log`, `path` doit être une table), `close_panel`, `exit_to_windows`.
+    Inutilisables : `take_screenshot` (fige le jeu), `cm_search` (corpus `wh3_mcp_docs.tsv` absent), `select_campaign`
+    (prologue, RoC, IE seulement : une partie neuve de notre campagne passe par `essai_tours_auto.py`).
+    **Essai de Gisoreux (02.10.2026)** : 57 régions, 0 case principale vide ; les trois régions de Gisoreux ont leur
+    bâtiment principal ; toutes révélées au joueur (comme un mod « sans brouillard »), 15 tours sans erreur de script ;
+    partie neuve du Duc, 12 tours, 0 erreur, 0 blocage. Clé d'une région inexistante donnée à
+    `make_region_seen_in_shroud` : ignorée, sans erreur.
+
+155. **`string.find(..., 1, true)` interdit** (erreur 287, 9.0.2) : le drapeau « texte brut » rend nil à tort puis casse les
+    chaînes du processus (`string.len` rend la chaîne, `out()` de CA échoue, plantage natif ensuite). Remplacer par
+    `string.gmatch` ou `string.sub`. Plantage de rendu d'Orion au tour 26 (`+0x1AC3FF2`, `TILE_DATABASE`, même famille
+    que le n° 150) : non résolu, voir `05-journal\2026-10-03-passe-test-dix-seigneurs\constats.md` (O-5).
+156. **Borders en ligne de commande par notre CAIME** (erreur 324, 03.10.2026) : le fork exporte `borders.pbd` par
+    `CAIME process --borders` (code 0) sur une carte de 560 × 905 ; la v1.0.1 officielle exige la fenêtre.
+157. **Mise à jour 9.0.2 du kit** (erreurs 290, 305, 311) : `raw_data\db` réécrit (nos lignes perdues, à restaurer) ;
+    nouvelle empreinte de `bob_terrain.modder.x64.dll`, décalages inchangés (ajoutée à
+    `compiler_terrain_bob.VERSIONS_DLL`) ; RPFM : `update_schemas` et `generate_dependencies_cache`.
+158. **BOB « Campaign Trees » écrête z à `world_width` × 2/√3** (erreur 325, 03.10.2026) : sur une carte plus haute que
+    large, tous les arbres au-delà se tassent sur une ligne. La Saison n'est pas touchée (elle prend la liste de WH1) ;
+    Expanded a sa parade (`arbres_expanded.py`).
+159. **Carte agrandie : la lisière de mer de l'ancienne carte reste close** (erreur 328, 03.10.2026) : l'ancien bord non
+    jouable (`Impassable = 0`) sépare les mers d'origine des neuves ; CAIME ne contrôle pas la connexité de la mer. Ouvrir
+    la lisière et contrôler la mer seule, port par port (`connexite_expanded`).
+160. **Jonction de propriété de DLC sur une faction à nous : le jeu se ferme sans rien dire** (erreur 329, 04.10.2026, 9.0.2) :
+    `faction_ownership_content_pack_junctions` recopiée d'un modèle de CA ; 9 à 13 s, aucun rapport, aucun `mp_log`.
+    Méthode qui l'a trouvé : copie du pack dans `data\`, une table retirée à la fois, génération du startpos relancée.
+    **Règle : aucune table `*_ownership_content_pack_junctions` (faction, zone jouable, bataille…) dans un pack pour une
+    clé à nous** ; un verrou de DLC se fait par script (`cm:is_dlc_flag_enabled`, n° 106). Codé :
+    `build_pack.EXCLUES_EXPANDED` ; `factions_atlas.TABLES` ne la recopie plus. Le `bad_mods_report.txt` ne voit pas
+    cette faute.
+161. **`campaigns.mask` non vide : plantage de la génération du startpos** (erreur 331, 04.10.2026, 9.0.2,
+    `+0x2A588B2`) ; laisser le masque vide comme toutes les campagnes. **Données de l'IA** : créer
+    `data\campaign_maps\<carte>\` avant la génération, sinon `hlp_data.esf` et `spd_data.esf` ne sont pas écrits.
+162. **Modèle d'emplacement hors de la culture du maître : plantage au chargement** (erreur 333, 9.0.2, `+0x2602213`) ;
+    la génération du startpos passe quand même. Prendre les modèles que CA emploie pour la sous-culture ; jamais un
+    `*_port` sur une région sans port. Suite (trio, horde) : n° 164.
+163. **Colonie portuaire à 19 + 3 cases : plantage au chargement** (erreur 334, 9.0.2, `+0x2613117`, liste vide de la
+    colonie). Garder 16 + 3 (forme exacte : n° 166) ; les ports en 16 + 1 et 16 + 2 ont suivi le même chemin (Tor Soleil) ;
+    le grossissement des emplacements ne touche jamais une colonie portuaire. Pour nommer l'objet d'un plantage de
+    chargement : `essai_tours_auto.py --cdb-avant` avec un point d'arrêt qui journalise (`dpa @rcx`) à l'entrée de la
+    fonction fautive.
+164. **Colonies : le trio pris tel quel chez CA ; une faction en horde chez CA ne reçoit pas de colonie** (erreur 335,
+    9.0.2, Expanded, 04.10.2026 ; `+0x2602213` sur `saison_tor_soleil:0`). Le trio (modèle `primary` de
+    `start_pos_region_slot_templates`, `primary_building`, `port_building`) d'une colonie existe **tel quel** chez CA
+    pour la même sous-culture : `wh3_dlc27_human_major_primary_port` pour un port haut-elfe, que CA n'emploie jamais, fait
+    planter le chargement (ports haut-elfes de CA : primaire mineur portuaire + `wh2_main_hef_settlement_minor_2`, ou
+    modèles spéciaux de colonie). Une région de WH1 qui change de maître prend modèles ET bâtiments dans la culture du
+    nouveau maître (erreur 334 ; `depart_atlas.py` § 4). Une faction que CA fait partir en **horde sans région**
+    (Aislinn, campagne des Empires) n'en reçoit pas au départ : même plantage tant qu'Expanded lui donnait trois Tor ;
+    données à une faction haut-elfe mineure à nous, la campagne charge (04.10.2026, 20 h 36). Méthode (erreur 335) :
+    relire la section du guide de l'Atlas et la doc de l'outil avant chaque étape, `validate --all` avant tout export.
+165. **Region Borders : `generate-region-borders` (ou *Auto-generate* puis enregistrer) avant Pathfinding** (erreur 336,
+    session Expanded, 04.10.2026). `CalculateRegionEdgeMasks` (`MapHexFile.cs:783-791`) ne recalcule les masques que
+    parmi les hex déjà marqués frontière ; peindre ou importer la couche Regions ne marque rien, l'export Pathfinding lit
+    la couche telle quelle et passe avant Borders en ligne de commande. Grille d'Expanded aux régions importées par
+    script : 0 hex de frontière (Saison : 12 301), 129 Info « 0 passable region edge hexes ». Remède : verbe du fork
+    `generate-region-borders --map <map.hex>` (§ 8, commit local 0f06478), ou bouton *Auto-generate* de la couche puis
+    Ctrl+S, après toute retouche des régions, avant `validate` et `process`. Contrôle : `validate --regions` sans cette
+    Info sur une région qui a des voisines de terre.
+166. **Ports de CA mesurés** (erreur 337, session « Recherche or et rivières », 04.10.2026). Empires `_map_1` (130 ports),
+    `_map_7` (134), `chaos_map_4` (26) : les 3 hex de Port sont consécutifs sur l'anneau 2 du centre, motif [bout, milieu,
+    bout] = [mer, mer, terre] pour 127 sur 130 et 131 sur 134, le hex de terre sur la plage (126 sur 127) ; [mer, mer, mer]
+    pour 3 ; un seul port sur 290 n'a qu'un hex en mer. **Règle : port = 16 hex principaux de terre + 3 hex de Port
+    consécutifs de l'anneau 2, deux en mer et un sur la plage ; ville de l'intérieur = disque de 19, sans hex de Port.**
+    « Un en mer » n'est que le minimum du validateur (`TownSlotsValidator.cs:220`). La Saison garde ses ports de WH1 en
+    [mer, mer, mer] (décision A1 de Charles, validés en jeu) ; Expanded et toute carte neuve suivent la règle de CA. Un
+    guide qui décrit « ce que fait CA » se vérifie par une mesure sur les fichiers de CA.
+167. **Routes en fils, `process` borné dans le temps** (erreur 338, session Expanded, 04.10.2026). Un réseau trop maillé
+    (Bois Rêveur reflété comme une image : 331 carrefours à 3 branches, 55 à 4, 3 à 5 ; WH1 : 55 carrefours) bloque
+    l'export Pathfinding (22 min sans écrire, arrêté) alors que `validate --roads` le dit correct ; refait en miroir exact
+    de la grille d'hex (colonne impaire décalée d'une rangée, nord et sud échangés) : 20 carrefours, export en 4 s.
+    Contrôler les degrés du graphe des routes (des fils, peu de carrefours, comme CA et WH1) ; lancer `process` avec une
+    limite de durée ; un miroir de carte se fait dans le repère des hex, jamais de l'image.
+168. **Lanceur de CA et Workshop : 4 essais automatiques, erreur 25** (erreur 339, 04.10.2026). Le lanceur retente seul 4
+    fois chaque envoi : « une seule modification par objet » (erreurs 306, 310) ne se tient pas côté lanceur. « error code
+    #25 » (`k_EResultLimitExceeded`) : limite côté compte ou Steam (refus avant tout envoi, 0 octet), pas côté objet ni
+    pack ; le lanceur ne l'affiche pas. Journal : `%APPDATA%\The Creative Assembly\Launcher\launcher.log` (heure UTC).
+    Règle : un envoi à la fois, puis lire `launcher.log` ; en cas d'erreur 25, ne rien renvoyer (retenter des heures plus
+    tard) ; vérifier la page. Aussi : un BOB en cours tient les packs de `data\` ouverts (WinError 32 : attendre sa fin) ;
+    un `launcher.exe` fantôme fait dire « le jeu est déjà en cours d'exécution » ; un « téléchargement » de Steam peut
+    n'être qu'une mise à jour d'objets Workshop (`content_log.txt`). Le lanceur crée aussi un objet VIDE à chaque tentative
+    d'un objet neuf (4 orphelins le 04.10) : après une erreur Steam 25, ne plus rien envoyer ni créer par le lanceur.
+169. **Catalogue SÉPARÉ des sols** (erreur 341, validé en jeu par Charles le 25.09.2026 vers 23 h 35) : nos groupes de sol
+    `wh1_*` sont déclarés dans un catalogue à nous, `warscape_asset_variation_db/<pack>.assetdb` (+ `.xml`), écrit par
+    `textures_sol_wh1.py` (`CATALOGUE_SEPARE = True`), au lieu d'une copie de la base de CA (`terrain_textures_campaign`) :
+    aucun fichier de CA remplacé, les deux mods ne se couvrent plus ; plus rien à refaire après une mise à jour du jeu.
+170. **Tuiles de côte : ce que BOB sait paver** (erreur 343, session Expanded, 05.10.2026 ; preuve et scripts :
+    `05-journal\2026-10-05-tuiles-cote\RAPPORT.md`). Chaque tuile de côte décrit sa forme dans
+    `_tile_database\tiles\*.bin` (FASTBIN0) : groupe (`cliff_gen` = ruban de falaise de 2 px, `cliff_gen_ends` = bloc de
+    bout 2 × 2 à une seule ancre, `sea_coast` = plage), masque d'emprise, ancres et règles (=/≠ un type) ; y vers le bas
+    dans la fiche, vers le haut dans `tile_list.bin` (rotations : `convention_rotation.py`). BOB chaîne les tuiles ancre
+    contre ancre. Pas de tuile : ruban de falaise coupé sur `generic` ou la mer sans bout ; côte sur la rangée 0 ou la
+    dernière rangée / colonne ; isthme d'un hex où deux falaises se croisent. CA : 412 plages, 36 bouts seulement ;
+    autour d'une plage d'un hex, un bout lié à la plage laisse un trou côté falaise. **Expanded** : bouts repeints en
+    falaise (`tuiles_expanded.composer`, écart au guide Terry accordé par Charles) ; ni falaise ni plage au bord de la
+    grille ; prédicteurs avant BOB : `modele_pavage.py`, `modele_local.py`.
+171. **Relief sous les tuiles de côte : continu et lisse, comme chez CA** (erreurs 345 et 346, session Expanded,
+    05.10.2026 ; réécrit à 11 h 50). Chez CA (relief des Empires Immortels ombré au pixel), le relief se prolonge sous la
+    mer sans marche : **le trait de côte n'existe que dans les tuiles (`cliff_gen`, `sea_coast`) et dans le fond**, aucun
+    chenal n'est creusé dans le relief. Ne pas sculpter le relief au trait des tuiles ni le remettre à la surface sur les
+    tuiles de mer : cela fait des hachures et des escaliers (Expanded, 05.10 : premier essai à profil unique, terre à 0,13
+    et fond à −0,63 ; deuxième à profil par tuile, mesuré au trait : falaise 0,74 / fond −0,40, plage −0,16 au trait et
+    +0,12 à 1 u / fond −0,19 ; les deux refusés par Charles en jeu). L'eau se lit sur les tuiles (`outils\mer_tuiles.py`),
+    un chenal de fleuve se creuse dans le fond seulement (`outils\chenaux_fleuves.py`), le relief se lisse
+    (`outils\cotes_relief.py` v2). La berge en pente d'environ 1 u du guide Terry vaut pour une côte sans tuile de côte
+    (`generic`, la Saison).
+172. **Embouchure = Beach ET River dans CAIME** (erreur 347 ; code : `CAIME\Classes\Exporters\BaselineTilemapExporter.cs`).
+    L'export de `tile_map.png` fait une falaise (`cliff_gen`) de tout hex de terre voisin de la mer qui n'est pas une
+    plage, même une rivière ; seul un hex `IsRiver` et `IsBeach` donne « river ending at beach » (peint en plage pour
+    WH3). Sans cela, une rivière finit sur une falaise et n'arrive pas à la mer. Expanded : `outils\plages_expanded.py`
+    (33 embouchures).
+173. **Plage sur terre basse seulement** (erreur 349, session Expanded, 05.10.2026). Chez CA, une plage est posée sur une
+    terre basse ; une plage sur une terre haute (1,25 u sur la Brienne) donne une pente raide et une ombre sombre. Règle
+    d'Expanded : terre au-delà de 0,8 u dans les 3 hex vers l'intérieur → falaise, sauf plages de port et embouchures ;
+    filtre des suites de 3 cases ; 909 → 621 plages.
 
 ## 16. Pour une IA qui reprend ce dossier
 
@@ -1632,7 +1976,7 @@ startpos, ordre des phases) est conservée dans `05-journal\historique-documents
 
 ```powershell
 $exe = "C:\TotalWar-CampaignMap\01-outils\CampaignMapToolkit\CAIME\bin\Debug\CAIME.exe"
-& $exe --help                     # 8 verbes attendus
+& $exe --help                     # 10 verbes attendus (dont export-tilemap et generate-region-borders, commit local 0f06478, § 8)
 & $exe config --show              # Warhammer3 doit pointer sur l'assembly_kit
 powershell -ExecutionPolicy Bypass -File "C:\TotalWar-CampaignMap\02-scripts\lancer-outils.ps1" -Outil rpfm-server
 # puis : claude mcp add --transport http rpfm http://127.0.0.1:45127/mcp   (ou l'équivalent du client)
@@ -1641,4 +1985,3 @@ powershell -ExecutionPolicy Bypass -File "C:\TotalWar-CampaignMap\02-scripts\lan
 Conventions : un projet = `04-projets\<nom>\` (`notes.md` = la fiche) ; références dans `03-references\<nom>\` ;
 tout ce qui est daté dans `05-journal\<date>-<sujet>\` ; ce qui ne sert plus dans `99-archives\` (rangé, jamais
 supprimé) ; fork : jamais `git add -A`, commits en anglais.
-

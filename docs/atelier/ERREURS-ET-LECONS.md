@@ -17,48 +17,132 @@ Dans la session ci-dessous, les sections A, B et C sont des `[évitable]` ; la s
 les `[découverte]`.
 
 ---
-## Règles vivantes (sommaire au 25.09.2026 ; le détail est dans l'entrée citée)
+## Règles vivantes (sommaire au 04.10.2026, grand nettoyage ; le détail est dans l'entrée citée)
 
 À lire en premier, puis les entrées des deux derniers jours ; le reste à la demande (recherche par numéro ou par mot ;
 les étiquettes s'écrivent aussi sans accent : chercher `\[(é|e)vitable\]`). Les numéros 6 et 29 sont en double (citer
-A6 / B6 et 29-undo / 29-attribution).
+A6 / B6 et 29-undo / 29-attribution). Une règle remplacée porte « [Remplacée le … par n° …] » dans son entrée. L'ancien
+sommaire (25.09.2026) est rangé en bas du fichier. Source : `05-journal\2026-10-04-grand-nettoyage\audit-erreurs.md` § 6.
+Les règles sont numérotées R1 à R40 (pour ne pas les confondre avec les entrées) ; les nombres entre parenthèses sont
+des numéros d'entrées.
 
-Méthode
-- Ne jamais jeter la sortie d'un outil, la regrouper (1). Un message qui cite une donnée se vérifie dans la donnée (2, 54, 61).
-- Un témoin se rejoue avec la commande exacte, drapeaux compris, à chaque tour (30, 35, 39).
-- Un seul changement de fond entre deux essais ; jamais le pilote d'essai et le pack dans le même essai (53, 239).
-- Plantage aléatoire : 10 essais par variante, « piste » avant « cause » (186) ; un essai ne conclut qu'à son terme (52).
-- Ce qui se voit en jeu se vérifie EN JEU, pas dans Terry ni dans un fichier compilé (67, 109, 113, 114, 146).
-- Annoncer la mesure du produit écrit, jamais le bilan de l'algorithme ni l'intention du code (81, 192, 231, 248) ;
-  toute heure vient de `date` (211).
-- Un réglage qui porte un contrôle validé ne change qu'en annonçant le contrôle qui tombe (240).
-- Contenu et aspect : WH1 d'abord (45, 48, 102, 222) ; conventions du moteur de WH3 : CA d'abord (53, 93, 126, 202, 251).
-Charles et le PC
-- Prévenir Charles avant TOUT lancement du jeu et lui dire de ne rien toucher (124, 132, 177) ; ne pas piloter l'écran
-  sans son accord du moment, `etat_clavier.py` après (4, 108) ; jamais `open_application` sur Terry ou le jeu (88, 152) ;
-  `essai_tours_auto.py --nettoyer` après tout arrêt forcé (178).
-Sessions en parallèle
-- Préavis : annoncer l'heure affichée par `preavis.py heure`, `preavis.py attendre` en arrière-plan, relire les
-  messages, puis écrire (145, 215, 221). Vérifier qu'un nom de fichier est libre (121). Le jeu d'essai n'est à personne
-  d'autre (144).
-Shell
-- Ni heredoc, ni `python -c` composé, ni `sed` à antislashs, ni script écrit par PowerShell : un fichier écrit avec
-  l'outil d'écriture (129 ; crochet `garde_commandes.py` : 212, 217, 228 ; 237). Chemins absolus (75, 218). À
-  transmettre à chaque agent lancé (193).
-Pack, startpos, mise à jour
-- Essai de démarrage avant d'annoncer un pack qui change une table (107) ; journal du pack : chaque table du lot avec
-  son nombre de lignes (131) ; scripts changés → startpos régénéré, `__save_counter` = 1, pack reconstruit (58, 112).
-- Jamais une de nos régions dans un groupe, une liste ou une table de liens de CA (110, 154, 156 ; `verifier_groupes.py`) ;
-  jamais un fichier à nous à un chemin que CA cite (254).
-- À chaque reprise : `crash_report\` et `save_games\` (69). Après une mise à jour du jeu : ne rien construire avant
-  d'avoir vérifié `raw_data\db` ; empreintes des DLL ; les adresses d'avant sont celles de la 8.1 (206, 216, 220) ;
-  lire les écouteurs nommés en erreur au premier essai (252).
-Carte
-- Positions des entités en espace des hex ; un raster se lit à z × √3/2 (89). `sea_height` sous 0 partout ; mer pleine
-  sous l'eau à moins de 2 u des terres (155, 223, 240). Éclairage : zones à la manière de CA, une à la fois (251).
-Règles périmées (ne plus appliquer telles quelles) : 25, 73, 74 (code), 97 (en 9.0), 102 (une surface), 109 (état des
-zones), 113 (height = surface), 143 (limitée à l'IA), 208 (pour les zones), 230 (moyen), 232 (3 clics).
-Adresses mémoire : celles relevées avant le 24.09.2026, 16 h 07, sont celles du jeu 8.1 (signatures historiques).
+**Déclarer (base, clés)**
+R1. Avant toute déclaration : relire les décisions de Charles (`CLAUDE.md` § 2) ; `saison_` pour ce que nous créons,
+   `wh_dlc05_` pour ce qui vient de WH1 ; retirer des lignes par un outil ciblé, jamais `declare_map --undo` (29, 272).
+R2. Une ligne de base part d'un gabarit qui marche : la ligne de WH1 pour le contenu ; la ligne de la Saison, champ par
+   champ, pour une campagne ou une zone jouable neuve (`campaigns.mask` vide, aperçu au rapport du monde, hauteur 600) ;
+   tout écart se justifie (48, 53, 331, 332).
+R3. Jamais une de nos régions dans un groupe, une liste ou une table de liens de CA ; jamais remplacer une table de CA ;
+   un pack d'une autre carte ne garde que les lignes dont les régions sont sur sa carte (110, 154, 156, 330 ;
+   `verifier_groupes.py`).
+R4. Aucune `*_ownership_content_pack_junctions` pour une clé à nous : le jeu se ferme sans rien dire (107, 268, 329).
+R5. Un nom propre ou de mécanique se vérifie dans le `.loc` français du jeu, et de nouveau après une mise à jour (139,
+   191, 207, 256).
+R6. Sauvegarde dans `db-backups\` avant d'écrire dans `raw_data\db` ; préavis : l'heure de `preavis.py heure` telle
+   quelle, `attendre` en arrière-plan, relire les messages, puis écrire (145, 215, 221).
+
+**CAIME**
+R7. Avant chaque étape, relire la section du guide de l'Atlas et la doc officielle, et la suivre à la lettre ;
+   `validate --all` avant tout export, Error ET Warning des villes corrigés (seule exception : l'étendue d'une ville en
+   col) (335 ; remplace 38).
+R8. Ville = disque de 19 hex ; port = 16 hex principaux de terre + 3 hex de Port consécutifs de l'anneau 2 (chez CA :
+   deux en mer, un sur la plage) ; un port de WH1 garde 16 + 3 ; ses cases de port restent dans leur région de mer
+   (313, 334, 337). La Saison garde ses ports [mer, mer, mer], validés en jeu (décision de Charles, 04.10.2026).
+R9. Le trio (modèle primary, `primary_building`, `port_building`) existe tel quel chez CA pour la sous-culture du
+   maître ; une région qui change de maître prend modèles ET bâtiments ; une faction en horde chez CA n'a pas de
+   colonie (333, 334, 335).
+R10. Régions posées par script : `generate-region-borders` avant validate et process (336).
+R11. Routes en fils, peu de carrefours : contrôler les degrés du graphe, borner `process` dans le temps ; un miroir de
+    carte se fait dans le repère des hex (338).
+R12. Toute retouche : nombre de cases franchissables comparé avant / après ; en agrandissant, mer seule contrôlée port
+    par port ; rivières et côtes avant les villes (314, 316, 328).
+R13. Couches : `Impassable` 1 = franchissable ; ne réimporter que les couches changées (Roads, Rivers, Region Borders
+    perdent leurs directions) ; après un import, recopier les `.hex_layer` du projet et tout réexporter (40, 46, 174 ;
+    découverte du 20.09).
+
+**Terry et BOB**
+R14. `tile_map.png` vient de l'export CAIME (Baseline Tilemap), jamais peinte ni retouchée ; 0 « Failed to find tile »
+    (63 et § C annotés le 27.09). Exception décidée par Charles le 04.10.2026 : la Saison garde sa `tile_map.png` peinte
+    par script (côtes validées en jeu) ; export CAIME pour toute carte neuve (85, 86, 87).
+R15. Positions des entités en espace des hex ; un raster se lit à z × √3/2 ; le sens de rangement de chaque fichier
+    compilé se prouve un par un (89, 253 ; découverte du 21.09).
+R16. Eau : plans d'eau `ECPolygonMesh` (pivot dans la carte) ; `sea_height` sous 0 là où il y a de la mer, sans effet
+    sous la terre ; côte en pente douce, ni marche ni falaise sur le trait ; mer pleine sous l'eau à moins de 2 u des
+    terres (155, 163, 164, 223, 240).
+R17. Après toute mise à jour du kit : empreinte de `bob_terrain` relevée et `compiler_terrain_bob.py --carte` à blanc ;
+    liste d'arbres de BOB jamais prise telle quelle sur une carte plus haute que large (220, 311, 325). BOB sous `cdb`
+    est la méthode assumée de l'atelier (décision de Charles, 04.10.2026).
+R18. Modèles de WH1 : convertir selon le shader de WH3 qui les lit, puis contrôler sur les conversions de CA des MÊMES
+    objets ; corriger tous les fichiers que la règle touche ; jamais un fichier à nous à un chemin que CA cite (un ajout
+    à une base de CA passe par un catalogue à nous, 341) ; montagnes en objets au matériau 68 (117, 126, 202, 254, 327 ;
+    pas de pack de la Saison avant la décision de Charles sur ces montagnes).
+R19. Un effet ou un fichier de rendu converti de WH1 ne s'embarque qu'après un essai en jeu, caméra dessus ; un réglage
+    qui porte un contrôle validé ne change qu'en annonçant le contrôle qui tombe (146, 240).
+R20. Éclairage : zones à la manière de CA (LUT, brouillard, soleil, ambiance), une à la fois, montrées en image puis
+    essayées en jeu ; captures faites par Charles (109, 251).
+
+**Tables et scripts**
+R21. Une table neuve a son entrée dans `TABLES_LOT*` et figure au journal du pack avec son nombre de lignes ; les lots
+    restent rejouables (idempotents) (131, 145, 206).
+R22. Débuts de tour sur `FactionBeginTurnPhaseNormal` ; protection centrale de `core.event_callback` ; à chaque montée de
+    version, lire les écouteurs nommés en erreur et retirer par leur nom ceux sans objet (230, 231, 252).
+R23. Lua : jamais `find`/`match` avec le 4e argument `true` (codé) ; une erreur de script de CA vue en essai est imputée
+    au mod tant que l'appel fautif n'est pas trouvé dans nos scripts (287, 291, 292).
+
+**Startpos**
+R24. Tables `start_pos_*` dans le pack de génération seulement ; `startpos_manuel.py … --sans-working-dir --ai-map-data`,
+    `data\campaign_maps\<carte>\` présent ; `__save_counter` = 1 ; copie dans le projet, puis pack reconstruit ;
+    `user.script.txt` remis (39, 58, 59, 112, 331).
+R25. Après une restauration du kit : chaque lot compté contre sa source ; chaque table `start_pos` comparée au pack de
+    départ (0 ligne du pack absente du kit) ; retouches hors lots repassées (302, 305, 326).
+
+**Pack et mises à jour**
+R26. Avant le pack : `verifier_textes`, `verifier_groupes`, `rpfm_server` sous 8 Go de mémoire PRIVÉE ; après : essai de
+    démarrage avant d'annoncer ou de dire « construit » (107, 265, 275, 330).
+R27. Mise à jour du jeu ou du kit : photo avant ; après, compter nos lignes de `raw_data\db` avant toute construction,
+    schémas RPFM et cache des dépendances ; toute adresse mémoire porte sa version (8.1, 9.0, 9.0.2) (206, 290).
+R28. On corrige la source, jamais le produit ; jamais un fichier final dans un dossier de sortie ; chaque module écrit
+    dans le dossier de SA carte ; un nom de fichier neuf se vérifie libre (44, 121, 229, 312).
+
+**Essais en jeu**
+R29. Prévenir Charles avant TOUT lancement du jeu ; aucun pilotage d'écran sans son accord du moment, jamais pendant un
+    essai ; pas de capture du bureau ; `etat_clavier.py` après tout pilotage (108, 124, 277, 279, 286).
+R30. À chaque reprise : `crash_report\`, `save_games\`, `user.script.txt` ; `essai_tours_auto.py --nettoyer` après tout
+    arrêt forcé ; le jeu d'essai n'est à personne d'autre (69, 144, 178).
+R31. Un seul changement de fond par essai ; le témoin se rejoue avec la commande exacte ; un changement du pilote se
+    valide seul par 2 tours sur un pack éprouvé ; le pilote ne touche jamais en masse aux objets de CA (35, 39, 239,
+    270).
+R32. Un correctif de script se prouve chargé par sa propre ligne de journal ; avant de conclure à un gel : `ui_locked`,
+    panneaux ouverts, `script_log` (231, 285, 288).
+R33. Sous `all_players_ai`, la faction du joueur ne joue pas : les mécaniques du seigneur se testent en mode joueur ou à
+    la main (210).
+R34. Plantage aléatoire : 10 essais par variante au moins (une trentaine pour un taux faible), « piste » avant « cause »,
+    sur des parties jouées comme le joueur (caméra, intro) (186, 188, 265, 327).
+R35. Ce qui se voit en jeu se juge en jeu, face à la référence WH1 de Charles : ni Terry, ni un fichier compilé, ni les
+    tables (67, 113, 114, 282).
+
+**Workshop et site**
+R36. Un pack = un objet Workshop ; UNE modification par objet (pack et textes ensemble), puis attendre la levée ; un envoi
+    par le lanceur à la fois, `launcher.log` relu, erreur 25 : ne rien renvoyer ; ce qui est en ligne se vérifie
+    (tailles) (278, 306, 310, 339 ; remplace 276).
+R37. Site : un dossier d'envoi part de la liste complète du déploiement précédent et se compare dans les deux sens ;
+    zéro `msedge --headless` avant de rendre la main ; toute phrase de lore publiée passe par un audit (172, 307, 340).
+
+**Méthode**
+R38. Shell : ni heredoc, ni `python -c` composé (même d'une ligne), ni `sed` pour retoucher, ni script écrit par
+    PowerShell ; pas de tube qui tronque un script qui écrit ; le jeu par `Start-Process` ; chemins absolus ; à
+    transmettre à chaque agent (129, 193, 212, 267, 289, 303).
+R39. Annoncer la mesure du produit écrit, jamais le bilan de l'algorithme ni l'intention du code ; toute heure vient de
+    `date` ; une affirmation sur CA ou dans un guide se vérifie sur les fichiers de CA (81, 211, 248, 337).
+R40. Contenu et aspect : WH1 tel quel d'abord (48, 65, 222) ; convention d'un moteur ou d'un outil de CA : un exemple de
+    CA qui marche d'abord, et « comme dans X » se mesure sur X (45, 93, 313).
+
+Règles périmées (ne plus appliquer telles quelles) : celles de l'ancien sommaire (25, 63, 73, 74, 97, 102, 109, 113,
+143, 155, 208, 230, 232, § C) et celles annotées le 04.10.2026 dans leurs entrées : découvertes du 20.09 (`campaigns.mask`,
+script de RPFM, `start_pos_*` hors pack de mod, export BOB avant `build_starpos`, `town-sprawl` non bloquant), 29-undo,
+38, découverte de la session 45 (ports), 45 / 174 / 335 (ports), 85, 86, 87, 102 (falaises), 106 / 117 (recette),
+110 (remplacer la table de CA), 114, 154 / 156 (préfixe), 179 (copie de la base), 185, B6, 213 (moyen), 265 (piste
+des objets reposés), 276.
 
 ---
 
@@ -111,6 +195,8 @@ Adresses mémoire : celles relevées avant le 24.09.2026, 16 h 07, sont celles d
 6. **`sed` sous Git Bash avec des antislashs dans le motif.** MSYS convertit ce qui ressemble à
    un chemin ; le remplacement échoue en silence. Deux fois. → **Règle : remplacer du texte avec
    l'outil Edit ou un script Python ; jamais `sed` quand le motif contient `\`.**
+   [Remplacée le 04.10.2026 par n° 189 et n° 269 : toute retouche de fichier passe par l'outil d'édition, jamais
+   `sed`, antislash ou non ; `grep` et `sed` jamais dans le même segment.]
 
 7. **`Get-Content -Raw` en PowerShell 5.1 sur un UTF-8 sans BOM.** Lu en ANSI, réécrit en UTF-8 :
    accents détruits dans la note de mémoire et dans un script. → **Règle : PowerShell 5.1 ne
@@ -259,6 +345,8 @@ codée dans `02-scripts\caime_layers.py` ou dans le verbe `sync-names`.
     fiche exacte qui a servi à `--apply` ; pour une variante, travailler sur une copie du kit ou
     vérifier après chaque cycle que `sync-names` annonce le bon nombre de régions.** Et pour
     bissecter : **un seul changement à la fois, avec un témoin relancé à chaque tour.**
+    [Remplacée le 04.10.2026 par n° 272 : pour retirer des lignes, un outil ciblé, jamais `declare_map --undo`, même
+    avec la fiche exacte. La partie « un seul changement à la fois, témoin relancé » reste valable.]
 
 30. `[évitable]` **Bissecter sans revérifier le témoin.** Le témoin (`ile_claude_map`) est passé de
     « marche » à « plante » au milieu de la série sans que je m'en aperçoive, ce qui a invalidé une
@@ -294,6 +382,9 @@ codée dans `02-scripts\caime_layers.py` ou dans le verbe `sync-names`.
 - **Le validateur d'étalement est plus strict que les données de CA** : `wh3_main_combi_map_1`
   échoue sur 5 colonies (terrain difficile en deux zones autour d'une colonie), notre carte sur 2.
   Un échec `town-sprawl` de ce type n'est donc pas bloquant.
+  [Remplacée le 04.10.2026 par n° 335 (preuves 333, 334 : plantages au chargement que le validateur annonçait) :
+  `validate --all` avant tout export, Error ET Warning des villes corrigés ; seule exception : l'étendue d'une ville en
+  col, comme chez CA.]
 - **Le bloc « trois entiers inconnus » du `map.hex` (formats 0x12 et 0x14) est une liste.**
   Preuve : octets suivant les listes de noms — vanilla `01 00 00 00 | 00 00 00 00 | 00 00 00 00 |
   22 01 00 00 (290 couleurs)` ; `wh_dlc05_wood_elves_map_1` : `02 00 00 00 | 00 00 00 00 |
@@ -427,6 +518,8 @@ codée dans `02-scripts\caime_layers.py` ou dans le verbe `sync-names`.
   vérifiée sur des données non nulles). Ferme la question ouverte le matin (« « 8 » et « 32 » ne
   correspondent à aucun compte du fichier »). Reporté dans `GUIDE.md` § 15 n° 15 ; à citer dans
   la PR `fix/map-hex-entry-list`, qui pourra nommer le champ au lieu de le dire inconnu.
+  [Précisée le 04.10.2026 par n° 331 : vrai pour le `map.hex` de WH1, mais dans WH3 `campaigns.mask = 32` fait planter
+  la génération ; toutes les campagnes du kit l'ont vide : une ligne `campaigns` à nous garde `mask` vide.]
 - **Le script que RPFM fait exécuter au jeu pour construire un startpos** (extrait des chaînes de
   `rpfm_server.exe`, car RPFM efface le fichier ensuite) — il l'écrit dans
   `%APPDATA%\The Creative Assembly\Warhammer3\scripts\user.script.txt` :
@@ -441,6 +534,9 @@ codée dans `02-scripts\caime_layers.py` ou dans le verbe `sync-names`.
   Deux conséquences : le jeu **crée réellement le monde de campagne** (d'où l'hypothèse du
   terrain), et il lit aussi les fichiers **en vrac dans `assembly_kit\working_data`**, donc ce qui
   manque au pack peut être servi de là.
+  [Remplacée le 04.10.2026 par n° 190 (code de RPFM 5.0.6 : pas d'`add_working_directory` pour WH3) et n° 39 :
+  le script du startpos s'écrit à la main (`startpos_manuel.py --sans-working-dir`) ; avec `add_working_directory`, le
+  jeu sort en 9 s sans rien produire.]
 - **Un cinquième outil de startpos existe dans RPFM** : `build_starpos_check_victory_conditions`,
   qui vérifie la présence de `db/victory_objectives.txt` dans le pack (message :
   « Processing the startpos without this file will result in issues in campaign »). Appelé sur
@@ -471,6 +567,9 @@ codée dans `02-scripts\caime_layers.py` ou dans le verbe `sync-names`.
   kits ne le livre (il se fabrique depuis `raw_data\db` par le nœud `database` de BOB) et
   `binaries\bob_db.log` fait 0 octet. C'est la cause du pointeur nul, et c'est la « brique 2 » du
   `GUIDE.md` § 16, jamais faite.
+  [Remplacée le 04.10.2026 par n° 39, n° 190 et la recette de `CLAUDE.md` § 5 (et par la découverte du même soir, plus
+  bas : dans un pack de mod, le jeu nomme la ligne fautive) : les tables `start_pos_*` passent par un pack de génération
+  (`zz_startpos_db.pack`, `--sans-working-dir`), jamais par `working_data`, et jamais dans le pack joué.]
 - **La chaîne officielle du startpos est dans `bob_campaign.modder.x64.dll`, et RPFM n'en fait que
   la seconde moitié.** Actions lues dans la DLL : `Build Queried Campaign Tables` (lit
   `<raw>/database/campaigns`, `start_pos_factions`, `start_pos_regions`, `start_pos_settlements`,
@@ -486,6 +585,8 @@ codée dans `02-scripts\caime_layers.py` ou dans le verbe `sync-names`.
   le témoin prologue à 21 h 20). Et l'action `Campaign / Process start pos` de BOB lui-même rend
   « Startpos file not found after running the game! » : **la génération de startpos ne marche pas
   sur cette installation, même pour une campagne vanilla sans aucun mod chargé.**
+  [Remplacée le 04.10.2026 par la recette du startpos de `CLAUDE.md` § 5 (`startpos_manuel.py`, n° 39, 190) : ni
+  `build_starpos` de RPFM ni export BOB à chaque génération ; l'export BOB n'a servi qu'à amorcer le pack de génération.]
 - **Le jeu a une commande faite pour ça** : `wait_for_debugger`, que son binaire décrit comme
   « Waits for debugger when the command is read, **useful for debugging startpos generation** ».
   Inutilisable ici : Visual Studio n'est installé qu'en **Build Tools** (pas d'IDE, pas de
@@ -511,6 +612,9 @@ codée dans `02-scripts\caime_layers.py` ou dans le verbe `sync-names`.
     peut-être produit quand même, et c'est le jeu qui tranche, pas le validateur. → **Règle :
     quand un essai vise une question précise, aller jusqu'à cette question ; un validateur rouge
     n'est pas une réponse, c'est un avis.**
+    [Remplacée le 04.10.2026 par n° 335 (preuves 333, 334) : `validate --all` avant tout export, Error ET Warning des
+    villes corrigés (seule exception : l'étendue d'une ville en col, comme chez CA). La première moitié (« aller jusqu'à
+    la question posée ») reste valable.]
 
 - **Le vidage garde les arguments de l'appel qui a échoué.** Au plantage, `rdx` pointait encore sur
   la clé passée à la fonction qui a rendu nul : `0xFFFF0000`. → **Règle : désassembler la fonction
@@ -724,6 +828,8 @@ codée dans `02-scripts\caime_layers.py` ou dans le verbe `sync-names`.
 - **Modele d'une colonie portuaire chez CA** (`wh3_main_chaos_map_4`, 26 ports, aucune sans
   position) : bloc de port = le disque entier de 19 hex et il porte la position, bloc principal =
   son sous-ensemble terrestre de 16 hex.
+  [Note du 04.10.2026 : ceci décrit le bloc de port de `map_data.esf` (compilé) ; la règle des couches de CAIME
+  (16 + 3 hex de Port, n° 45, 337) parle de la carte source : deux choses différentes.]
 - **Une region de CA n'a qu'une seule « zone » (`REGION_AREAS`)** ; les notres en ont jusqu'a
   seize, parce que nos regions sont coupees par l'infranchissable. Le jeu sait faire, mais c'est
   une difference structurelle a garder en tete.
@@ -755,6 +861,9 @@ codée dans `02-scripts\caime_layers.py` ou dans le verbe `sync-names`.
     commande. -> **Regle : devant un format ou une convention d'un outil de CA, exporter d'abord un
     exemple de CA qui fonctionne, et verifier son propre outil sur cet exemple avant de l'appliquer
     a nos donnees** (fait ici : 242 colonies de CA jugees conformes, zero a repeindre).
+    [Ports : remplacée le 04.10.2026 par n° 337 (mesure sur 290 ports de CA) : 16 hex principaux de terre + 3 hex de
+    Port consécutifs de l'anneau 2, deux en mer et un sur la plage ; la Saison garde ses ports [mer, mer, mer], validés
+    en jeu (décision de Charles, 04.10). La règle de méthode (exemple de CA d'abord) reste valable.]
 
 46. `[evitable]` **Oublier de relancer tous les exports apres un changement de carte.** J'ai
     enchaine des `process --map-data` seuls, alors que notre `GUIDE.md` § 10 dit : « tout
@@ -768,6 +877,8 @@ codée dans `02-scripts\caime_layers.py` ou dans le verbe `sync-names`.
   (`SETTLEMENT_INFO` de `map_data.esf`). Colonie interieure : 19 hex en emplacement principal.
   **Colonie portuaire : 16 hex en principal, tous sur terre, et 3 hex consecutifs du second anneau,
   cote mer, en emplacement de port** (chez CA deux sur terre, un en mer dans la region de mer).
+  [Corrigée le 04.10.2026 par n° 337 : chez CA, deux hex de port en mer et un sur la plage ; la Saison garde ses
+  ports [mer, mer, mer], validés en jeu (décision de Charles, 04.10).]
   L'etalement couvre exactement les 19 hex. Sans ce disque, MapDataBuilder ecrit la position
   `0xFFFF` et l'IA de campagne du jeu meurt a `Warhammer3+0x2A4401A` sur la coordonnee
   `0xFFFFFFFF`. Code : `recentrer_emplacements.py`.
@@ -804,6 +915,10 @@ codée dans `02-scripts\caime_layers.py` ou dans le verbe `sync-names`.
     la mini-campagne. Meme famille que la regle 45. -> **Regle : pour chaque ligne de la base,
     partir de la ligne de Warhammer 1 de cette campagne quand elle existe ; ne prendre chez CA
     (Warhammer 3) que ce que Warhammer 1 n'avait pas (colonnes nouvelles, assets presents).**
+    [Codée le 04.10.2026 par n° 332 (rechute : 256 × 256 en dur dans `declare_map.py`) : aperçu au rapport du monde,
+    hauteur 600. Hiérarchie des gabarits fixée le 04.10.2026 (avec n° 53 et 331) : contenu = ligne de WH1 ; ligne
+    `campaigns` ou zone jouable d'une carte neuve = ligne de la Saison, champ par champ ; convention de moteur absente
+    des deux = CA.]
 
 49. `[evitable]` **Deviner ce que l'interface lit au lieu de lire sa mise en page.** Les images de
     la vignette (`_button`, `_vertical`), la cle du titre (numero de la zone jouable) et la source
@@ -880,6 +995,9 @@ codée dans `02-scripts\caime_layers.py` ou dans le verbe `sync-names`.
   Terry file + 5 masques. Preuve : bob_terrain+0x29189 (`record_from_name`) renvoie 0 sous `cdb` ;
   le projet des Empires copie sous un autre nom echoue pareil. **Contournement : `compiler_terrain_
   bob.py`** fournit l'enregistrement (minx, maxx du kit) au retour de la recherche.
+  [Décision de Charles, 04.10.2026 : BOB sous `cdb` (`compiler_terrain_bob.py`) est gardé et assumé comme méthode de
+  l'atelier (seule voie connue pour une carte neuve), malgré les guides de l'Atlas (« on ne contourne pas les outils de
+  CA ») ; à écrire franchement dans les guides. Voir aussi n° 220 et 311.]
 - **Commande de Terry pour BOB** : `BOB.modder.x64.exe /dont_stop_on_error /nosplashscreen
   /get_latest_rules -no_console /offline /configuration:_terry_auto /workspace:
   "/changelist:Terry (<.terry>)"`, configuration dans `binaries\BOB\_terry_auto_configuration.xml`.
@@ -903,6 +1021,9 @@ codée dans `02-scripts\caime_layers.py` ou dans le verbe `sync-names`.
     propre cle par symetrie ; 2) un seul changement de fond entre deux essais en jeu.** Code :
     `ajouter_seigneurs_jouables.py` (`STARTPOS_MAP = "default"`, corrige aussi les fiches deja
     creees). **Ce n'etait pas la cause du plantage : voir 55.**
+    [Règle 1 précisée le 04.10.2026 (avec n° 48 et 331) : contenu = ligne de WH1 ; ligne `campaigns` ou zone jouable
+    d'une carte neuve = ligne de la Saison, champ par champ ; convention de moteur absente des deux = CA (une campagne
+    neuve qui marche).]
 
 52. `[evitable]` **Conclure « pas de plantage » sur un essai interrompu trop tot.** Un essai
     ralenti par mes points d'arret n'avait pas plante au bout de 4 min ; je l'ai arrete et j'ai
@@ -1008,6 +1129,8 @@ codée dans `02-scripts\caime_layers.py` ou dans le verbe `sync-names`.
     de son adresse). -> **Regle : generer le startpos avec `--ai-map-data` et embarquer les deux
     fichiers.** Code : `build_pack.py` les embarque et previent s'ils manquent ; commande du temoin
     corrigee dans `CLAUDE.md`.
+    [Complétée le 04.10.2026 par n° 331 : la génération n'écrit `hlp_data.esf` / `spd_data.esf` que si le dossier
+    `data\campaign_maps\<carte>\` existe ; le créer avant de générer.]
 
 ### B. Decouvertes (reportees dans `GUIDE.md` § 15, n° 46 a 49)
 
@@ -1067,6 +1190,13 @@ codée dans `02-scripts\caime_layers.py` ou dans le verbe `sync-names`.
     produire un format, en mesurer la grammaire sur l'exemple de CA (motifs par hex, longueurs de
     segments) ; les avertissements de BOB se comptent apres chaque compilation.** Code :
     `terrain_wh1_vers_terry.routes`.
+    **[Corrigée le 27.09.2026 : ne jamais peindre ni retoucher `tile_map.png` à la main ; l'exporter
+    depuis CAIME (Tools → Export → Baseline Tilemap). Pour WH3, l'export place un bloc 2 × 2 `roads`
+    (93, 66, 24) par hex de route retenu après priorité de la mer et des falaises côtières
+    (`BaselineTilemapExporter.cs`).]**
+    [Décision de Charles, 04.10.2026 : la `tile_map.png` de la Saison, peinte par script
+    (`terrain_wh1_vers_terry.py`), est laissée telle quelle (côtes C1 à C4 validées en jeu) ; l'export CAIME est la
+    règle pour toute carte neuve (Expanded comprise).]
 
 64. `[evitable]` **Un generateur qui supprime l'ancien projet avant d'avoir tout calcule.**
     `terrain_wh1_vers_terry.py` sauvegardait puis effacait le projet Terry, puis calculait les objets ;
@@ -1305,6 +1435,9 @@ codée dans `02-scripts\caime_layers.py` ou dans le verbe `sync-names`.
     logique : mer visuelle = `sea_coast` et `sea_ocean` ; les lacs sont de la terre et leurs plans d'eau deviennent des
     polygones d'eau de WH3 (`ECPolygonMesh`, comme les 361 des Empires), a leur hauteur de WH1.** Code :
     `terrain_wh1_vers_terry.SOLS_MER`, `props_wh1_vers_layers.entite_eau`.
+    [Remplacée le 04.10.2026 (méthode du 27.09, annotation de n° 63 et § C) : `tile_map.png` vient de l'export CAIME,
+    jamais peinte. Décision de Charles, 04.10 : la Saison garde sa `tile_map.png` peinte (validée en jeu) ; export
+    CAIME pour toute carte neuve. La partie « lacs = polygones d'eau à leur hauteur de WH1 » reste valable.]
 
 86. `[evitable]` **Tracer la mer du visuel d'apres la carte logique, puis relever la terre qui se noyait.** La mer
     logique (hex `sea_coast` / `sea_ocean`) s'arrete un hex trop tot tout le long de la cote : cette bande, de l'eau
@@ -1314,6 +1447,9 @@ codée dans `02-scripts\caime_layers.py` ou dans le verbe `sync-names`.
     WH1 n'est sous 0 que sur 440 px. -> **Regle : la mer du visuel est celle de WH1 (hex a plus de moitie sous ses
     maillages de mer), sauf les emplacements principaux de ville ; la terre garde ses hauteurs de WH1 (les rares
     pixels sous 0 remontes a 3 cm).** Code : `terrain_wh1_vers_terry.mer_de_wh1`.
+    [Remplacée le 04.10.2026 (méthode du 27.09) : `tile_map.png` exportée de CAIME, jamais peinte. Décision de
+    Charles, 04.10 : la Saison garde sa `tile_map.png` peinte (côtes validées en jeu) ; export CAIME pour toute carte
+    neuve.]
 
 87. `[decouverte]` **Les tuiles de cote de WH3 ne couvrent qu'une bande reguliere.** Passer a la mer de WH1 (erreur
     86) a donne 28 « Failed to find tile » dans BOB (`TileSet_cliff_gen`, `TileSet_sea_coast`), donc des trous dans
@@ -1324,6 +1460,9 @@ codée dans `02-scripts\caime_layers.py` ou dans le verbe `sync-names`.
     visuel passe par `regulariser_cote` ; le generateur s'arrete s'il reste un hex de bande a plus de trois voisins
     de mer ou a deux bras de mer.** Code : `terrain_wh1_vers_terry.defaut_de_cote`, `regulariser_cote` ; GUIDE § 15,
     n° 97.
+    [Remplacée le 04.10.2026 (méthode du 27.09) : pour une carte neuve, `tile_map.png` vient de l'export CAIME, jamais
+    peinte ni régularisée. Décision de Charles, 04.10 : la chaîne de la Saison (`regulariser_cote`, `tile_map.png`
+    écrite par `terrain_wh1_vers_terry.py`) est laissée telle quelle, ses côtes étant validées en jeu.]
 
 88. `[evitable]` **Ramener Terry au premier plan avec `open_application`.** L'outil de controle de l'ecran ne
     retrouve pas la fenetre de Terry pendant qu'il charge un projet : il lance un **second** `tweak.modder.x64.exe`
@@ -1466,6 +1605,11 @@ codée dans `02-scripts\caime_layers.py` ou dans le verbe `sync-names`.
   terre) de types de cote : `cliff_gen` (253, 3, 1), `sea_coast` (255, 255, 0), et quelques blocs
   `cliff_gen_ends` (84, 230, 84). Notre carte n'en avait aucun : cote en escalier d'hex (« en pixels »,
   Charles). WH1 alternait falaises (`cliff_custom`) et rivages (`sea_coast`) le long de la meme cote.
+  **[Corrigée le 27.09.2026 : ces couleurs décrivent l'ancien relevé ; exporter `tile_map.png`
+  depuis CAIME, sans la peindre ni la retoucher. Pour WH3, CAIME place `cliff_gen` sur la terre
+  côtière hors plage, `sea_coast` sur les plages, `cliff_gen_ends` aux transitions ; les rivières
+  sont en `generic` et leurs embouchures en plage ; les routes priment sur les plages
+  (`BaselineTilemapExporter.cs`).]**
 - **La marche terre / fond marin est la norme** : aux Empires, terre au bord de la mer a 0,64 (mediane), fond a
   -0,39 ; WH1 aussi (terre 0,29, fond -0,46). C'est le trace de la cote qui fait la difference.
 - **Terry copie et colle sa camera** : `camv3;oeil x;y;z;cible x;y;z` en coordonnees du monde (commandes
@@ -1519,6 +1663,12 @@ n° 85 a 87)
     de WH3 ; mer visuelle = maillages de mer de WH1 au pixel ; une seule surface ecrite dans `height` et `sea_height`.**
     Code : `terrain_wh1_vers_terry.COTE_WH1`, `montagnes_wh1.FAMILLES` (+ `cliff_custom`) ; GUIDE § 15, n° 104.
     **[Remplacée par les erreurs 113 puis 155 : deux surfaces ; `sea_height` sous 0 partout.]** [25.09.2026, ménage]
+    **[Corrigée le 27.09.2026 : `sea_height` doit rester sous 0 en mer pour ne pas masquer les
+    maillages d'eau ; sous la terre, sa valeur ne change rien (ChaosRobie).]**
+    [Partie « falaises » remplacée le 04.10.2026 par n° 223 : jamais de falaise sur le trait de côte
+    (`FALAISES_DE_COTE = False`) ; les 233 `cliff_custom` de WH1 ne se reposent pas sur la côte. Mer visuelle : pour
+    une carte neuve, `tile_map.png` exportée de CAIME (méthode du 27.09) ; la Saison garde la sienne (décision de
+    Charles, 04.10).]
 
 103. `[evitable]` (session « IA et modding 3D », 23.09.2026, 00 h 46) **Livrer dans `scripts-campagne` un `required.lua` qui
     chargeait des fichiers pas encore ecrits.** Remis aussitot ; le pack de 00 h 39 etait anterieur. -> **Regle :
@@ -1548,6 +1698,8 @@ n° 85 a 87)
     `_base_colour` (le `_diffuse`, en-tete DX10 sRGB) et un `_material_map` a la recette de CA.** Code :
     `fichiers_wh1.Relocateur._pbr_glace` (3 jeux de glace), `decalques_wh1.en_dx10_couleur`, `carte_materiau_rg` ; GUIDE
     n° 113.
+    [Recette remplacée le 04.10.2026 par n° 126 (métal = 1,5 × spéculaire si spéculaire et brillance ≥ 90, sinon 0)
+    puis n° 202 (le canal R est lu comme du métal ; glace : `METAL_GLACE = 14`).]
 
 107. `[evitable]` **Annoncer un pack a Charles sans l'avoir demarre.** Pack de 02 h 24 : le jeu se fermait tout seul
     8 s apres le lancement (« crash en lançant le jeu », Charles, 02 h 26), sans vidage, sans message, sans evenement
@@ -1560,6 +1712,9 @@ n° 85 a 87)
     tenir 45 s). Une fermeture sans vidage se diagnostique par un point d'arret sur `KERNELBASE!TerminateProcess` et
     `dpa` / `dpu` sur la pile. Une table de propriete de contenu (`*ownership*`) n'entre pas dans un pack de mod.** Code :
     `build_pack.TABLES_EXCLUES` (et retrait de la table si un pack precedent la porte).
+    [Précisée le 04.10.2026 par n° 268 (rechute) et n° 329 : jamais une `*_ownership_content_pack_junctions` pour une
+    clé à nous ; les verrous des seigneurs passent par les jonctions de faction de CA. La règle de l'essai de démarrage
+    reste entière.]
 
 108. `[evitable]` **Piloter l'ecran pendant que Charles se sert de l'ordinateur.** 23.09.2026, 02 h 45 : je placais la
     camera de Terry (clics sur le menu View, F10) pendant que Charles travaillait (Edge est passe devant au milieu d'une
@@ -1582,6 +1737,8 @@ n° 85 a 87)
     camera et dans trois regions ; `eclairage_wh1.ZONES_CYLINDRES = False` ; `build_pack` reecrit la collection a chaque
     fois et refuse une zone quand elles sont retirees.**
     **[État des interrupteurs remplacé (clairières rallumées le 24.09, zones éteintes puis Winterheart seule à la manière de CA le 25.09 : erreur 251, `eclairage_wh1.ZONES_REMISES`). La règle de livraison (captures en jeu à trois hauteurs) tient.]** [25.09.2026, ménage]
+    [Précisée le 04.10.2026 (conflit avec n° 277, 285, 286) : les captures en jeu sont faites par Charles, ou par une
+    voie prouvée sans pilotage ; jamais de capture du bureau, et `take_screenshot` du mod MCP fige le jeu.]
 
 110. `[evitable]` (session « IA et modding 3D », donnees ; analyse du vidage par la session de construction)
     **Ajouter nos lignes a une table de liens de CA qui garde celles des Empires.** Essai de Charles, 02 h 53 : plantage au
@@ -1597,6 +1754,8 @@ n° 85 a 87)
     `da` sur les chaines citees) pour nommer l'objet nul. Suite demandee par Charles (« il y a pas moyen de faire
     coexister toutes les campagnes ??? ») : cles a nous (ressource et rituel copies de ceux de CA), tables de CA
     intactes (en cours, session « IA et modding 3D »).
+    [Moyen « remplacer la table de CA » remplacé le 04.10.2026 par n° 154 et n° 254 et la décision de Charles
+    (`CLAUDE.md` § 2) : clés à nous, tables de CA intactes, jamais un fichier à nous à un chemin que CA cite.]
 
 111. `[evitable]` **Declarer disparus de WH3 des emetteurs d'effets cherches en ASCII dans des fichiers UTF-16.** Revue
     de 01 h : « six emetteurs de campagne de WH1 retires des bibliotheques de WH3 » (GUIDE n° 109). L'agent de recherche
@@ -1622,6 +1781,8 @@ n° 85 a 87)
     d'une carte de BOB, mesurer celle de CA sur la meme couche (`height` / `sea_height` des Empires) ; verifier en JEU,
     pas dans Terry, tout ce qui touche a l'eau. Code : `terrain_wh1_vers_terry.NIVEAU_EAU`, `SOUS_TERRE_MER`.**
     **[Corrigée par l'erreur 155 : vrai seulement dans les marges hors jeu ; sur la mer jouable, `height` n'est pas la surface ; le niveau de l'eau est 0.]** [25.09.2026, ménage]
+    **[Corrigée le 27.09.2026 : dans WH3, l'eau visible vient des maillages posés ; sous la terre,
+    il n'y a pas de tuile de fond marin et la valeur de `sea_height` ne change rien (ChaosRobie).]**
 
 114. `[evitable]` **Croire le jeu sur la foi du fichier compile.** 22.09.2026 : les chemins des textures de WH1 ecrits
     dans `global_map\texture_arrays.xml` (`textures_sol_wh1`) ; « Terry ne la lit pas, le jeu si », jamais verifie en
@@ -1631,6 +1792,8 @@ n° 85 a 87)
     parait clairsemee. -> **Regle : un effet suppose d'un fichier compile se prouve sur une capture EN JEU (couleur
     mesuree) avant d'etre annonce. Code : `textures_sol_wh1.EQUIVALENTS_CA` (groupe de CA le plus proche en couleur et en
     nature ; `CHEMINS_WH1 = False`).**
+    [Moyen remplacé le 04.10.2026 par n° 179 (groupes `wh1_*` déclarés) puis n° 341 (catalogue séparé des sols,
+    `textures_sol_wh1.CATALOGUE_SEPARE`, validé en jeu par Charles le 25.09). La règle « prouver en jeu » reste.]
 
 115. `[evitable]` **Laisser la variante BASE des arbres de WH1 dans Athel Loren.** Charles, captures cote a cote : « tu
     as ajoute beaucoup de pins ; dans WH1 il n'y a pas de pins ». Le modele d'un arbre suit la culture du proprietaire
@@ -1652,6 +1815,8 @@ n° 85 a 87)
     -> **Regle : un defaut de rendu explique par une regle du moteur se corrige pour TOUS les fichiers que la regle
     touche, et le bilan le compte. Code : `fichiers_wh1.Relocateur.PBR_WH1` (tout `_diffuse` de WH1 qui a son
     `_specular` et son `_gloss_map`, sauf `_base_colour` deja fourni ou present chez CA).**
+    [Recette (R = spéculaire) remplacée le 04.10.2026 par n° 126 puis n° 202 (R lu comme du métal). La règle « corriger
+    tous les fichiers que la règle touche » reste.]
     Au passage (a verifier en jeu) : les rubans de riviere et les plans d'eau des lacs ont le meme materiau que chez CA,
     mais ne se voient pas en jeu (deja a 00 h 22, avant la cote de WH1) ; Terry les montrait : l'eau se verifie en jeu.
 
@@ -1739,6 +1904,8 @@ n° 85 a 87)
     les objets que CA a convertis lui-meme. Code : `Relocateur._metal` (metal = 1,5 x speculaire si speculaire ET
     brillance >= 90, sinon 0 ; glace : speculaire), `_carte_pixels` (512 x 512 au plus, BC7, point par point),
     `_couleur_metal` (couleur de base d'un metal = son speculaire). L'or sort identique a celui de CA (R 216, G 77).**
+    [Précisée le 04.10.2026 (conflit avec n° 202) : d'abord le shader de WH3 qui lit le fichier, puis contrôle sur les
+    conversions de CA des MÊMES objets ; pour la glace, n° 202 l'emporte (`METAL_GLACE = 14`).]
 
 127. `[evitable]` **Recopier dans le pack des tables de depart des colonnes que le pack laisse vides.** 23.09.2026,
     13 h 05 : la generation du startpos s'arretait apres le chargement des scripts, sans vidage (`no_clean_exit`, 75 a
@@ -1944,6 +2111,9 @@ n° 85 a 87)
     (il remettrait des lignes retirees depuis). A surveiller, meme motif : `cai_region_hint_area_athel_loren`,
     `wh3_wood_elf_forests`, `cai_region_hint_area_bretonnia`, `cai_region_hint_area_dwarf_empire`,
     `cai_region_hint_sub_area_western_mountains`, `wh3_main_transfer_settlement_excluded_regions`.
+    [Préfixe remplacé le 04.10.2026 par la décision de Charles du 25.09 (`CLAUDE.md` § 2) et n° 272 : `saison_` pour
+    tout ce que nous créons, `wh_dlc05_` seulement pour ce qui vient de WH1. La règle « jamais une de nos régions dans
+    un groupe de CA » reste.]
 
 155. `[evitable]` (session « Rendu de la carte », chaines 2 et 3 du 23.09.2026, 16 h 43 et 18 h 41 ; cause PROBABLE,
     a confirmer en jeu avec le terrain de la chaine 4) **Fond marin (`sea_height`) mis a la hauteur de la terre pres des
@@ -1958,6 +2128,10 @@ n° 85 a 87)
     `tile_list.bin`.** Code : `terrain_wh1_vers_terry.FOND_SOUS_ZERO`, `FOND_MAX`. Reporte dans `GUIDE.md` § 15, n° 137.
     Correction de l'erreur 113 : « height vaut 0 en mediane sur la mer » n'est vrai que dans les marges hors jeu ; sur
     la mer jouable des Empires, height vaut 0,9 en mediane et n'est pas la surface dessinee (le niveau de l'eau est 0).
+    **[Corrigée le 27.09.2026 : `sea_height` doit rester sous 0 seulement là où il y a de la mer ;
+    s'il dépasse les plans d'eau, il les masque. Sous la terre, il n'y a pas de tuile de fond marin
+    et sa valeur ne change rien. Dans WH3, toute l'eau vient des maillages posés (ChaosRobie).
+    `FOND_SOUS_ZERO` peut rester tel quel.]**
 
 156. `[evitable]` (session « IA et modding 3D », lot 23 ; attrape par l'essai de demarrage du startpos, 23.09.2026,
     20 h 25) **Groupe de regions neuf absent du pack** : le lot 23 tenait l'entree `region_groups` du lot 1 pour un
@@ -1968,6 +2142,8 @@ n° 85 a 87)
     pack ou dans le jeu (controle a coder, propose par la session « IA et modding 3D »).** La regle de l'erreur 107
     (essai de demarrage avant toute annonce) a joue son role.
     **[Codé : `02-scripts\verifier_groupes.py`, à lancer avant le pack (`CLAUDE.md` § 5).]** [25.09.2026, ménage]
+    [Préfixe `wh_dlc05_saison_` remplacé le 04.10.2026 par `saison_` (décision de Charles du 25.09, `CLAUDE.md` § 2 ;
+    n° 272).]
 
 Session « Extension carte Bretonnie est » (23.09.2026 ; detail : `05-journal\2026-09-23-extension-carte\carte-papier-v2.md`
 § 9 ; rien de cette session ne touche le pack, le startpos, le terrain ni le jeu) :
@@ -2003,6 +2179,7 @@ Session « Rendu de la carte » (23.09.2026, soir) :
     (`ECPolygonMesh` au materiau d'eau de la carte, a y = 0), comme les Empires (997 plans) ; le relief seul, meme avec
     le fond sous 0 (erreur 155), ne donne pas d'eau. Notre projet n'en avait que pour les 26 etangs. Code :
     `terrain_wh1_vers_terry.polygones_mer`, calque `mer_wh1`. Reporte dans `GUIDE.md` § 15, n° 138.
+    [Confirmée le 27.09.2026 (ChaosRobie : dans WH3, toute l'eau vient des maillages posés) et par n° 318.]
 
 164. `[decouverte]` **BOB ecarte un `ECPolygonMesh` dont le pivot est hors de la carte**, avec le seul avertissement
     « Failed to find valid quadtree node for Polygon Mesh entity » ; l'entite manque alors dans `global_props.bin`.
@@ -2056,6 +2233,9 @@ Session « Extension carte Bretonnie est » (23.09.2026, soiree ; rien ne touche
     23 h 33 avec le retour des ports a leur hex de WH1 (`02-scripts\placer_ports_wh1.py`, demande de Charles :
     Bordeleaux (35,255), Brionne (23,183), Mousillon (53,302) ; map_data.esf les place bien, sans position 0xFFFF,
     malgre 3 hex de port tous en mer).
+    [Ports : règle remplacée le 04.10.2026 par n° 337 (chez CA, deux hex de port en mer et un sur la plage ; règle
+    pour Expanded et toute carte neuve). La Saison garde ses ports [mer, mer, mer], validés en jeu (décision de
+    Charles, 04.10). La règle des couches (copier les `.hex_layer` dans `couches-slots`) reste.]
 
 175. `[evitable]` (session « Rendu de la carte » et construction, 23.09.2026, 23 h 53) **Chaine du terrain tuee par
     manque de memoire** (`_ArrayMemoryError` dans `rivieres_wh1.composantes`) : deux diagnostics sur toute la carte
@@ -2076,6 +2256,9 @@ Session « Extension carte Bretonnie est » (23.09.2026, soiree ; rien ne touche
     redemarrage des sessions ; le jeu, lance a la main, demarrait normalement ; la generation suivante a marche. ->
     **Regle : prevenir Charles avant TOUT lancement du jeu, meme de diagnostic ; une generation qui sort en quelques
     secondes sans rien ecrire se relance une fois (etat passager de Steam) avant d'enqueter.**
+    [Précisée le 04.10.2026 par n° 329 et n° 331 : une fermeture silencieuse en 9 à 13 s vient aussi des données (une
+    jonction `*_ownership_content_pack_junctions` sur une clé à nous, `campaigns.mask` non vide) ; après une relance
+    sans effet, chercher d'abord ownership et `mask`.]
 
 178. `[evitable]` (construction, 23-24.09.2026 ; releve par la session « IA et modding 3D » a 01 h) **Parties de Charles
     jouees avec le pack d'essai** : un essai arrete de force (TaskStop) ne fait pas son menage ; `user.script.txt`
@@ -2095,6 +2278,9 @@ Session « Rendu de la carte », nuit du 23 au 24.09.2026 (la panne de memoire d
     gardes dans `remplacements_base_variantes`, exception de `build_pack`) ; la refaire a chaque mise a jour du jeu (la
     copie masque celle de CA tant que le mod est actif).** La base porte aussi, par carte,
     `campaign_texture_terrain/campaigns/<carte>` -> `water_plane_material`. Reporte au GUIDE § 15, n° 139.
+    [Moyen remplacé le 04.10.2026 par n° 341 (catalogue séparé, mise à jour 1 du 25.09 ; `CATALOGUE_SEPARE = True`) et
+    n° 254 : aucun fichier de CA remplacé, plus de copie de la base au chemin de CA. Le fait (groupe non déclaré = dernière
+    texture du tableau) reste.]
 
 180. `[evitable]` **Montagnes drapees sans leurs normales** (`montagnes_wh1.draper`, 22.09) : sommets deplaces sans
     transformer normales ni tangentes ; ecart median des normales a la surface 9,8° (WH1 : 2,9°), eclairage faux. ->
@@ -2124,6 +2310,8 @@ Session « Rendu de la carte », nuit du 23 au 24.09.2026 (la panne de memoire d
     (brouillons seulement). -> **Regle durcie : tout code Python de plus d'une ligne, meme un controle, passe par un
     fichier ecrit avec l'outil d'ecriture ; jamais de heredoc, jamais de `python -c` contenant des antislashs ou des
     chemins Windows.**
+    [Remplacée le 04.10.2026 par n° 267 (avec 176, 199) : tout code Python passe par un fichier, MÊME d'une ligne ;
+    c'est ce qu'applique le garde `garde_commandes.py` (n° 212).]
 
 186. `[evitable]` (construction, 24.09.2026, 01 h 42) **Conclusion tiree sur 5 essais** : « sans les montagnes de WH1,
     0 plantage sur 5 » annonce a Charles comme la cause trouvee ; les 4 parties suivantes ont plante 3 fois (3 sur 9 au
@@ -2347,6 +2535,9 @@ marquée ‡, non relue par nous).]** [25.09.2026, ménage]
     de l'audit des vampires etait fausse. -> **Regle : chacun de nos ecouteurs passe par une fonction commune qui
     protege et journalise (`pcall`), sans exception.** Mesure du meme audit : nos scripts coutent quelques
     millisecondes par round ; les tours de 30 a 40 s viennent du moteur (IA de campagne, chemins).
+    [Moyen précisé le 04.10.2026 par n° 231 et n° 252 : la règle unique est la protection CENTRALE de
+    `core.event_callback` dans `required.lua`, avec journal nommé (« ecouteur [clé] en erreur ») ; une protection par
+    écouteur peut coexister, elle n'est plus exigée.]
 
 214. `[evitable]` (session « Illustrations », 24.09.2026 vers 19 h 45, juste avant la pose du crochet ; signale par elle)
     **Deux rechutes, lecture seule** : un `sed` a antislash sous Git Bash (« unterminated s command », remplace par
@@ -2598,6 +2789,8 @@ marquée ‡, non relue par nous).]** [25.09.2026, ménage]
     hauteurs, erreur 109).** Code : `eclairage_wh1.ZONES_FACON_CA`, `ZONES_REMISES` (Winterheart seule, LUT
     `campaign_chaos_kislev`, choix de Charles sur conseil, 02 h 45). Rend caduque, pour les zones, la consigne « exactement
     comme dans WH1 » du 24.09 à 05 h 45. GUIDE § 15 n° 144.
+    [Précisée le 04.10.2026 (conflit avec n° 277, 285, 286) : les captures en jeu sont faites par Charles, ou par une
+    voie prouvée sans pilotage ; jamais de capture du bureau.]
 
 252. `[decouverte]` (construction et session « IA et modding 3D », 25.09.2026, 02 h 15 - 02 h 42) **Les fautifs de
     `FactionTurnStart`** : une fois `core.event_callback` protégé (erreur 231), le journal a nommé trois écouteurs de CA
@@ -2667,6 +2860,9 @@ marquée ‡, non relue par nous).]** [25.09.2026, ménage]
     `ASSEMBLAGES_HORS_MONTAGNES`, `RUINES_SUR_LEURS_DALLES`), coupés pour la chaîne 16 (accord de Charles). -> **Règle :
     trois essais automatiques réussis ne prouvent pas une correction quand l'essai ne joue pas comme le joueur (intro et
     caméra sautées) ; un plantage intermittent se juge sur des parties jouées comme Charles.**
+    [Piste des 3 814 objets reposés remplacée le 04.10.2026 par n° 327 : cause désignée = montagnes et falaises de WH1
+    posées au matériau 49 (correctif : matériau 68 ; 0 plantage sur 15 parties). La règle « parties jouées comme
+    Charles » reste.]
 
 268. `[découverte]` (construction, 25.09.2026, 17 h 55 ; demande de Charles : le verrou du DLC visible avant la partie)
     **Une zone jouable rattachée à un paquet de DLC est refusée par le jeu, même avec UNE seule ligne** :
@@ -2776,12 +2972,16 @@ marquée ‡, non relue par nous).]** [25.09.2026, ménage]
     garde chaque session sans délai, avec la base du jeu et les packs OUVERTS (`/sessions`) ; un DELETE MCP est accepté
     mais ne libère rien (`rpfm_mcp.fermer`, essai de 20 h 50). À traiter après la bêta (une seule session partagée, ou
     relance du serveur par la chaîne).
+    [Décision de Charles, 04.10.2026 : RPFM 5.1.1 (fuite de mémoire des sessions corrigée) à essayer sur une copie ; le
+    pack de la Saison doit en sortir identique avant adoption.]
 276. `[découverte]` (session « Extension », 25.09.2026, 21 h 15 ; concerne le Workshop) **Une « mise à jour » depuis le
     lanceur de WH3 remet le titre de la page Workshop au nom du .pack et VIDE sa description** ; la visibilité reste. Le
     lanceur n'offre le bouton d'envoi que pour un pack ACTIVÉ (penser à le désactiver ensuite). -> **Règle : après
     chaque mise à jour par le lanceur, remettre titre et description (textes : scratchpad de la session « Extension »,
     `est\workshop\description_*_en.txt`) ; la vignette d'Expanded vient de
     `05-journal\2026-09-23-extension-carte\vignette-lanceur\vignette_expanded_fr_512.png` (`pack_demo_expanded.py`).**
+    [Remplacée le 04.10.2026 par n° 306, 310 et 339 : UNE modification par objet (pack et textes dans le même passage),
+    puis attendre la levée ; un envoi par le lanceur à la fois, `launcher.log` relu ; erreur 25 : ne rien renvoyer.]
 277. `[évitable]` (construction, 25.09.2026, 21 h 48) **Capture d'écran « témoin » qui ne montre pas le jeu** : pour
     comparer les sols avant et après le catalogue séparé, `ImageGrab` a capturé l'écran au tour 1 ; les deux images
     (`sol_avant.png`, `sol_apres.png`) montrent la fenêtre de Claude, le jeu étant derrière. Le témoin de 21 h 41 a été
@@ -2795,6 +2995,460 @@ marquée ‡, non relue par nous).]** [25.09.2026, ménage]
     -> **Règle : ce qui est en ligne se vérifie avant de l'écrire (taille affichée comparée aux packs locaux, liste des
     objets) ; un pack = un objet Workshop.** Suite : décision de Charles du 25.09, 23 h : pack principal en anglais,
     traduction française en objet à part (`build_pack.PACK_FR`, `injecter_textes.LANGUE_PRINCIPALE`).
+279. `[évitable]` (construction, 25.09.2026, 22 h 47) **Pilotage d'écran accordé pendant un essai en jeu** : j'ai répondu
+    « vas-y » à la session « Extension », qui voulait mettre Steam au premier plan, en raisonnant que le pilote clique par
+    Lua et non à la souris. L'essai de la Fée a pris 116 erreurs des scripts d'interface de CA (« is not a ui
+    component », `UIDestroyed`), puis le jeu s'est fermé ; elle avait passé 10 tours à 0 erreur sur le même pack.
+    Probable perte de focus : le jeu en arrière-plan détruit ou recrée son interface. -> **Règle : aucun pilotage
+    d'écran, aucune fenêtre mise au premier plan pendant un essai en jeu ; attendre « jeu fermé ».** (Non reproduit :
+    essai arrêté sur décision de Charles.)
+280. `[découverte]` (session « Extension », 25.09.2026, 01 h 20 à son heure) **Le lanceur ne liste un pack publié que si
+    l'on est abonné à son objet** ; sinon il disparaît de « Vos mods ». Mise à jour : s'abonner, bouton dossier ->
+    « MISE À JOUR », puis se désabonner (sinon la copie du Workshop double celle de `data\`). Un objet neuf abonne son
+    auteur tout seul. Reporté au GUIDE § 15 n° 152.
+281. `[évitable]` (essai WH3 MCP, 27.09.2026) **Première commande JSON écrite avec un BOM UTF-8.** Le
+    `json.decode` du mod l'a refusée ; la même commande sans BOM a répondu `pong=true`. -> **Règle : écrire
+    `wh3_mcp_command.json` en UTF-8 sans BOM et contrôler les premiers octets avant l'envoi ; déplacer le résultat
+    précédent avant une nouvelle commande.**
+282. `[évitable]` (diagnostic de Gisoreux, 27.09.2026) **Avoir conclu trop vite à l'absence de défaut visible.** Les
+    tables et MCP montrent un bâtiment principal dans les trois régions, mais la capture du joueur et l'essai avec
+    Mousillon montrent des cases vides dans le panneau. La cause de cet écart reste à établir. -> **Règle : pour un
+    défaut d'interface, comparer le panneau et l'état du jeu dans la même partie ; ne pas déduire l'affichage des seules
+    tables ou de `slot_list()`.**
+    **[Corrigée le 27.09.2026 : l'essai a établi que la découverte et la propriété modifient l'affichage
+    des cases, tandis que les trois bâtiments principaux sont présents dans la partie. Le gel reste
+    à diagnostiquer avec la sauvegarde et le `script_log` du joueur.]**
+283. `[évitable]` (essai WH3 MCP, 27.09.2026) **Avoir passé une durée nulle à
+    `cm:scroll_camera_from_current`.** Le `script_log` a signalé deux erreurs, alors que le MCP répondait
+    `ok` ; la caméra n'a pas bougé. -> **Règle : utiliser une durée positive et contrôler le `script_log`
+    même si `eval` répond `ok`.**
+284. `[évitable]` (diagnostic de Gisoreux, 27.09.2026) **Avoir relancé le jeu
+    après que Charles a demandé de chercher dans le pack.** L'autorisation
+    antérieure d'essayer le jeu ne remplaçait pas cette consigne plus récente.
+    Le jeu a été arrêté et `user.script.txt` remis à l'identique. ->
+    **Règle : suivre la consigne la plus récente ; pour un diagnostic demandé
+    dans le pack, rester en lecture seule et demander un nouvel accord avant
+    tout essai en jeu.**
+
+285. `[découverte]` (diagnostic de Gisoreux, 02.10.2026, mod MCP) **Trois faux gels et un vrai piège du mod MCP.**
+    (1) `take_screenshot` fige le jeu plus de 3 minutes (« ne répond pas », CPU arrêté) et laisse un TGA tronqué, noir :
+    ne jamais l'envoyer ; arrêt forcé du jeu nécessaire. (2) Un `params` vide `{}` est lu comme un nombre par le mod
+    (`attempt to index local 'params'`) : toujours passer au moins une clé. (3) `soak_turns` bloque au tour 5 : le tutoriel
+    vampire de CA (`in_vmp_confederation_text_pointer`, puis `in_vmp_bloodlines_text_pointer`) verrouille l'interface
+    (`ui_locked=true`) et seul son bouton `text_pointer_tp_vmp_confederation > button_parent > button_close` la libère
+    (`SimulateLClick`) ; au tour 15, le pilote laisse le panneau `diplomacy_dropdown` ouvert pour le dilemme CA
+    `wh_main_all_foolish_vainglory` : la fin de tour ne part pas tant qu'on ne l'a pas fermé (`close_panel
+    {"panel":"diplomacy"}`). Ces blocages ne viennent pas de notre pack. -> **Règle : avant de conclure à un gel du jeu,
+    lire `ui_locked`, les panneaux ouverts (`get_situation`) et le `script_log` ; piles de tous les fils par `cdb -pv`
+    (fil principal en `PeekMessage` = le jeu tourne). Reporté au GUIDE § 15 n° 154.**
+286. `[évitable]` (diagnostic de Gisoreux, 02.10.2026) **Capture du bureau par `ImageGrab` pour voir le jeu** : elle a montré
+    la fenêtre de Claude et la barre latérale de Charles, pas le jeu (rechute de 277). -> **Règle : pas de capture du
+    bureau ; pour voir un panneau, demander une capture à Charles ou lire l'état par script (`eval`, `list_ui`).**
+
+287. `[découverte]` (passe de test des dix seigneurs, 03.10.2026) **`string.find(s, motif, 1, true)` (drapeau « texte brut »)
+    rend nil à tort puis corrompt la bibliothèque de chaînes de TOUT le processus** sur le jeu 9.0.2 : ensuite
+    `string.len('<706.8s>')` rend la chaîne elle-même et chaque `out()` de CA échoue (`lib_campaign_manager.lua:423 :
+    attempt to perform arithmetic on a string value`), puis le moteur plante (déréférencement nul dans le Lua natif,
+    `Warhammer3+0x244cfdf`, déterministe). Notre `saison_chroniques.lua:904` (`retirer_armee`, fin de chaque étape de
+    chronique et des Échos) l'appelait : Albéric plante au tour 27, quand l'étape 1 expire. Preuve par expérience contrôlée
+    sur un jeu neuf. Le manuel du mod MCP de WH3 le dit (§ 9). Même appel dans le script du pilote d'essai
+    (`saison_essai_auto.lua:71`). -> **Règle : jamais `find`/`match` avec le 4e argument `true` dans un script du jeu ni
+    dans un script d'essai ; comparer des éléments par `string.gmatch` ou `string.sub`. À coder : verifier_lua.py doit
+    refuser ce motif (non fait au 03.10).** Corrections non appliquées (domaine de la session « IA et modding 3D »).
+    [Codée : n° 292 (`verifier_lua.INTERDITS`). Annoté le 04.10.2026.]
+288. `[découverte]` (passe de test, 03.10.2026) **Le pack d'essai prioritaire (`!!saison_essai_auto.pack`, `--prioritaire`) n'a
+    pas remplacé `saison_chroniques.lua`** : la pile de l'erreur citait les mêmes lignes qu'avec la version d'origine.
+    -> **Règle : pour tester un correctif de script, vérifier d'abord par une ligne `out(...)` posée dans le correctif
+    qu'il est bien chargé ; sinon reconstruire le pack.**
+289. `[évitable]` (passe de test, 03.10.2026) **Une commande lancée dans le même appel qu'un démarrage de jeu a bloqué
+    l'outil 10 minutes** (le processus du pilote hérite de la sortie redirigée par `| Out-String`). -> **Règle : lancer
+    le démarrage par `Start-Process` avec fichiers de sortie, puis relire le fichier.**
+290. `[découverte]` (construction, 03.10.2026, constat de la session « Expanded map avec vaults ») **Le kit réécrit par
+    une mise à jour le 27.09.2026 à 16 h 48** : `raw_data\db` ne contient plus aucune ligne de la Saison ni d'Expanded
+    (0 ligne `wh_dlc05_` ou `saison_` dans `campaign_map_regions`, `regions`, `campaigns`), comme à la 9.0 (erreur 206,
+    GUIDE § 15 n° 142). Le pack en ligne et ses copies (`05-journal\pack-backups\*maj1-20260925-2355*`) sont intacts.
+    Restauration lancée le 03.10 à 01 h 36 par la session « Lakemen » (`restaurer_lignes_kit.py --apply`, 3 370 lignes,
+    57 tables). -> **Règle (celle de l'erreur 206) : après toute mise à jour du jeu ou du kit, compter nos lignes dans
+    `raw_data\db` AVANT toute construction ; restaurer par les lots idempotents et les sauvegardes de
+    `05-journal\db-backups\`.**
+291. `[évitable]` (construction, 25.09.2026, 23 h 45 ; trouvé le 03.10, voir n° 287) **Erreur du jeu attribuée au pilote
+    d'essai sans preuve** : l'erreur `lib_campaign_manager.lua:423` des essais du Duc et de la Fée a été classée « pilote
+    seulement, sans effet pour les joueurs », parce que seul le pilote avait des minuteurs en temps réel en campagne. La
+    cause était notre `saison_chroniques.lua:904` (n° 287), qui plante la partie d'Albéric au tour 27. -> **Règle : une
+    erreur de script de CA vue en essai est imputée au mod tant qu'on n'a pas trouvé l'appel fautif dans NOS scripts
+    (pile, recherche du motif) ; on cherche avant de conclure.** (Mes n° 281 et 282 du 03.10 réutilisaient des numéros
+    pris : renumérotés 290 et 291, règle « prochain numéro = le plus grand + 1, vérifié ».)
+292. `[évitable]` (session « IA et modding 3D », 23.09.2026 ; trouvé le 03.10, voir n° 287) **Recherche « texte brut »
+    (`find` avec 4e argument vrai) écrite dans `saison_chroniques.lua` (`retirer_armee`)** sans connaître son défaut en
+    9.0.2 ; elle a fait planter Albéric au tour 27. Corrigée par une boucle `string.gmatch` (IA, 03.10) ; le marqueur de
+    la rencontre « Nains » de `saison_foret.lua` passe en (272, 210), le point (272, 209) étant invalide pour le moteur.
+    Le pilote d'essai (`saison_essai_auto.lua:71`) avait le même motif : remplacé par `string.sub(id, 1, 12)`
+    (construction, 03.10 ; à valider par 2 tours sur un pack éprouvé, erreur 239). -> **Règle CODÉE :
+    `verifier_lua.INTERDITS` refuse ce motif dans tout script du jeu et d'essai** (n° 287 : « à coder » fait).
+
+Session « Expanded map avec vaults » (03.10.2026, passage de la grille d'Expanded à 560 × 905 pour les Voûtes ; détail :
+`05-journal\2026-09-23-extension-carte\voutes-2026-10-03\pour-la-construction.md` § 5) :
+293. `[évitable]` **Bruits qui dépendent de la forme de la grille** : 80 rangées ajoutées au sud ont changé tous les champs
+    de bruit de la chaîne de l'Atlas, donc des bois, une île et un relief déjà validés. -> **Règle codée :
+    `geo_extension.stable_au_sud` ; après tout changement de cadre, comparer les grilles à la sauvegarde.**
+294. `[découverte]` **Une table du kit vidée ne lève aucune erreur** : `factions_carte.py` rendait « 0 région tenue »
+    (kit réécrit, n° 290). -> **Règle codée : repli sur un instantané daté, avec un message ; lire le bilan chiffré de
+    chaque étape.**
+295. `[évitable]` **Le lissage des contours coupait les coins du cadre d'une corde** (côte en diagonale à travers le
+    massif). -> **Règle codée : `carte_papier_v2.bords_denses`.**
+296. `[évitable]` **Douze outils d'Expanded portaient le cadre en dur** (825, 250, 507, 1142, 575…), dont les miens
+    (`projet_expanded`, `rivieres_atlas`, `retouches_expanded`). -> **Règle codée : `cadre_expanded.py`, seule source,
+    contrôlée contre `carte_config`.**
+297. `[évitable]` **`villes_expanded` ouvrait toute la terre d'une région neuve** : dans un massif, un passage partout.
+    -> **Règle codée : la haute montagne des Voûtes reste fermée (même seuil que la carte de l'Atlas).**
+298. `[évitable]` **Un fil de connexité tracé tout droit traverse tout ce qui est sur sa colonne** : avec les Voûtes, il
+    perçait le massif. -> **Règle codée : le fil ne traverse que le voile, depuis une case déjà franchissable.**
+299. `[évitable]` (concerne le site) **`images_recit.mjs` rendait toujours `travail\site\`**, même quand la carte d'essai
+    était ailleurs : il aurait refait les images du récit sur l'ancienne carte. -> **Règle codée : il suit `ATLAS_SITE`,
+    comme `page_v2.py`.**
+300. `[évitable]` (même session, § 6 n° 8) **`spec_expanded.py` lancé sans `--lot2`** : `map_spec_expanded.json` est
+    ressortie avec les seules régions de WH1 et a remplacé la bonne en silence ; rattrapé et contrôlé contre la copie du
+    dépôt public. -> **Règle codée : l'Atlas est pris par défaut (`--sans-atlas` pour l'ancien comportement).**
+301. `[évitable]` (même session, § 6 n° 9) **Minicarte d'Expanded : `cv2.remap` avec le bord constant par défaut**
+    dessinait une frange d'encre au bord nord. -> **Règle codée : `BORDER_REPLICATE`.**
+302. `[découverte]` (même session, § 6 n° 10) **La restauration du kit (n° 290) a ramené les onze mers `saison_sea_*` en
+    noir** (0, 0, 0) : la recoloration du 25.09 à 20 h 10 (`maj_couleurs_mers.py`) n'est pas dans la copie restaurée. Sans
+    effet sur la Saison. -> **Règle : après une restauration du kit, repasser aussi les retouches faites hors des lots
+    (`maj_couleurs_mers.py --apply`, sous préavis) et compter ce qu'elles écrivent.** [Réglé le 03.10 à 03 h 19 : 11 mers
+    recolorées avec la déclaration d'Expanded, sauvegarde `db-backups\20261003-031951`.]
+
+Session « Lakemen » (passe de test et restauration du kit, 03.10.2026 ; `05-journal\2026-10-03-passe-test-dix-seigneurs\REPRISE.md`) :
+303. `[évitable]` **Un tube `| Select-Object -First 1` a coupé un script en cours d'écriture** : PowerShell arrête la
+    commande dès la première ligne reçue ; `restaurer_tables_photo.py` s'est interrompu après 10 tables sur 21. -> **Règle :
+    jamais de tube qui tronque la sortie d'un script qui écrit ; sortie dans un fichier, puis lecture du fichier.**
+304. `[évitable]` (construction, 25.09.2026) **`build_pack` écrivait toujours le pack français en place** (`PACK_FR` en
+    dur), même pour un pack candidat construit sous un autre nom ; `injecter_textes` faisait de même par défaut. ->
+    **Règle codée (03.10) : `build_pack.pack_traduction(pack)` et `injecter_textes` (sans `--pack-traduction`) prennent
+    `!<nom>_fr.pack` à côté du pack construit ; seul le pack normal garde `!saison_des_revelations_fr.pack`.**
+305. `[découverte]` **`restaurer_lignes_kit.py` ne prend que la copie la plus récente de chaque table** : les lignes du lot
+    1 (21 tables) n'existaient que dans la photo 8.1 (`03-references\instantane-wh3-8.1\`), et non dans les sauvegardes
+    récentes. -> **Règle : après une restauration, compter les lignes de chaque lot contre sa source ; outil
+    `05-journal\2026-10-03-passe-test-dix-seigneurs\outils-passe\restaurer_tables_photo.py` pour les tables de la photo.**
+    RPFM en 9.0.2 : `update_schemas` et `generate_dependencies_cache` avant tout pack (GUIDE § 15, déjà noté à la 9.0).
+
+Session « Extension » (Workshop et site, 02.10.2026) :
+306. `[découverte]` **Toute modification d'un objet Workshop le soumet à une « vérification automatique de contenus »**
+    qui le masque (page illisible hors compte de l'auteur, liens externes remplacés par « {LIEN SUPPRIMÉ} ») et le
+    VERROUILLE : « MISE À JOUR » du lanceur refusée (`launcher.log` : « error code #15 », le pack monte pourtant à
+    100 %), seconde description refusée (« L'accès a été refusé »). Levée constatée après 1 h 40 (traduction), plus pour
+    la Saison. -> **Règle : une seule modification par objet, puis attendre la levée ; pack et textes dans le même
+    passage ; prévenir que le lien est indisponible pendant ce temps.** Rappel : la mise à jour 1 est en ligne depuis le
+    26.09 (Saison 816,252 Mo = pack de 23 h 55 + vignette ; traduction 37,263 Mo) ; titres anglais remis le 02.10
+    (rechute de l'erreur 276).
+307. `[évitable]` **Edge sans fenêtre laissé en mémoire à chaque capture** : Edge se relance lui-même, `edge.kill()` ne
+    tue que le lanceur ; 82 navigateurs, 1 100 processus, 23 Go, 239 profils temporaires (53 Go) ; Charles a vu son
+    PC ramer. -> **Règle codée : `cdp_outils.mjs` ferme par `Browser.close` puis tue tout msedge de son profil
+    (`travail\fermer_edge.mjs`) ; zéro msedge `--headless` avant de rendre la main ; filet
+    `travail\nettoyer_navigateurs.ps1`. À vérifier : `rendre_png_v2.py` / `v3` (icônes de monuments, `--headless`).**
+
+Session « Expanded map avec vaults » (03.10.2026, suite ; `voutes-2026-10-03\pour-la-construction.md` § 6) :
+308. `[évitable]` (§ 6 n° 11) **Rivières de l'Atlas trouées** : `geo_extension.tracer` coupait le squelette à chaque nœud
+    et écartait les morceaux de moins de 3 points ; au nord de la Bretonnie et au Reikland, rivières en pointillés et sans
+    source. -> **Règle codée : `travail\rivieres_chainees.py` (appelé par `carte_papier_v2.py` : raccords, sources dans
+    la montagne, anneaux et ramilles ôtés) ; 508 bouts deviennent 103 tronçons continus.** (Les lits creusés par
+    `rivieres_atlas.py` dans le relief d'Expanded suivaient ces morceaux : à relancer sur les tronçons chaînés.)
+309. `[évitable]` (§ 6 n° 12) **Bande de mer tirée à la règle au sud-ouest des grilles de l'Atlas** : la marge du bas du
+    relevé est restée en mer quand la Tilée a été ajoutée dessous. -> **Règle codée : `geo_extension` la remet en terre ;
+    contrôle : 479 cases changées, toutes dans la bande ; sauvegarde `travail\sauvegardes\20261003-avant-bande-mer-so\`.**
+310. `[évitable]` (session « Lakemen », 03.10.2026, 15 h 01 ; rechute du n° 306) **Description anglaise de la page de la
+    Saison modifiée sans relire le n° 306**, puis six essais de sauvegarde : page illisible hors compte de l'auteur, liens
+    remplacés par « {LIEN SUPPRIMÉ} », toute nouvelle sauvegarde refusée (« L'accès a été refusé »), lanceur refusé aussi
+    (« error #15 ») jusqu'à la levée (1 h 40 au moins). -> **Règle : relire le n° 306 avant toute modification d'un objet
+    Workshop ; UNE modification par objet (pack et textes dans le même passage) ; jamais d'essais répétés ; pas d'envoi de
+    pack prévu pendant la vérification de Steam.**
+311. `[découverte]` (construction, 03.10.2026) **La 9.0.2 a changé l'empreinte de `bob_terrain.modder.x64.dll`** :
+    `compiler_terrain_bob.py` refusait de tourner (« décalages à relever de nouveau »), bloquant toute compilation de
+    terrain (Saison et Expanded). Relevé en lecture seule (`decalages_bob.py` du scratchpad : import de l'IAT, seul appel
+    indirect, octets attendus) : décalages IDENTIQUES à la 9.0 (0x34099, 0x3409F, 0x341F4). -> **Règle : après toute mise à
+    jour du kit, lancer `compiler_terrain_bob.py --carte <carte>` à blanc ; nouvelle empreinte ajoutée à `VERSIONS_DLL`
+    seulement après relevé des octets.**
+    [Décision de Charles, 04.10.2026 : BOB sous `cdb` (`compiler_terrain_bob.py`, `VERSIONS_DLL`) est gardé et assumé
+    comme méthode de l'atelier, malgré les guides de l'Atlas ; voir la découverte du 21.09 (BOB et SA base).]
+312. `[évitable]` (construction, 25.09.2026 ; trouvé le 03.10) **`textures_sol_wh1.SORTIE` et `SORTIE_BASE` écrits en dur
+    vers le dossier de la Saison** : lancé pour Expanded (`SAISON_CARTE=expanded`), il aurait réécrit les textures de sol
+    et la base de sols qu'embarque le pack de la bêta. -> **Règle codée : sorties par `carte_config.dans_projet(...)` ;
+    contrôle : même chemin qu'avant pour la Saison, dossier d'Expanded pour Expanded. Tout module de la chaîne écrit
+    dans le dossier de SA carte.** (`EMPRISE_MONTAGNES` reste une ENTRÉE de la Saison.)
+
+Session « Expanded map integration et polish » (03.10.2026, 13 h - 16 h ; détail `04-projets\saison-expanded\JOURNAL.md`) :
+313. `[évitable]` **Cases de port d'une ville neuve rattachées à la région de la ville « comme dans WH1 »** : faux, les 9
+    cases de port de la Saison gardent leur région de MER (25 avertissements CAIME). -> **Règle codée : rattachées le
+    temps de `grow_town_slots`, puis rendues à leur mer. Un « comme dans X » se vérifie sur le disque de X.**
+314. `[évitable]` **Rivières du Bois Rêveur reflétées APRÈS la croissance des villes** : étalement en erreur. -> **Règle
+    codée : rivières et côtes se posent avant les villes.**
+315. `[évitable]` **Ouverture d'« infranchissables isolés » sans région** : 2 cases de terre sauvage franchissables. ->
+    **Règle codée : une case ouverte prend la région voisine, sinon reste fermée.**
+316. `[évitable]` **Règle des enclaves qui a ouvert le massif intérieur des Grises de l'est** (+4 800 cases franchissables,
+    vues au compte de connexité 210 440 -> 215 272). -> **Règle codée : une réaffectation de région ne change jamais le
+    passage ; la haute montagne reste fermée ; comparer le nombre de cases franchissables avant et après toute retouche.**
+317. `[évitable]` **Montagnes faites au bruit seul** (« marbre fondu », trois essais avant l'érosion). -> **Règle codée :
+    `relief_alpin` (érosion fluviale avec soulèvement, vallées de jeu en exutoires) ; mesurer un profil chiffré avant de
+    juger à l'œil.**
+318. `[évitable]` **Mers de l'extension sans plans d'eau** (le projet du 25.09 ne recopiait que ceux de WH1 ; le guide
+    Terry : « sans eux, pas d'eau sur la mer »). -> **Règle codée : `eau_expanded` (toutes les mers depuis la grille).**
+319. `[évitable]` **Éther à l'inverse de la convention** (fond +0,02, surface −1,2) : aurait masqué l'eau. Corrigé.
+320. `[évitable]` **Polygones d'eau découpés en pavés tracés séparément** : fente sans eau d'un quart d'hex aux coupures.
+    -> **Règle codée : tracé entier, puis intersection exacte (shapely).**
+321. `[évitable]` **Identifiant de projet Terry recopié de la Saison** (deux projets du kit au même id). Corrigé.
+322. `[évitable]` **Zone jouable d'Expanded restée celle de la Saison décalée** (caméra bornée au cadre de WH1). Corrigée
+    sous préavis (`kit_expanded.py`) : x 0-373,14, z 0-697,06.
+323. `[évitable]` **Rechutes du n° 212** : trois `python -c` composés ou heredocs arrêtés par le garde, un mauvais nom de
+    couche (`layer_ground_types` / `groundtypes`). Le garde a fait son travail.
+324. `[découverte]` **Notre CAIME (fork) exporte Borders en ligne de commande** (`process --borders`, code 0, `borders.pbd`
+    écrit, carte de 560 × 905), alors que la v1.0.1 officielle exige la fenêtre. Reporté au GUIDE § 15 n° 156.
+(N° 11 de la même liste, bande de mer du sud-ouest : voir n° 309 ; règle ajoutée : après un changement de cadre, relire
+la rangée de l'ancien bord.)
+325. `[découverte]` (session « Expanded map integration et polish », 03.10.2026, 16 h 50) **L'action « Campaign Trees »
+    de BOB écrête la coordonnée z des arbres à `world_width` × 2/√3** : elle suppose une carte plus large que haute.
+    Expanded (portrait, 373 × 698 u) : z max 431,45, 54 027 arbres empilés sur les rangées 550-574, aucun au nord ; la
+    Saison aussi est écrêtée (z max 308,35 pour une profondeur de 338,9), sans effet car elle prend la liste de WH1
+    (`liste_wh1`). Rasters et objets de `global_props.bin` sont à leur place. Preuve :
+    `05-journal\2026-09-21-phase-3-terrain\compilations\saison_expanded_map-20261003-163550\`. -> **Règle : ne jamais
+    prendre la liste d'arbres de BOB telle quelle sur une carte plus haute que large ; parade codée pour Expanded,
+    `04-projets\saison-expanded\outils\arbres_expanded.py` (arbres du nord tirés du raster d'arbres, densité et mélange
+    mesurés au sud).** Reporté au GUIDE § 15 n° 158.
+326. `[évitable]` (restauration du kit du 03.10 ; trouvé par la construction à 18 h 45) **La restauration n'a ramené que les
+    lots numérotés et les dernières copies des tables** : 19 lignes de départ de la Saison, écrites par des outils à part
+    (`ajouter_seigneurs_jouables.py`, `seigneur_soeurs.py`, `seigneurs_drycha_kemmler_grom.py`, `declare_campaign.py`),
+    manquaient au kit (7 relations diplomatiques, 10 options de départ des seigneurs, 1 trait, 1 calendrier) ; seul
+    `zz_startpos_db.pack` les portait. Un `synchroniser_pack_startpos.py --supprimer` les aurait EFFACÉES du pack. Vu en
+    préparant la recopie du départ d'Expanded. -> **Règle codée : après une restauration du kit, comparer CHAQUE table
+    start_pos au pack des tables de départ (`synchroniser_pack_startpos.py --table <t>` à blanc : « lignes du pack absentes du
+    kit » doit valoir 0) ; `restaurer_depuis_zz.py` remet les lignes manquantes du pack vers le kit (fait le 03.10, 19 lignes,
+    sauvegarde `db-backups\20261003-185346-restaurer-depuis-zz`).**
+327. `[découverte]` (construction, 03.10.2026) **Nos montagnes et falaises de WH1 posées en objets au matériau 49 des tuiles
+    de terrain** sont la cause désignée du plantage de rendu `+0x1AC3FF2` (GUIDE § 15 n° 150, deux vidages complets).
+    Corrigé : `montagnes_wh1.vers_materiau_68` (format relevé sur `lzd_mountain_03` de CA : en-tête de 2 248 octets, sommets
+    de 32 octets, triangles retournés, masque à nous), `montagnes_materiau_68.py` pour les 2 531 modèles en place ; BOB des
+    seuls `global_props` ; pack d'essai `saison_des_revelations_essai68.pack`, tables identiques au candidat. Série de
+    20 lancements (session « Lakemen », 18 h 39 - 21 h 48) : 15 parties valides (≈ 177 min, 5 à 61 tours), **0 plantage
+    de rendu**, 0 erreur de script, 0 vidage (sans correctif : 1 sur 11 le soir, 4 sur 8 le matin) ; 5 démarrages avortés
+    = course du pilote (jeu relancé avant la fin du précédent ; filet ajouté à `serie.ps1`). Encourageant, pas une preuve
+    (≈ 24 % de chances d'un zéro sur 15 au taux du soir) : ~30 parties pour trancher.
+    [Décision de Charles, 04.10.2026 : les montagnes au matériau 68 sont déjà converties dans le KIT commun ; aucun pack
+    de la Saison n'est reconstruit avant sa décision sur elles (après les avoir vues en jeu).]
+328. `[découverte]` (Expanded, 03.10.2026 ; trouvé par la session « Recherche or et rivières navigables », consigné par la
+    construction) **En agrandissant la carte, la lisière non jouable des mers de WH1 est restée infranchissable** : dans la
+    Saison, l'ancien bord de carte est `Impassable = 0` ; dans Expanded, 434 cases (colonnes 123 à 127, rangées 503 à 645)
+    fermaient le Golfe du Bidouze aux mers de l'Atlas : les ports de Bordeleaux, Brionne et Mousillon donnaient sur une mer
+    close. CAIME n'a aucun contrôle de connexité de la mer, et notre contrôle mêlait terre et mer : rien ne l'a signalé.
+    **Règle : en agrandissant une carte, ouvrir la lisière de mer de l'ancienne et contrôler la MER SEULE, port par port.**
+    Codé : `villes_expanded` (étape 2) et `connexite_expanded` (« mer franchissable : … ports hors de la principale »).
+    GUIDE § 15 n° 159.
+329. `[découverte]` (construction, 04.10.2026, génération du startpos d'Expanded) **Une jonction de propriété de DLC
+    recopiée d'une faction modèle de CA (`faction_ownership_content_pack_junctions`, 16 factions de l'Atlas) fait fermer le
+    jeu sans rien dire en 9 à 13 s** : ni rapport, ni `mp_log`, ni startpos ; même famille que l'erreur 107 (jonction de
+    propriété de la zone jouable). Trouvé par dichotomie sur une copie du pack (`essai_exp.pack`, une table retirée à la
+    fois). **Règle : une table `*_ownership_content_pack_junctions` n'entre jamais dans un pack pour une clé à nous** ; codé :
+    `build_pack.EXCLUES_EXPANDED`, et `factions_atlas.TABLES` ne la recopie plus. GUIDE § 15 n° 160.
+330. `[évitable]` (construction, 04.10.2026) **Le pack d'Expanded embarquait des lignes de gameplay de la Saison qui citent
+    une région absente d'Expanded** (Fort Solstice, repris sous `saison_glanborielle_fort_solstice` : 4 lignes dans
+    `campaign_group_member_criteria_regions` et `regions_to_region_groups_junctions`) : `bad_mods_report.txt` à la
+    génération. **Règle : un pack d'une autre carte ne garde que les lignes dont toutes les régions citées sont sur sa carte** ;
+    codé : `build_pack.regions_absentes()` (lignes écartées et comptées au journal du pack). Et toujours un contrôle de
+    démarrage avant de dire un pack « construit ».
+331. `[découverte]` (construction, 04.10.2026) **`campaigns.mask = 32` sur la campagne d'Expanded fait planter la génération
+    du startpos** (`Warhammer3.exe+0x2A588B2`, lecture de 0x14, 9.0.2) ; toutes les campagnes du kit, dont la Saison, ont un
+    masque vide. Masque vidé dans le pack : startpos et données de l'IA écrits (22 s). Trouvé après avoir écarté par
+    essais les lignes de départ de l'Atlas, les emplacements, les hordes et les personnages (le plantage changeait de place
+    sans disparaître : signe que la cause était ailleurs). **Règle : une ligne `campaigns` neuve se fait sur le gabarit de
+    celle de la Saison, champ par champ ; tout écart se justifie.** Aussi : la génération n'écrit les données de l'IA
+    (`hlp_data.esf`, `spd_data.esf`) que si `data\campaign_maps\<carte>\` existe. GUIDE § 15 n° 161.
+332. `[évitable]` (construction, 04.10.2026 ; vu par Charles en jeu) **Carte de l'écran de sélection d'Expanded déformée** :
+    `campaign_map_playable_areas.preview_width / preview_height` à 256 × 256, valeur écrite EN DUR par `declare_map.py`,
+    alors que le jeu affiche la carte dans ce format (CA : 750 × 600 au rapport de ses mondes ; Saison : 472 × 600 =
+    266,5 / 338,9). **Règle : l'aperçu a le rapport du monde (hauteur 600).** Codé : `declare_map.py` le calcule (ou prend
+    `preview_width` / `preview_height` de la fiche) ; Expanded : 321 × 600 (session Expanded, kit et fiche).
+333. `[découverte]` (construction, 04.10.2026, chargement d'Expanded, 9.0.2) **Un modèle d'emplacement que CA n'emploie
+    jamais pour la culture du maître fait planter le chargement de la partie** (`+0x2602213`, lecture de 0x30, « port,
+    primary » dans la pile) : 18 régions du Bois Rêveur tenues par Slaanesh avec les primaires spéciaux des elfes sylvains
+    (`wh_main_special_waterfall_palace_primary`…), plus des nains et Aislinn sur des modèles humains (49 emplacements).
+    La génération du startpos, elle, passe. **Règle : un modèle d'emplacement se prend parmi ceux que CA emploie pour la
+    sous-culture du maître ; jamais un `*_port` sur une région sans port.** Contrôle : `modeles_par_culture.py` (bloc-notes
+    de la construction, à coder dans le kit d'Expanded). GUIDE § 15 n° 162.
+334. `[découverte]` (construction et session Expanded, 04.10.2026) **Une colonie portuaire de WH1 grossie à 19 cases
+    principales + 3 de port (au lieu de 16 + 3) fait planter le chargement** (`+0x2613117`, lecture de 0 : la fonction prend
+    le premier élément d'une liste vide de la colonie). Bordeleaux, Brionne et Mousillon, grossies par `grow_town_slots`
+    dans la grille d'Expanded ; trouvé par le pilote sous débogueur (point d'arrêt journalisant sur la fonction, il a
+    nommé `wh_dlc05_bordeleaux_bordeleaux`) ; retirer le port du startpos ne suffit pas, la cause est dans la carte.
+    **Règle : les colonies portuaires gardent 16 + 3 ; le grossissement des emplacements ne touche pas une colonie
+    portuaire ; après toute croissance, les colonies de WH1 reviennent à l'identique de la Saison** (codé par la session
+    Expanded : `villes_expanded.villes_wh1_a_l_identique`, appelée après `grow_town_slots`). Suite (même essai, même
+    méthode) : `+0x2602213` nommé sur le Poste de la Pierre Noire, région de WH1 rendue à Karak Ziflin (nains) dont seul
+    le bâtiment principal avait suivi (modèles et bâtiments de Drachenfels restés). **Règle : une région de WH1 qui change
+    de maître prend modèles ET bâtiments dans la culture du nouveau maître** (codé : `depart_atlas.py` § 4, audit de toutes
+    les colonies par la session Expanded). Encore ensuite : Tor Soleil (port neuf de l'Atlas, ports neufs en 16 + 1 /
+    16 + 2). Méthode codée :
+    `essai_tours_auto.py --cdb-avant <fichier>` (points d'arrêt à soi) et le profil
+    `SAISON_CARTE=expanded` du pilote. GUIDE § 15 n° 163.
+335. `[évitable]` (toutes sessions, 04.10.2026 ; relevé par Charles : « la plupart des erreurs qu'on fait, c'est par
+    négligence, parce qu'on ne suit pas les guides ») **Les erreurs 333 et 334 étaient écrites dans notre propre guide
+    CAIME** (`atelier\caime\index.md`, § Les villes : « port : 16 hex de terre + 3 hex consécutifs du bord, dont 1 en mer » ;
+    le validateur avertit « emplacement principal ≠ 19 ou 16 ; port sans mer »). Des heures de débogueur pour retrouver
+    une règle publiée. **Règle : avant chaque étape, relire la section du guide de l'Atlas et la doc officielle de l'outil,
+    la suivre à la lettre ; `validate --all` de CAIME avant tout export, Warning des villes compris.** Inscrite dans
+    `CLAUDE.md` § 6 et transmise à toutes les sessions. Suite (session Expanded) : `recentrer_emplacements` tolérait 2 ou 3
+    hex de port en mer et ignorait le terrain à risque ; les 11 ports de l'Atlas refaits selon le guide (disque de 19,
+    16 + 3 consécutifs, un seul en mer au milieu, en région de mer ; `outils\ports_expanded.py`) ; `validate --all` :
+    3 Error d'étendue de villes de col (dont 2 identiques à la Saison, l'exception du guide) et 1 Warning (terre sauvage).
+    Ports refaits : la liste vide disparaît ; plantage suivant `+0x2602213` sur `saison_tor_soleil:0` : modèle
+    `wh3_dlc27_human_major_primary_port` pour un port haut-elfe, que CA n'emploie jamais (ports hef de CA : primaire
+    mineur portuaire + `wh2_main_hef_settlement_minor_2`, ou modèles spéciaux de colonie). **Règle : le trio (modèle
+    primary, primary_building, port_building) d'une colonie existe tel quel chez CA pour la même sous-culture.** Après
+    correction (colonie elfe majeure de CA), même plantage sur Tor Soleil : sa maîtresse, Aislinn, est chez CA une HORDE
+    sans aucune région (combi) ; Expanded lui en donnait trois. **Règle : une faction que CA fait partir en horde ne reçoit
+    pas de colonie au départ.** Vérifié le 04.10 à 20 h 36 : les trois Tor données à une faction haut-elfe mineure à nous
+    (`saison_hef_tor_soleil`, Aislinn horde sans région comme chez CA), la campagne d'Expanded CHARGE (premier tick,
+    tour 1 d'Orion, aucun plantage) : démarrage de référence sans fleuves atteint. GUIDE § 15 n° 164.
+    [Ports « un seul en mer au milieu » remplacés le 04.10.2026 par n° 337 (chez CA : deux hex de port en mer, un sur la
+    plage), règle pour Expanded et toute carte neuve ; la Saison garde ses ports [mer, mer, mer], validés en jeu
+    (décision de Charles, 04.10). Le reste de la règle (guide relu, `validate --all`) tient.]
+336. `[découverte]` (session Expanded, consigné par la construction, 04.10.2026) **Notre guide CAIME se trompe sur la
+    couche Region Borders** : il dit (§ Produire les couches par script) qu'elle se recalcule depuis Regions à
+    l'enregistrement ; le code (`CalculateRegionEdgeMasks`) ne recalcule que parmi les hex déjà marqués `IsBorder`. La
+    grille d'Expanded, régions importées par script, avait 0 hex de frontière (Saison : 12 301) ; validate : 129 Info
+    « 0 passable region edge hexes ». **Règle : toute carte dont les régions sont posées par script passe
+    `generate-region-borders` (verbe de notre fork, code « Auto-generate » de CAIME) avant validate et process.** À
+    corriger dans le guide (session Extension, liste du grand nettoyage). Aussi : les 3 « Failed to find tile » du terrain
+    de bataille d'Expanded sont les rangées hors de la grille des tuiles, comme la dernière rangée de la Saison.
+    GUIDE § 15 n° 165.
+337. `[découverte]` (session « Recherche or et rivières », consigné par la construction, 04.10.2026) **Notre guide CAIME
+    décrit mal les ports de CA** (« 3 hex de Port, dont un en mer » ; « chez CA : deux sur la terre, un sur la mer »).
+    Mesure sur les cartes de CA (Empires `_map_1` : 130 ports, `_map_7` : 134, `chaos_map_4` : 26) : motif [bout, milieu,
+    bout] = [mer, mer, terre] pour 127 sur 130 et 131 sur 134, le hex de terre sur la plage (126 sur 127) ; [mer, mer, mer]
+    pour 3 ; un seul port sur 290 n'a qu'un hex en mer. « Un en mer » n'est que le MINIMUM du validateur. **Règle : port =
+    16 hex principaux de terre + 3 hex de Port consécutifs de l'anneau 2, deux en mer et un sur la plage.** À corriger
+    dans le guide (session Extension). Leçon de méthode : un guide qui décrit « ce que fait CA » se vérifie par une mesure
+    sur les fichiers de CA, pas seulement sur le code de l'outil. GUIDE § 15 n° 166.
+    [Décision de Charles, 04.10.2026 : cette règle est LA règle des ports (Expanded et toute carte neuve) ; n° 45, 174
+    et 335 annotés vers elle. La Saison garde ses ports [mer, mer, mer], validés en jeu.]
+338. `[découverte]` (session Expanded, consigné par la construction, 04.10.2026) **Un réseau de routes trop maillé bloque
+    l'export Pathfinding de CAIME** (22 min sans écrire, arrêté) alors que `validate --roads` le dit correct : routes du
+    Bois Rêveur reflétées par symétrie d'image (331 carrefours à 3 branches, 55 à 4, 3 à 5 ; WH1 : des fils, 55
+    carrefours). Refaites en miroir exact de la grille d'hex (colonne impaire décalée d'une rangée, nord et sud échangés) :
+    20 carrefours, export en 4 s. **Règle : en plus de validate, contrôler les degrés du graphe des routes (des fils, peu
+    de carrefours, comme CA et WH1) et borner `process` dans le temps ; un miroir de carte se fait dans le repère des hex,
+    jamais de l'image.** GUIDE § 15 n° 167.
+339. `[découverte]` (session « Mise à jour miniatures Steam », consigné par la construction, 04.10.2026) **Le lanceur de
+    CA retente seul 4 fois chaque envoi Workshop** : la règle « une seule modification par objet » (erreurs 306, 310) ne se
+    tient pas côté lanceur. Envoi de la miniature d'Expanded (mini-pack de démonstration + image, 436 844 octets) refusé
+    par Steam, « error code #25 » (`k_EResultLimitExceeded`), 4 tentatives à 17 h 36-37 ; page inchangée. La page de la
+    Saison (3807973986) restait « pas encore analysée… masquée temporairement » plus de 26 h après la modification du
+    03.10. Journal du lanceur : `%APPDATA%\The Creative Assembly\Launcher\launcher.log` (heure UTC). **Règle : un envoi par
+    le lanceur à la fois, puis lire `launcher.log` ; en cas d'erreur 25, ne rien renvoyer (limite atteinte) ; vérifier la
+    page.** Aussi : le « téléchargement de 1,5 Go » de Steam à 17 h 16 était une mise à jour d'objets Workshop
+    (`content_log.txt` : « Workshop update »), pas du jeu (Warhammer3.exe, db.pack et buildid inchangés, kit intact).
+    Suite : la traduction française a pris la même erreur 25, refusée AVANT tout envoi (0 octet) : limite côté compte ou
+    Steam, pas côté objet ni pack ; à retenter des heures plus tard, et le lanceur ne l'affiche pas. Autres faits : un BOB
+    en cours tient les packs de `data\` ouverts (remplacement refusé, WinError 32 : attendre sa fin) ; un `launcher.exe`
+    fantôme fait dire « le jeu est déjà en cours d'exécution ». Suite (22 h 50) : un NOUVEL objet pour Expanded a pris la
+    même erreur 25, et le lanceur a créé un objet VIDE à chacune de ses 4 tentatives automatiques (3813668505, 3813668537,
+    3813668607, 3813668715 : orphelins, invisibles dans la liste ; à supprimer par Charles) : la limite est côté compte
+    ou Steam, pas côté objet. **Règle : après une erreur 25, ne plus rien envoyer ni créer par le lanceur ; essayer la
+    page Steam ou attendre.** GUIDE § 15 n° 168.
+340. `[évitable]` (session « Expanded map avec vaults », consigné par la construction, 04.10.2026 ; concerne le site)
+    **L'envoi de l'Atlas de 17 h 54 a retiré de bretonia.dev le dossier `steam/` (90 images des trois pages Workshop) et
+    2 images du Bois Rêveur** : 404 pendant environ 25 min, pages Workshop cassées pour tout le monde. Cause : le dossier
+    d'envoi partait du build de la session (`page_v2.py`), qui ne produit pas `steam/` ; les contrôles comparaient le
+    dossier à la production, jamais la production au dossier (`verifier_deploiement.py` ne regarde que les fichiers
+    texte). Corrigé vers 18 h 20 (92 fichiers remis, 432 servis identiques à l'octet). **Règle : un dossier d'envoi part de
+    la liste COMPLÈTE du déploiement précédent (tout fichier servi et absent du dossier est repris), puis on compare tous
+    les fichiers, lourds compris, dans les deux sens, avant et après l'envoi.**
+341. `[découverte]` (construction, consigné le 04.10.2026 au grand nettoyage ; décision du 25.09.2026) **Le catalogue
+    séparé des sols remplace la copie de la base de variantes de CA** (entrée manquante : n° 114 et 179 décrivaient encore
+    la copie). Audit de compatibilité du 25.09 vers 17 h 45 : remplacer `terrain_textures_campaign.assetdb` cassait tout
+    autre mod de carte qui livre le sien (The Old World de ChaosRobie, 443 entrées : un seul des deux vaut) ; le jeu lit
+    tous les `*.assetdb` du dossier. Correctif (accord de Charles) : un fichier À NOUS,
+    `warscape_asset_variation_db/<pack>.assetdb` (`saison_des_revelations.assetdb` ; `saison_expanded.assetdb` depuis le
+    03.10), qui ne porte que nos ajouts (clés `wh1_*` des trois espaces de texture et plan d'eau de notre carte), aucune
+    entrée de CA. Code : `textures_sol_wh1.CATALOGUE_SEPARE = True`, `CATALOGUE_SEPARE_CHEMIN`, `build_pack.py`. **Validé
+    en jeu par Charles le 25.09.2026 vers 23 h 35** (pack de 21 h 46, sols autour d'Orion : « rien d'anormal »). **Règle :
+    un ajout à une base de CA passe par un fichier à nous, sous un nom à nous, qui ne porte que nos clés ; jamais une
+    copie de la base de CA à son chemin (n° 254) ; un catalogue par mod.** GUIDE § 15 n° 169.
+342. `[découverte]` (session Expanded, consigné par la construction, 05.10.2026, 0 h) **Des nœuds de route que CA ne
+    connaît pas laissent des trous de tuiles** : routes de l'Atlas avec 21 carrefours voisins, virages de 60°, formes à
+    trois branches collées (formes canoniques 3, 7, 23) et routes côte à côte sans lien ; BOB : 107 « Failed to find
+    tile » au lieu de 75, les 32 de plus en `TileSet_roads`, 25 trous sur 26 à 1 hex de ces nœuds. `validate --roads` ne
+    les voit pas. **Règle : routes aux seules formes de CA (formes 1, 5, 9, 11, 13, 21), jamais deux carrefours voisins,
+    ni virage de 60°, ni deux routes côte à côte hors des villes** (codé : `routes_expanded`) ; avec l'erreur 338, une
+    route se trace comme chez CA et WH1 : des fils, peu de carrefours.
+343. `[découverte]` (session Expanded, consigné par la construction, 05.10.2026, 2 h 15 ; **écart au guide Terry accordé
+    par Charles à 2 h 10**) **Les bouts de falaise que CAIME pose autour des plages font des trous de tuiles** : CAIME
+    entoure chaque plage de deux `cliff_gen_ends` (84, 230, 84) ; toutes les plages d'Expanded sont un hex de plage entre
+    deux bouts. Chez CA (`wh3_main_combi_map_1`, fichiers compilés) : 412 plages, 36 bouts sur toute la carte, la plupart
+    des plages raccordées directement à la falaise. Un bout a deux poses possibles (liée à la falaise ou à la plage) ;
+    chez CA 36/36 liées à la falaise, 0 trou ; dans Expanded, 9 bouts liés à la plage = 9 trous côté falaise ; les 10
+    plages de la carte en ont. Preuve : `05-journal\2026-10-05-tuiles-cote\RAPPORT.md` (§ 3, `bouts_e.py`,
+    `liens_bob.py`). **Écart : le guide Terry de l'Atlas dit « `tile_map.png` exportée de CAIME sans retouche » ; dans
+    Expanded, les `cliff_gen_ends` sont repeints en `cliff_gen` (`tuiles_expanded.composer`, raccord plage-falaise de
+    CA)**. Prédicteur sur la carte avec les fleuves : 102 → 43 boîtes sans pavage ; BOB seul confirmera. Les fleuves
+    doublent presque la côte (14 540 px contre 10 658) : plus de trous attendus sans cette correction. Autres faits
+    (GUIDE § 15 n° 170) : forme des tuiles de côte lue dans `_tile_database\tiles\*.bin` ; BOB chaîne ancre contre
+    ancre ; ni la rangée 0 du bord ni un isthme d'un hex n'ont de tuile de côte. La Saison n'est pas touchée.
+344. `[évitable]` (session Expanded, consigné par la construction, 05.10.2026, 2 h 55) **Fleuves d'Expanded : un chenal
+    sans eau, l'ancienne rivière de WH1 flottant dessus** (vu en jeu par Charles après l'essai de 2 h 23, qui avait
+    seulement prouvé le chargement). Deux causes. (1) La chaîne du terrain lisait des COPIES des couches de la grille
+    (`couches-expanded`, `villes-sortie`) de 0 h 13, antérieures au lot des fleuves (2 h 05) : aucun plan d'eau sur les
+    chenaux. (2) L'étape « terrain » de la méthode de CA pour un fleuve (fond à −0,35, berges basses, pas de ruban de
+    rivière sur le chenal) n'avait été confiée à personne ; dans la zone de WH1, la terre était à 0,8 u et le fond à −2,1 u
+    sous les tuiles de mer. **Règle : une chaîne qui lit des copies de couches les refait depuis la source (`map.hex`)
+    avant de s'en servir** (codé : `outils\couches_a_jour.py`, appelé en tête de `projet_expanded.py` ;
+    `outils\chenaux_fleuves.py` refuse de tourner sur des copies périmées) ; un lot qui change la grille nomme aussi
+    l'étape du terrain qui va avec, et son responsable. Chenal : `chenaux_fleuves.py` (relief du chenal, berges, objets de
+    WH1 retirés ou recalés, 36 rubans de WH1 rognés). Le pilote prouve un chargement, jamais un rendu : un lot visible se
+    juge en jeu (déjà la règle des erreurs 223 et 251).
+345. `[découverte]` (session Expanded, consigné par la construction, 05.10.2026, 3 h 40) **« Escaliers » sur les berges
+    des fleuves et les côtes d'Expanded** (vus en jeu par Charles) : sur le trait des tuiles de côte, notre terre était
+    partout à 0,13 et le fond à −0,63. Chez CA (relief et fond des Empires Immortels, mesurés dans le kit), le profil dépend
+    de la tuile : **sous une falaise (`cliff_gen`), un plateau de 0,74 u et le fond à −0,40 ; sous une plage
+    (`sea_coast`), la terre passe sous l'eau (−0,16 au trait, +0,12 à 1 u) et le fond est à −0,19**. Le guide Terry de
+    l'Atlas (« pour une côte lisse en jeu, berge en pente d'environ une unité, ni marche d'un pixel ni falaise sur le
+    trait de côte ») ne vaut que pour une côte SANS tuile de côte, en `generic`, comme celle de la Saison ; il ne dit rien
+    du relief sous une tuile de falaise. **Règle : avec l'export CAIME (`cliff_gen` / `sea_coast`), le relief du trait suit
+    le profil de CA de sa tuile** (codé : `04-projets\saison-expanded\outils\cotes_relief.py`, appelé par
+    `projet_expanded` avant l'écriture du relief ; objets de WH1 et rubans suivent la différence de relief). GUIDE § 15
+    n° 171 ; correction du guide Terry transmise à la session Extension. **[Règle remplacée le 05.10.2026 à 11 h 45 par
+    l'erreur 346 : un profil calculé au trait des tuiles laisse encore des hachures ; chez CA, le relief est continu sous
+    la mer.]**
+346. `[découverte]` (session Expanded, consigné par la construction, 05.10.2026, 11 h 50) **Chez CA, le relief est continu
+    et lisse sous les tuiles de mer ; le trait de côte n'existe que dans les tuiles et dans le fond** (relief des Empires
+    Immortels ombré au pixel : la terre se prolonge sous la mer, aucun chenal creusé dans le relief). Charles voyait encore
+    des hachures, des escaliers et des chenaux imparfaits dans Expanded, parce que notre relief suivait les hex des tuiles
+    (profil des côtes calculé au trait des tuiles, relief remis à 0,02 sur chaque tuile de mer, erreur 345). **Règle : ne
+    jamais sculpter le trait de côte ni un chenal dans le relief ; le lisser et le laisser continu sous la mer ; l'eau se
+    lit sur les tuiles, le chenal se creuse dans le fond seulement** (codé : `outils\cotes_relief.py` v2,
+    `outils\chenaux_fleuves.py` sans creusement du relief, `outils\mer_tuiles.py` pour `eau_materiau`,
+    `rivieres_atlas_eau`, les arbres, les décors et les contrôles). GUIDE § 15 n° 171 (réécrit).
+347. `[découverte]` (session Expanded, consigné par la construction, 05.10.2026, 11 h 50 ; vérifié dans le code)
+    **CAIME fait une falaise de toute terre côtière qui n'est pas une plage, rivière comprise** : dans
+    `CAIME\Classes\Exporters\BaselineTilemapExporter.cs`, un hex de terre voisin de la mer devient `cliff_gen` sauf s'il
+    est `IsBeach` ; seul un hex `IsRiver` ET `IsBeach` donne l'indice 8, « river ending at beach » (peint en plage pour
+    WH3). Les 33 embouchures d'Expanded étaient des falaises, et les rivières n'arrivaient pas à la mer. **Règle : une
+    embouchure se marque Beach ET River dans CAIME** (codé : `outils\plages_expanded.py`, +49 cases). GUIDE § 15 n° 172.
+348. `[évitable]` (construction, 05.10.2026, 12 h 15) **Une étape en échec masquée par un tube : startpos généré sur des
+    tables de départ périmées, plantage.** Après un redémarrage de Steam, `rpfm_server` ne tournait plus ;
+    `startpos_db_expanded.py` a échoué (`URLError`, connexion refusée), mais `chaine_expanded.sh` le lisait par
+    `| grep | cut` : sous `set -e` sans `pipefail`, le code d'erreur d'un tube est celui de la dernière commande, et la
+    chaîne a continué. La génération du startpos sur la grille neuve (Beaches) avec les tables de 04 h 02 a planté
+    (`Warhammer3.exe+0x24303E1`, lecture de 0x24, 9.0.2, pile dans le chargement de `startpos.esf`) ; avec les tables
+    resynchronisées (12 h 00), même grille, même pack : génération en 82 s, chargement d'Orion au tour 1. **Règle : tout
+    script de chaîne en `set -e` porte `set -o pipefail` ; `rpfm_server` est relancé AVANT la première étape qui le lit ;
+    `user.script.txt` est remis par un `trap … EXIT`** (codé dans `chaine_expanded.sh`). Une grille changée exige des
+    tables de départ resynchronisées : la recette du § 5 le disait.
+349. `[découverte]` (session Expanded, consigné par la construction, 05.10.2026, 12 h 45) **Une plage ne va que sur une
+    terre basse.** Coupe de la berge nord de la Brienne : une « plage » du lot des fleuves posée sur une terre à 1,25 u ;
+    le profil de plage y faisait une pente raide, d'où une ombre sombre sur l'aperçu (et une digue). Chez CA, une plage
+    est sur une terre basse. Le lot des fleuves posait des plages sur 25 à 55 % des berges : proportion mesurée sur les
+    berges des fleuves de la carte de ChaosRobie (`04-projets\banc-fleuve\etude\SYNTHESE-fleuves-navigables.md` § 1.2 :
+    plages 25-55 %, falaises 40-70 %, approches de pont 5-10 %), reprise sans tenir compte du relief. **Règle : une plage dont la terre monte au-delà de 0,8 u dans les 3 hex vers l'intérieur
+    redevient falaise, sauf les plages de port et les embouchures (erreur 347), avec le filtre des suites de 3 cases**
+    (appliqué par la session Expanded à toute la carte : 909 → 621 plages ; `validate` 0 Error / 1 Warning). Grille
+    changée = tables de départ resynchronisées et startpos neuf (erreur 348). GUIDE § 15 n° 173.
 
 ## Comment tenir ce fichier
 
@@ -2809,3 +3463,58 @@ Ajouts du 25.09.2026 (ménage) :
 - **Étiquettes** avec accents de préférence ; une entrée qui ne concerne pas le mod le dit (« Concerne le site »).
 - **Une découverte du jeu** est reportée au GUIDE § 15 le jour même, avec le numéro de l'entrée.
 - **Toute adresse mémoire** porte la version du jeu (8.1, 9.0).
+
+Ajout du 04.10.2026 (grand nettoyage) : entrées hors ordre, laissées telles quelles (les numéros sont cités partout) :
+52 après 53, 77 après 79, bloc 258 à 264, 266, 267 après 268 ; on ne renumérote pas.
+
+---
+
+## Ancien sommaire (25.09.2026, remplacé le 04.10.2026)
+
+Gardé pour mémoire ; ne plus s'y fier (sommaire en vigueur : en tête du fichier).
+
+À lire en premier, puis les entrées des deux derniers jours ; le reste à la demande (recherche par numéro ou par mot ;
+les étiquettes s'écrivent aussi sans accent : chercher `\[(é|e)vitable\]`). Les numéros 6 et 29 sont en double (citer
+A6 / B6 et 29-undo / 29-attribution).
+
+Méthode
+- Ne jamais jeter la sortie d'un outil, la regrouper (1). Un message qui cite une donnée se vérifie dans la donnée (2, 54, 61).
+- Un témoin se rejoue avec la commande exacte, drapeaux compris, à chaque tour (30, 35, 39).
+- Un seul changement de fond entre deux essais ; jamais le pilote d'essai et le pack dans le même essai (53, 239).
+- Plantage aléatoire : 10 essais par variante, « piste » avant « cause » (186) ; un essai ne conclut qu'à son terme (52).
+- Ce qui se voit en jeu se vérifie EN JEU, pas dans Terry ni dans un fichier compilé (67, 109, 113, 114, 146, 282).
+- Annoncer la mesure du produit écrit, jamais le bilan de l'algorithme ni l'intention du code (81, 192, 231, 248) ;
+  toute heure vient de `date` (211).
+- Un réglage qui porte un contrôle validé ne change qu'en annonçant le contrôle qui tombe (240).
+- Contenu et aspect : WH1 d'abord (45, 48, 102, 222) ; conventions du moteur de WH3 : CA d'abord (53, 93, 126, 202, 251).
+Charles et le PC
+- Prévenir Charles avant TOUT lancement du jeu et lui dire de ne rien toucher (124, 132, 177) ; ne pas piloter l'écran
+  sans son accord du moment, `etat_clavier.py` après (4, 108) ; jamais `open_application` sur Terry ou le jeu (88, 152) ;
+  `essai_tours_auto.py --nettoyer` après tout arrêt forcé (178).
+Sessions en parallèle
+- Préavis : annoncer l'heure affichée par `preavis.py heure`, `preavis.py attendre` en arrière-plan, relire les
+  messages, puis écrire (145, 215, 221). Vérifier qu'un nom de fichier est libre (121). Le jeu d'essai n'est à personne
+  d'autre (144).
+Shell
+- Ni heredoc, ni `python -c` composé, ni `sed` à antislashs, ni script écrit par PowerShell : un fichier écrit avec
+  l'outil d'écriture (129 ; crochet `garde_commandes.py` : 212, 217, 228 ; 237). Chemins absolus (75, 218). À
+  transmettre à chaque agent lancé (193).
+- Fichier `wh3_mcp_command.json` : UTF-8 sans BOM ; vérifier l'encodage avant l'essai (281).
+Pack, startpos, mise à jour
+- Essai de démarrage avant d'annoncer un pack qui change une table (107) ; journal du pack : chaque table du lot avec
+  son nombre de lignes (131) ; scripts changés → startpos régénéré, `__save_counter` = 1, pack reconstruit (58, 112).
+- Jamais une de nos régions dans un groupe, une liste ou une table de liens de CA (110, 154, 156 ; `verifier_groupes.py`) ;
+  jamais un fichier à nous à un chemin que CA cite (254).
+- À chaque reprise : `crash_report\` et `save_games\` (69). Après une mise à jour du jeu : ne rien construire avant
+  d'avoir vérifié `raw_data\db` ; empreintes des DLL ; les adresses d'avant sont celles de la 8.1 (206, 216, 220) ;
+  lire les écouteurs nommés en erreur au premier essai (252).
+Carte
+- Positions des entités en espace des hex ; un raster se lit à z × √3/2 (89). `sea_height` sous 0 en mer pour ne pas
+  masquer les maillages d'eau, sans effet sous la terre ; mer pleine sous l'eau à moins de 2 u des terres
+  (155, 223, 240). Éclairage : zones à la manière de CA, une à la fois (251).
+Règles périmées (ne plus appliquer telles quelles) : 25, 63 (peinture de `tile_map.png`), 73, 74 (code),
+97 (en 9.0), 102 (une surface), 109 (état des zones), 113 (height = surface), 143 (limitée à l'IA),
+155 (`sea_height` sous 0 partout), 208 (pour les zones), 230 (moyen), 232 (3 clics),
+§ C « La cote de CA » (côte peinte) ; anciennes règles du GUIDE § 10-11 (anneaux interdits),
+n° 55/81/84 (`tile_map.png` peinte), n° 137 (`sea_height` sous 0 partout).
+Adresses mémoire : celles relevées avant le 24.09.2026, 16 h 07, sont celles du jeu 8.1 (signatures historiques).

@@ -412,6 +412,28 @@ TABLES_LOT43 = [
      'region_group_key', 'saison_cai_'),
 ]
 
+# Lot 44 (donnees_campagne.py --lot etape44), 25.09.2026, 23 h 40 : les effets de faction du Duc écarlate à l'écran de
+# sélection (Mousillon n'avait ni frontend_factions ni groupe). frontend_factions : TABLE NEUVE, essai de démarrage.
+TABLES_LOT44 = [
+    ('frontend_factions', 'frontend_factions_tables', 'faction', ['wh_main_vmp_mousillon']),
+    ('frontend_faction_groups_to_factions', 'frontend_faction_groups_to_factions_tables', 'faction_key',
+     ['wh_main_vmp_mousillon']),
+]
+
+# Lot 45 (donnees_campagne.py --lot etape45), 26.09.2026, minuit : le trait VITRINE du Duc à l'écran de sélection
+# (lignes descriptives sans effet de jeu ; saison_duc.lua le retire et pose le vrai trait). Jonctions et
+# faction_starting_general_effects : TABLES NEUVES dans le pack, essai de démarrage.
+TABLES_LOT45 = [
+    ('effects', 'effects_tables', 'effect', ['saison_duc_effect_diplomatie_bretonnie_dummy',
+                                             'saison_duc_effect_entretien_chevaliers_dummy',
+                                             'saison_duc_effect_traquer_chauves_souris_dummy']),
+    ('effect_bundles', 'effect_bundles_tables', 'key', ['saison_lord_trait_duc_selection']),
+    ('effect_bundles_to_effects_junctions', 'effect_bundles_to_effects_junctions_tables', 'effect_bundle_key',
+     ['saison_lord_trait_duc_selection']),
+    ('faction_starting_general_effects', 'faction_starting_general_effects_tables', 'agent_subtype',
+     ['wh_dlc05_vmp_red_duke']),
+]
+
 # Lot 42 (donnees_campagne.py --lot etape42), 25.09.2026 : trait de faction du Duc écarlate, « Tyran d'Aquitanie »
 # (effets posés par saison_duc.lua, section 8) et ses quatre lignes « A accès à … ». effects : table NEUVE dans un pack
 # joué, essai de démarrage du Duc avant toute annonce (erreur 107). effect_bundles : réunie avec les lots 34 et 38.

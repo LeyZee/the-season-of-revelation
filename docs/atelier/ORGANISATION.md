@@ -2,7 +2,9 @@
 
 Ce fichier dit **où vont les choses, comment on nomme, ce qu'on fait au début et à la fin d'une séance, et comment on
 consigne les erreurs**. **Le point d'entrée est `CLAUDE.md`** (état du projet, sessions et domaines, recettes, règles) ;
-le fond du métier est dans `GUIDE.md` ; le journal des erreurs dans `ERREURS-ET-LECONS.md`. `AGENTS.md` renvoie à
+le fond du métier est d'abord dans les guides de l'Atlas (`05-journal\2026-09-23-extension-carte\travail\site\atelier\`,
+règle du 04.10.2026, `CLAUDE.md` § 6), puis dans `GUIDE.md` (nos découvertes, § 15) ; le journal des erreurs dans
+`ERREURS-ET-LECONS.md`. `AGENTS.md` renvoie à
 `CLAUDE.md` pour les agents qui lisent ce nom.
 
 ## 1. Ordre de lecture pour qui reprend le dossier
@@ -23,12 +25,13 @@ TotalWar-CampaignMap\
 │                   l'Assembly Kit (raw_data\EmpireDesignData\campaign_maps\<carte>\) ; ici on
 │                   garde tout ce qui le fabrique et le contrôle.
 ├── 05-journal\     tout ce qui est daté : preuves, captures, journaux, sauvegardes des tables,
-│                   inventaires. Nom : AAAA-MM-JJ-sujet ou sujet-JJ-MM-AAAA. On n'y supprime rien.
+│                   inventaires. Nom : AAAA-MM-JJ-sujet ou sujet-JJ-MM-AAAA. On n'y supprime rien sans
+│                   l'accord de Charles (liste montrée d'abord, corbeille, jamais d'effacement définitif).
 ├── 99-archives\   ce qui ne sert plus (scripts remplacés, essais, anciens projets), RANGÉ et non supprimé,
 │                   sous le chemin d'origine (99-archives\02-scripts\..., 99-archives\04-projets\...), avec
 │                   `INDEX.md` qui dit quoi, pourquoi et quand. Charles seul décide de supprimer.
-├── 99-a-supprimer-AAAAMMJJ\   un ménage vérifié : ce qui ne sert plus du tout, avec `INDEX.md` (raison de chaque
-│                   élément) ; Charles supprime le dossier d'un bloc.
+├── 99-a-supprimer-AAAAMMJJ\   (pratique du 23.09, remplacée depuis le ménage du 03.10 : la corbeille de Windows,
+│                   après accord de Charles sur la liste)
 └── .claude\        réglages de Claude Code pour ce projet : `settings.json`, `hooks\garde_commandes.py` (le garde
                     des commandes, `CLAUDE.md` § 6).
 ```
@@ -40,32 +43,28 @@ Ce qui ne va nulle part ici : les autosaves et `backups\` de CAIME (ils naissent
 `map.hex`, on les laisse là et on ne les copie pas), les paquets du Store (non relocalisables),
 l'installation officielle de CAIME (`%LOCALAPPDATA%`).
 
-## 3. Un projet de carte
+## 3. Les projets de carte
 
-```
-04-projets\<nom>\
-├── map_spec.json     la fiche : nom, campagne, provinces, régions (couleur RGB unique), routes
-├── design.png        le dessin, vue « en jeu » (haut en haut) : la source de vérité
-├── legend.json       couleur → valeur par couche
-├── couches\          les .hex_layer générés (produits, régénérables)
-├── controle\         les PNG exportés par CAIME après import (à comparer au dessin)
-└── notes.md          décisions, état des validateurs, ce qui reste à faire
-```
-
-Le nom du projet = le nom de carte = le nom du dossier dans l'Assembly Kit : lettres, chiffres,
-underscore, minuscules, sensible à la casse. Préfixer toutes les clés de base par ce nom
-(`ile_claude_region_...`, `ile_claude_province_...`, `ile_claude_road_lv_1`).
+Deux projets vivants (le modèle « une fiche, un dessin, une légende » de l'île d'essai du 20.09 ne sert plus) :
+- `04-projets\saison-des-revelations\` : la Saison (carte `wh_dlc05_wood_elves_map_1`) ; fiche `notes.md` ;
+- `04-projets\saison-expanded\` : Saison Expanded (carte `saison_expanded_map`) ; `README.md`, `PLAN.md`, `JOURNAL.md`,
+  `outils\`.
+Le nom de carte (dossier de l'Assembly Kit) : minuscules, chiffres et soulignés, sensible à la casse. Clés de base :
+`saison_` pour tout ce que nous créons, `wh_dlc05_` seulement pour ce qui vient de WH1 (décision du 25.09, `CLAUDE.md`
+§ 2) ; l'ancienne convention « clés préfixées par le nom de carte » (`ile_claude_…`) est abandonnée.
 
 ## 4. Rituel de séance
 
-**Avant** : lire (§ 1) ; vérifier l'environnement (`GUIDE.md` § 16, trente secondes) ; vérifier
-`git status` et `git log -3` dans le fork, et que rien n'est en cours de fusion.
+**Avant** : lire (§ 1) ; relire la section du guide de l'Atlas de l'étape du jour (`CLAUDE.md` § 6) ; vérifier
+l'environnement (`GUIDE.md` § 16, trente secondes) ; si la séance touche CAIME, `git status` et `git log -3` dans le
+fork, et que rien n'est en cours de fusion.
 
 **Pendant** : consigner chaque erreur dans `ERREURS-ET-LECONS.md` **au moment où on la comprend**,
 pas en fin de séance ; ne jamais jeter la sortie d'un validateur, la regrouper ; comparer chaque
 import au dessin par un PNG de contrôle.
 
-**Après** : mettre à jour `CLAUDE.md` § 4 (état) et, en fin de chantier, un point de reprise daté dans `05-journal\`
+**Après** : envoyer son état à la Construction, seule à écrire `CLAUDE.md` § 4 (`CLAUDE.md` § 3) et, en fin de
+chantier, un point de reprise daté dans `05-journal\`
 (et son entrée dans `05-journal\INDEX.md`) ; `notes.md` si une demande de Charles change ; `GUIDE.md` § 15 pour chaque
 découverte ; commettre le fork avec des fichiers nommés (jamais `git add -A`). Rien n'est envoyé en amont ni
 redistribué sans l'accord de Charles.
@@ -89,5 +88,5 @@ Une entrée = quoi → symptôme → cause → règle. Pas de récit, pas de jus
 Les règles non négociables (git, BOB / Terry / Tweak, shell, sauvegarde du kit, publication) sont dans `CLAUDE.md` § 6.
 En plus :
 - Écrire dans `01-outils\` autrement qu'en compilant le fork ou en déposant une version datée.
-- Supprimer quoi que ce soit dans `05-journal\`.
+- Supprimer quoi que ce soit dans `05-journal\` sans l'accord de Charles (corbeille seulement).
 - Usage commercial, service pour des tiers, redistribution des fichiers générés : interdits par les licences.

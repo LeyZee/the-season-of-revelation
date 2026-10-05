@@ -855,6 +855,9 @@ function saison_duc_demarrer()
 		return;
 	end;
 	baiser_d_abhorash();
+	-- la vitrine de l'écran de sélection (lot 45 : lignes descriptives sans effet, posées par faction_starting_general_
+	-- effects au lancement de la partie) laisse la place au vrai trait ; à chaque chargement, sans effet si déjà retirée
+	cm:remove_effect_bundle("saison_lord_trait_duc_selection", MOUSILLON);
 	saison_sur("trait du Duc", trait_du_duc, f);
 	saison_sur("regiments de renom de Mousillon", regiments_de_renom, f);
 	-- le duché perdu : dès le chargement, puis à chaque changement de main d'un domaine d'Aquitaine

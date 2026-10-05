@@ -53,14 +53,21 @@ import tempfile
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from rpfm_mcp import session, call, text                            # noqa: E402
+import carte_config                                                  # noqa: E402
 
 ATELIER = r"C:\TotalWar-CampaignMap"
 DATA = r"C:/Program Files (x86)/Steam/steamapps/common/Total War WARHAMMER III/data/"
 PACK = DATA + "saison_des_revelations.pack"
+# (03.10.2026, pack d'Expanded) SAISON_CARTE=expanded : textes de la Saison + ceux d'Expanded (`04-projets\saison-expanded\
+# textes\*.json`) + noms des régions et provinces de l'Atlas pris dans le kit (anglais ; même texte en français tant que la
+# session « IA et modding 3D » n'a pas de traduction), dans `saison_expanded.pack` et `!saison_expanded_fr.pack`
+EXPANDED = not carte_config.EST_SOURCE
+if EXPANDED:
+    PACK = DATA + carte_config.PACK
 PACK_EN = DATA + "!saison_des_revelations_en.pack"         # jusqu'au 25.09.2026 (rangé)
 # 25.09.2026, 23 h (Charles : « le pack en anglais, et un autre mod avec la traduction française ») : l'ANGLAIS dans le
 # pack principal, le FRANÇAIS dans le pack de traduction, sous le même chemin (le « ! » le fait passer devant)
-PACK_FR = DATA + "!saison_des_revelations_fr.pack"
+PACK_FR = DATA + f"!{os.path.splitext(os.path.basename(PACK))[0]}_fr.pack"
 LANGUE_PRINCIPALE, LANGUE_TRADUCTION = "en", "fr"
 KIT_ZONES = (r"C:\Program Files (x86)\Steam\steamapps\common\Total War WARHAMMER III\assembly_kit"
              r"\raw_data\db\campaign_map_playable_areas.xml")
@@ -72,6 +79,11 @@ COPIES = os.path.join(ATELIER, "04-projets", "saison-des-revelations", "textes")
 CHEMIN_LOC = "text/db/saison_des_revelations.loc"
 NOM = "saison_des_revelations"
 CARTE = "wh_dlc05_wood_elves_map_1"
+if EXPANDED:
+    COPIES = carte_config.dans_projet("textes-copies")
+    NOM = os.path.splitext(carte_config.PACK)[0]
+    CHEMIN_LOC = f"text/db/{NOM}.loc"
+    CARTE = carte_config.CARTE
 INDEX_ZONE_WH1 = "1564135548"
 PLACEHOLDERS = {"", "placeholder", "not used", "temp", "tbd"}
 
@@ -121,23 +133,57 @@ DOSSIER_TEXTES_SESSION = os.path.join(r"C:\TotalWar-CampaignMap", "04-projets",
                                       "saison-des-revelations", "textes")
 
 
-def textes_session():
-    """{clé: {"fr", "en"}} de tous les JSON de DOSSIER_TEXTES_SESSION ; une langue absente prend l'autre."""
+DOSSIERS_TEXTES = [DOSSIER_TEXTES_SESSION] + ([carte_config.dans_projet("textes")] if EXPANDED else [])
+
+
+def textes_kit_expanded():
+    """(Expanded) noms des régions et provinces de la carte que le kit porte (colonnes `onscreen`, `battle_name`), sous
+    les clés de .loc du jeu (`regions_onscreen_<clé>`…) ; le titre de la campagne."""
+    import xml.etree.ElementTree as ET
+    db = os.path.join(os.path.dirname(KIT_ZONES))
+    regions = {r.findtext("region") for r in ET.parse(os.path.join(db, "campaign_map_regions.xml")).getroot()
+               if r.findtext("campaign_map") == CARTE}
     out = {}
-    if not os.path.isdir(DOSSIER_TEXTES_SESSION):
-        return out
-    for nom in sorted(os.listdir(DOSSIER_TEXTES_SESSION)):
+    provinces = set()
+    for r in ET.parse(os.path.join(db, "region_to_province_junctions.xml")).getroot():
+        if r.findtext("region") in regions:
+            provinces.add(r.findtext("province"))
+    for table, cles, colonnes in (("regions", regions, ("onscreen", "battle_name")), ("provinces", provinces, ("onscreen",))):
+        for r in ET.parse(os.path.join(db, table + ".xml")).getroot():
+            k = r.findtext("key")
+            if k in cles and k.startswith("saison_"):          # celles de WH1 gardent leurs textes officiels de WH1
+                for col in colonnes:
+                    t = (r.findtext(col) or "").strip()
+                    if t:
+                        out[f"{table}_{col}_{k}"] = {"en": t, "fr": t}
+    out[f"campaign_map_playable_areas_onscreen_name_{index_zone()}"] = {
+        "en": "The Season of Revelation: Expanded", "fr": "La Saison de la Révélation : Expanded"}
+    return out
+
+
+def textes_session():
+    """{clé: {"fr", "en"}} de tous les JSON de DOSSIERS_TEXTES ; une langue absente prend l'autre."""
+    out = {}
+    for dossier in DOSSIERS_TEXTES:
+        if os.path.isdir(dossier):
+            out.update(_textes_dossier(dossier, out))
+    return out
+
+
+def _textes_dossier(dossier, deja):
+    out = {}
+    for nom in sorted(os.listdir(dossier)):
         if not nom.lower().endswith(".json"):
             continue
-        with open(os.path.join(DOSSIER_TEXTES_SESSION, nom), encoding="utf-8") as f:
+        with open(os.path.join(dossier, nom), encoding="utf-8") as f:
             brut = json.load(f)
         for cle, t in brut.items():
             if cle.startswith("_"):                     # « _commentaire » et autres notes : pas des textes
                 continue
             if not isinstance(t, dict) or not (t.get("fr") or t.get("en")):
                 raise SystemExit(f"{nom} : {cle} n'a ni texte français ni texte anglais")
-            if cle in out:
-                raise SystemExit(f"{nom} : clé {cle} déjà définie dans un autre fichier du dossier")
+            if cle in out or cle in deja:
+                raise SystemExit(f"{nom} : clé {cle} déjà définie dans un autre fichier ({dossier})")
             out[cle] = {"fr": t.get("fr") or t["en"], "en": t.get("en") or t["fr"]}
     return out
 
@@ -208,11 +254,19 @@ def lignes_loc(noms, textes):
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--pack", default=PACK)
-    ap.add_argument("--pack-traduction", default=PACK_FR)
+    ap.add_argument("--pack-traduction", default=None,
+                    help="par défaut : celui qui va avec --pack (!<nom>_fr.pack à côté ; erreur 304)")
     ap.add_argument("--apply", action="store_true")
     ap.add_argument("--vanilla", action="store_true", help="refaire la liste des cles du jeu")
     a = ap.parse_args()
     sys.stdout.reconfigure(encoding="utf-8")
+    if a.pack_traduction is None:
+        if os.path.normcase(os.path.abspath(a.pack)) == os.path.normcase(os.path.abspath(PACK)):
+            a.pack_traduction = PACK_FR
+        else:
+            base = os.path.splitext(os.path.basename(a.pack))[0]
+            a.pack_traduction = os.path.join(os.path.dirname(a.pack), f"!{base}_fr.pack").replace("\\", "/")
+    print(f"packs : principal {a.pack} ; traduction {a.pack_traduction}")
 
     sid, i = None, [1]
 
@@ -231,6 +285,9 @@ def main():
 
     paires = paires_de_cles()
     propres_session = textes_session()
+    if EXPANDED:
+        # les noms du kit d'abord : un texte d'une session (JSON) l'emporte sur eux
+        propres_session = {**textes_kit_expanded(), **propres_session}
     if propres_session:
         print(f"  textes de la session d'audit : {len(propres_session)} clés ({DOSSIER_TEXTES_SESSION})")
     langues = {}

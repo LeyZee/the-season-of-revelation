@@ -38,10 +38,68 @@ from declarer_gabarits_elfes import lignes_du_mod                    # noqa: E40
 ATELIER = r"C:\TotalWar-CampaignMap"
 AKIT = r"C:/Program Files (x86)/Steam/steamapps/common/Total War WARHAMMER III/assembly_kit"
 GAME_DATA = r"C:/Program Files (x86)/Steam/steamapps/common/Total War WARHAMMER III/data"
-PACK = GAME_DATA + "/saison_des_revelations.pack"
-MAP = "wh_dlc05_wood_elves_map_1"
-CAMPAIGN = "wh_dlc05_wood_elves"
-PREFIX = "saison_des_revelations"
+# (03.10.2026, pack d'Expanded) la carte suit `carte_config` (variable SAISON_CARTE) : la Saison garde EXACTEMENT ses
+# valeurs d'avant (pack, carte, campagne, préfixe) ; `SAISON_CARTE=expanded` construit `saison_expanded.pack`
+import carte_config                                                  # noqa: E402
+PACK = GAME_DATA + "/" + carte_config.PACK
+MAP = carte_config.CARTE
+CAMPAIGN = carte_config.CAMPAGNE
+PREFIX = os.path.splitext(carte_config.PACK)[0]
+EXPANDED = not carte_config.EST_SOURCE
+PROJET = carte_config.PROJET_ATELIER
+PROJET_SAISON = carte_config.PROFILS["saison"]["PROJET_ATELIER"]
+# Dossiers du projet PROPRES à la carte (pris dans le projet de la carte) ; les autres sont les ressources de WH1 et du
+# gameplay, communes aux deux mods (prises dans celui de la Saison). Pour Expanded, `affichage-carte` (flèches, frontières,
+# ciel, rivières de l'affichage) est celui de la Saison, recopié sous `campaign_maps/<carte d'Expanded>/` par
+# `chemin_affichage` ; la carte stratégique de WH1 (map_file, overlay) n'y va pas.
+DOSSIERS_DE_LA_CARTE = {"textures-sol-wh1", "eau-carte", "images-carte", "images-carte-en", "images-campagne", "startpos",
+                        "ia-carte", "rivieres-wh1", "drapeaux-jeu"}
+# Dossiers de la Saison qu'Expanded ne prend pas : les scripts (campagne `wh_dlc05_wood_elves` et menu de la Saison ; ceux
+# d'Expanded sont à écrire par la session « IA et modding 3D »)
+DOSSIERS_SAISON_SEULE = {"scripts-campagne"}
+# (Expanded) image remplacée par ses variantes `_en` / `_fr` (minicarte à noms écrits)
+VARIANTES_LANGUE_REMPLACEES = {f"{os.path.splitext(carte_config.PACK)[0]}_minimap.png"}
+
+
+def dossier_projet(dossier):
+    return os.path.join(PROJET if dossier in DOSSIERS_DE_LA_CARTE else PROJET_SAISON, dossier)
+
+
+_CACHE_CARTE = {}
+
+
+def regions_carte():
+    """Les régions de la carte (campaign_map_regions) : la sélection des tables de régions d'Expanded, dont les clés sont
+    celles de WH1 (wh_dlc05_) et celles de l'Atlas (saison_), sans les régions propres à la Saison."""
+    if "r" not in _CACHE_CARTE:
+        _CACHE_CARTE["r"] = {r["region"] for r in kit_rows("campaign_map_regions", "campaign_map", MAP)}
+    return _CACHE_CARTE["r"]
+
+
+def regions_absentes():
+    """(Expanded) régions de la carte de la Saison absentes de celle d'Expanded."""
+    if "a" not in _CACHE_CARTE:
+        saison = {r["region"] for r in kit_rows("campaign_map_regions", "campaign_map",
+                                                carte_config.PROFILS["saison"]["CARTE"])}
+        _CACHE_CARTE["a"] = frozenset(saison - regions_carte())
+    return _CACHE_CARTE["a"]
+
+
+def provinces_carte():
+    if "p" not in _CACHE_CARTE:
+        _CACHE_CARTE["p"] = {r["province"] for r in kit_rows("region_to_province_junctions", "region",
+                                                             lambda d: d.get("region") in regions_carte())}
+    return _CACHE_CARTE["p"]
+
+
+if EXPANDED:
+    _SEL_COLONIES = lambda d: d.get("settlement_id", "")[len("settlement:"):] in regions_carte()  # noqa: E731
+    _SEL_REGIONS = lambda d: d.get("key") in regions_carte()                                      # noqa: E731
+    _SEL_PROVINCES = lambda d: d.get("key") in provinces_carte()                                  # noqa: E731
+    _SEL_JONCTIONS = lambda d: d.get("region") in regions_carte()                                 # noqa: E731
+else:
+    _SEL_COLONIES, _SEL_REGIONS, _SEL_PROVINCES, _SEL_JONCTIONS = \
+        "settlement:wh_dlc05_", "wh_dlc05_", "wh_dlc05_", "wh_dlc05_"
 
 # table du kit -> (table du jeu, colonne qui porte la clé de sélection, valeur attendue)
 TABLES = [
@@ -49,11 +107,11 @@ TABLES = [
     ("campaign_maps", "campaign_maps_tables", "mapname", MAP),
     ("campaign_map_playable_areas", "campaign_map_playable_areas_tables", "mapname", MAP),
     ("campaign_map_regions", "campaign_map_regions_tables", "campaign_map", MAP),
-    ("campaign_map_settlements", "campaign_map_settlements_tables", "settlement_id", "settlement:wh_dlc05_"),
+    ("campaign_map_settlements", "campaign_map_settlements_tables", "settlement_id", _SEL_COLONIES),
     ("campaign_map_roads", "campaign_map_roads_tables", "campaign", CAMPAIGN),
-    ("regions", "regions_tables", "key", "wh_dlc05_"),
-    ("provinces", "provinces_tables", "key", "wh_dlc05_"),
-    ("region_to_province_junctions", "region_to_province_junctions_tables", "region", "wh_dlc05_"),
+    ("regions", "regions_tables", "key", _SEL_REGIONS),
+    ("provinces", "provinces_tables", "key", _SEL_PROVINCES),
+    ("region_to_province_junctions", "region_to_province_junctions_tables", "region", _SEL_JONCTIONS),
     # les deux seigneurs de l'ecran de selection propres a la mini-campagne, comme dans Warhammer 1
     # (21.09.2026, `ajouter_seigneurs_jouables.py`, journal § 22)
     ("frontend_faction_leaders", "frontend_faction_leaders_tables", "key", "wh_dlc05_political_party_mini_"),
@@ -149,10 +207,9 @@ NON_EMBARQUES_EXACTS = NON_EMBARQUES_EXACTS | SUBSTITUTS_CA_RETIRES
 def garde_substituts_ca():
     """Aucun de NOS modèles ne doit encore citer un chemin de SUBSTITUTS_CA_RETIRES (sinon il perdrait sa texture en jeu :
     modeles_wh1 --apply n'a pas repointé). 1 171 citations avant le repointage (session du rendu, 25.09.2026, 03 h 15)."""
-    projet = os.path.join(ATELIER, "04-projets", "saison-des-revelations")
     motifs = [p.encode("ascii") for p in SUBSTITUTS_CA_RETIRES]
     restes = {}
-    for d, _, fs in os.walk(projet):
+    for d, _, fs in (x for projet in sorted({PROJET_SAISON, PROJET}) for x in os.walk(projet)):
         for f in fs:
             if f.lower().endswith((".rigid_model_v2", ".wsmodel", ".material", ".xml.material")):
                 b = open(os.path.join(d, f), "rb").read().lower().replace(b"\\", b"/")
@@ -181,10 +238,19 @@ SCRIPTS_ECARTES |= {f"script/campaign/wh_dlc05_wood_elves/{n}.lua" for n in (
     "saison_lieux", "saison_salles")}
 for _nom in sorted(n for n in dir(tables_gameplay) if n.startswith("TABLES_LOT")):
     TABLES.extend(t for t in getattr(tables_gameplay, _nom) if t[1] not in TABLES_EXCLUES)
+if EXPANDED:
+    # les 16 factions de l'Atlas (session « Expanded map integration et polish », `factions_atlas.py`), à CLÉS EXACTES :
+    # jamais dans le pack de la Saison
+    sys.path.insert(0, os.path.join(PROJET, "outils"))
+    import factions_atlas                                            # noqa: E402
+    # (4.10.2026, dichotomie de la génération du startpos) la jonction de propriété de DLC des factions recopiée des
+    # modèles de CA fait fermer le jeu sans rien dire en 9-13 s (famille de l'erreur 107) : jamais dans le pack
+    EXCLUES_EXPANDED = {"faction_ownership_content_pack_junctions_tables"}
+    TABLES.extend(e for e in factions_atlas.lot()[1] if e[1] not in EXCLUES_EXPANDED)
 
 
 ESF_KIT, ESF_JEU = 0xABCB, 0xABCA
-ESF_CORRIGES = os.path.join(ATELIER, "04-projets", "saison-des-revelations", "esf-corriges")
+ESF_CORRIGES = os.path.join(PROJET, "esf-corriges")       # par carte : même nom de fichier (map_data.esf) pour les deux
 
 
 def corrige_esf(chemins):
@@ -311,6 +377,15 @@ def main():
     ap.add_argument("--neuf", action="store_true", help="recréer le pack de zéro (l'ancien est rangé dans pack-backups)")
     ap.add_argument("--sortie", action="store_true", help="version livrée : --neuf et --sans-journal")
     a = ap.parse_args()
+    # (04.10.2026, décision A5 de Charles au grand nettoyage) les montagnes de WH1 converties au matériau 68 sont DANS le
+    # kit et le projet (communs aux deux cartes) mais pas validées pour la Saison : le pack de jeu de la Saison
+    # (data\saison_des_revelations.pack) ne se reconstruit pas avant sa décision ; un pack d'essai sous un autre nom reste
+    # permis. SAISON_A5_LEVEE=1 quand Charles aura tranché.
+    if (not EXPANDED and os.path.normcase(os.path.abspath(a.pack)) == os.path.normcase(os.path.abspath(PACK))
+            and os.environ.get("SAISON_A5_LEVEE") != "1"):
+        raise SystemExit("décision A5 (04.10.2026) : pas de pack de jeu de la Saison avant la décision de Charles sur les "
+                         "montagnes au matériau 68 ; un pack d'essai : --pack <autre nom> ; décision prise : "
+                         "SAISON_A5_LEVEE=1")
     if a.sortie:
         a.neuf = a.sans_journal = True
     if a.sans_journal:
@@ -368,10 +443,9 @@ def main():
     # 25.09.2026 (audit du contenu du pack, point 6) : dossiers du pack remplis par UN SEUL dossier du projet (vérifié : aucun
     # autre ne les fournit) ; tout fichier présent au pack sans source actuelle est un reste (233 falaises `cliff_custom`
     # retirées par la côte lissée, `river_wh1_c20_02`…). Retiré avant les ajouts, qui remettent ce qui existe.
-    projet = os.path.join(ATELIER, "04-projets", "saison-des-revelations")
     for prefixe, dossier in (("rigidmodels/_wh1/campaign/montagnes/", "montagnes-wh1"),
                              (f"terrain/campaigns/{MAP}/models/river_wh1_", "rivieres-wh1")):
-        racine = os.path.join(projet, dossier)
+        racine = dossier_projet(dossier)
         if not os.path.isdir(racine):
             continue
         sources = {os.path.relpath(os.path.join(d, f), racine).replace("\\", "/").lower()
@@ -423,6 +497,13 @@ def main():
                 if cle not in vues:
                     vues.add(cle)
                     rows.append(r)
+        if EXPANDED:
+            # (4.10.2026, bad_mods_report de la génération) les lignes de la Saison qui citent une de ses régions absente
+            # d'Expanded (Fort Solstice, repris sous une autre clé) : écartées
+            avant = len(rows)
+            rows = [r for r in rows if not any(v in regions_absentes() for v in r.values())]
+            if len(rows) != avant:
+                print(f"  {game_table:42s} {avant - len(rows)} ligne(s) écartée(s) : région de la Saison absente d'Expanded")
         if len(entrees) > 1:
             print(f"  {game_table:42s} {len(entrees)} entrées réunies")
         lignes_pack[game_table] = rows
@@ -483,7 +564,7 @@ def main():
         # Les arbres de WH1 (22.09.2026, 22 h, `arbres_wh1.liste_wh1`) : la liste compilée des arbres de WH1 elle-même
         # (chaque arbre à sa position de WH1, essences `wh1_*`, hauteur recalée sur notre sol), écrite par
         # terrain_wh1_vers_terry.py, remplace celle que BOB a placée d'après tree.tif.
-        from arbres_wh1 import SORTIE_LISTE, lire_liste
+        from arbres_wh1 import SORTIE_LISTE, lire_liste             # suit le profil (carte_config)
         for k, r in enumerate(rel):
             if r.endswith("display/trees/trees.campaign_tree_list"):
                 if not os.path.exists(SORTIE_LISTE):
@@ -492,6 +573,11 @@ def main():
                 # rochers et herbes de montagne de CA (23.09.2026, session du rendu) : identifiants de CA déjà dans db.pack
                 import ajouts_carte_wh3
                 ca = set(ajouts_carte_wh3.IDS_ARBRES_CA)
+                if EXPANDED:
+                    # (4.10.2026) Expanded pose aussi l'herbe et les buissons de CA du royaume de Slaanesh (Bois Rêveur) :
+                    # tout identifiant que CA déclare dans `campaign_tree_ids` (kit) est accepté, jamais un inconnu
+                    ca |= {r.get("key") or r.get("tree_id") for r in kit_rows("campaign_tree_ids", "key", lambda d: True)
+                           if not (r.get("key") or r.get("tree_id") or "").startswith("wh1_")}
                 inconnus = sorted({nom for nom, _ in groupes if not nom.startswith("wh1_") and nom not in ca})
                 if inconnus:
                     raise SystemExit(f"liste des arbres : identifiants ni wh1_* ni ajouts de CA déclarés : {inconnus[:5]}")
@@ -507,10 +593,12 @@ def main():
     # Minicarte et images de correspondance au format de CA (21.09.2026, § 21 du journal) :
     # `preparer_minicarte.py` les fabrique dans le projet ; elles remplacent, sous les mêmes noms,
     # les images de Warhammer 1 que `ajouter_images_campagne.py` avait mises dans le pack.
-    images = os.path.join(ATELIER, "04-projets", "saison-des-revelations", "images-carte")
+    images = dossier_projet("images-carte")
     if os.path.isdir(images) and not a.no_files:
+        # (Expanded) les minicartes à noms écrits `<nom>_en.png` / `<nom>_fr.png` passent par `paires_affichage_langues`
         noms = sorted(n for n in os.listdir(images)
-                      if n.lower().endswith((".png", ".tga")) and not n.startswith("controle"))
+                      if n.lower().endswith((".png", ".tga")) and not n.startswith("controle")
+                      and not (EXPANDED and (n.endswith(("_en.png", "_fr.png")) or n in VARIANTES_LANGUE_REMPLACEES)))
         if noms:
             call(sid, "add_packed_files", {"pack_key": key,
                                            "source_paths": [os.path.join(images, n) for n in noms],
@@ -522,7 +610,7 @@ def main():
     # en page de CA lit `frontend_image` et lui accole `_button` et `_vertical`.
     # `preparer_images_campagne.py` fabrique les trois ; on les range dans le dossier que déclare
     # la ligne de zone jouable, casse comprise, pour que la vérification ci-dessous les retrouve.
-    vignettes = os.path.join(ATELIER, "04-projets", "saison-des-revelations", "images-campagne")
+    vignettes = dossier_projet("images-campagne")
     if os.path.isdir(vignettes) and not a.no_files:
         noms = sorted(n for n in os.listdir(vignettes)
                       if n.lower().endswith(".png") and not n.startswith("controle"))
@@ -538,12 +626,16 @@ def main():
     # projet et on l'embarque dans le pack, là où CA range les siens. Il est mis **tel que le jeu
     # l'a écrit** (ESF 0xABCB, contenu compressé compris) : il ne passe pas par `corrige_esf`, qui
     # ne convertirait que l'enveloppe et laisserait le contenu compressé dans l'autre format.
-    startpos = os.path.join(ATELIER, "04-projets", "saison-des-revelations", "startpos", "startpos.esf")
+    startpos = os.path.join(dossier_projet("startpos"), "startpos.esf")
     if os.path.exists(startpos) and not a.no_files:
         # un startpos sans `__save_counter` fait passer chaque nouvelle partie pour une sauvegarde (ni intro ni missions :
         # erreur 112, GUIDE n° 117) : il doit être régénéré APRÈS les scripts de campagne
         import verifier_compteur_startpos
-        if verifier_compteur_startpos.C.interne(startpos).b.count(b"__save_counter") == 0:
+        if verifier_compteur_startpos.C.interne(startpos).b.count(b"__save_counter") == 0 and EXPANDED:
+            # (4.10.2026) Expanded n'a pas encore de scripts de campagne : pas de compteur possible ; le pack reste un pack
+            # d'essai (ni intro ni missions), jamais à publier tel quel
+            print("  !! startpos d'Expanded sans __save_counter (pas de scripts de campagne) : pack d'essai seulement")
+        elif verifier_compteur_startpos.C.interne(startpos).b.count(b"__save_counter") == 0:
             raise SystemExit(f"{startpos} : pas de __save_counter (startpos plus ancien que les scripts de campagne) ; "
                              "régénérer par startpos_manuel.py ... --ai-map-data, puis le recopier ici")
         res = call(sid, "add_packed_files", {"pack_key": key, "source_paths": [startpos],
@@ -559,7 +651,7 @@ def main():
     # joueur humain. Old World les livre au même endroit. Mis tels que le jeu les a écrits (0xABCB).
     # Attention : dans le pack, le startpos passe **devant** la copie en vrac de `<jeu>\data\` ; un
     # startpos régénéré ne compte en jeu qu'une fois le pack reconstruit (erreur 58).
-    ia = os.path.join(ATELIER, "04-projets", "saison-des-revelations", "ia-carte")
+    ia = dossier_projet("ia-carte")
     noms_ia = ["hlp_data.esf", "spd_data.esf"]
     if not a.no_files:
         absents = [n for n in noms_ia if not os.path.exists(os.path.join(ia, n))]
@@ -609,14 +701,30 @@ def main():
                           ("scripts-campagne", "scripts de campagne"),
                           # illustrations des évènements et missions (24.09.2026, session « IA et modding 3D » :
                           # `illustrations_vers_jeu.py`, ui/eventpics/saison/*.png, citées par ui_image des missions)
-                          ("images-evenements", "images d'évènements")):
-        wh1 = os.path.join(ATELIER, "04-projets", "saison-des-revelations", dossier)
+                          ("images-evenements", "images d'évènements"),
+                          # (Expanded) drapeaux des 16 factions de l'Atlas (`factions_atlas.py --drapeaux`)
+                          ("drapeaux-jeu", "drapeaux des factions")):
+        wh1 = dossier_projet(dossier)
         if not os.path.isdir(wh1) or a.no_files:
+            if EXPANDED and dossier in DOSSIERS_DE_LA_CARTE and not a.no_files:
+                print(f"  !! {quoi} : {wh1} absent (dossier propre à la carte)")
+            continue
+        if EXPANDED and dossier in DOSSIERS_SAISON_SEULE:
+            print(f"  {quoi} : propre à la campagne de la Saison, hors du pack d'Expanded")
             continue
         from contenu_pack import chemins_du_jeu
         rel = []
         for root, _, names in os.walk(wh1):
             rel += [os.path.relpath(os.path.join(root, n), wh1).replace("\\", "/") for n in names]
+        dest_de = {}                         # chemin du pack -> chemin relatif de la source, quand ils diffèrent
+        if EXPANDED and dossier == "affichage-carte":
+            # l'affichage de WH1 (flèches, frontières, rivières, ciel) sous la carte d'Expanded ; la carte stratégique de
+            # WH1 (map_file, overlay de la Saison) n'y va pas
+            avant = f"campaign_maps/{carte_config.PROFILS['saison']['CARTE']}/display/"
+            dest_de = {f"campaign_maps/{MAP}/display/" + r[len(avant):]: r for r in rel if r.startswith(avant)}
+            print(f"  {quoi} : {len(dest_de)} fichiers de display/ de la Saison recopiés sous campaign_maps/{MAP}/ "
+                  f"({len(rel) - len(dest_de)} écartés : carte stratégique de la Saison)")
+            rel = sorted(dest_de)
         sans_lien = [r for r in rel if non_embarque(r)]
         if sans_lien:
             rel = [r for r in rel if not non_embarque(r)]
@@ -654,7 +762,8 @@ def main():
                                  + " ; ".join(e for _, e in fautes[:5]))
             print(f"  {quoi} : syntaxe Lua vérifiée ({sum(1 for r in rel if r.endswith('.lua'))} fichiers)")
         res = call(sid, "add_packed_files", {"pack_key": key,
-                                             "source_paths": [os.path.join(wh1, *r.split("/")) for r in rel],
+                                             "source_paths": [os.path.join(wh1, *dest_de.get(r, r).split("/"))
+                                                              for r in rel],
                                              "destination_paths": json.dumps([{"File": r} for r in rel])}, 18)
         print(f"  {quoi} ajoutés : {len(rel)} fichiers  {'ok' if 'Success' in text(res) or '[' in text(res) else text(res)[:80]}")
 
@@ -743,7 +852,16 @@ def main():
 # charge les textes d'un mod quelle que soit la langue du joueur (erreur 47) ; le pack principal porte donc l'ANGLAIS
 # (textes et images à noms), et `!saison_des_revelations_fr.pack`, objet Workshop à part, le français sous les mêmes
 # chemins (le « ! » le fait passer devant). Remplace `!saison_des_revelations_en.pack` (rangé).
-PACK_FR = GAME_DATA + "/!saison_des_revelations_fr.pack"
+PACK_FR = GAME_DATA + f"/!{PREFIX}_fr.pack"                   # (Expanded : !saison_expanded_fr.pack)
+
+
+def pack_traduction(pack):
+    """Le pack de traduction qui va avec `pack` : `!<nom>_fr.pack` dans le même dossier (03.10.2026, erreur 304 : un pack
+    candidat construit sous un autre nom réécrivait le pack français publié de `data\\`)."""
+    if os.path.normcase(os.path.abspath(pack)) == os.path.normcase(os.path.abspath(PACK)):
+        return PACK_FR
+    base = os.path.splitext(os.path.basename(pack))[0]
+    return os.path.join(os.path.dirname(pack), f"!{base}_fr.pack").replace("\\", "/")
 
 
 def ajoute_icones_monuments(sid, key):
@@ -775,8 +893,29 @@ def paires_affichage_langues():
     """[(chemin du pack, source anglaise, source française)] des images à noms écrits (carte stratégique et minicarte) :
     l'anglaise de `affichage-carte-en` / `images-carte-en`, la française au même chemin dans `affichage-carte` ou, pour
     les images de `images-carte` (posées à plat sous `campaign_maps/<carte>/`), sous le même nom."""
-    projet = os.path.join(ATELIER, "04-projets", "saison-des-revelations")
-    out = []
+    if EXPANDED:
+        # (03.10.2026, session « Expanded map integration et polish ») la minicarte d'Expanded : l'anglaise
+        # `<nom>.png` (mise à la taille du lookup par `lookup_expanded.py`), la française `<nom>_fr.png` (session des Voûtes,
+        # `minicarte_parchemin.py`) ; même taille exigée. La carte stratégique : `affichage-carte(-en)` d'Expanded, plus bas.
+        from PIL import Image
+        images = dossier_projet("images-carte")
+        out = []
+        for nom in sorted(VARIANTES_LANGUE_REMPLACEES):
+            # l'anglaise de la session des Voûtes (`_en`) quand elle existe : la copie `<nom>.png` de lookup_expanded.py
+            # peut dater d'avant (3.10.2026, 22 h 30)
+            base = os.path.splitext(nom)[0]
+            en = os.path.join(images, base + "_en.png")
+            en = en if os.path.isfile(en) else os.path.join(images, nom)
+            fr = os.path.join(images, base + "_fr.png")
+            if not (os.path.isfile(en) and os.path.isfile(fr)):
+                raise SystemExit(f"affichage : {nom} ou sa version _fr absente de {images}")
+            with Image.open(en) as i_en, Image.open(fr) as i_fr:
+                if i_en.size != i_fr.size:
+                    raise SystemExit(f"affichage : {nom} {i_en.size} et sa version _fr {i_fr.size} n'ont pas la même taille")
+            out.append((f"campaign_maps/{MAP}/{nom}", en, fr))
+    else:
+        out = []
+    projet = PROJET
     for d_en, d_fr in (("affichage-carte-en", "affichage-carte"), ("images-carte-en", "images-carte")):
         racine = os.path.join(projet, d_en)
         for root, _, names in os.walk(racine):
@@ -785,6 +924,11 @@ def paires_affichage_langues():
                 fr = os.path.join(projet, d_fr, *rel.split("/"))
                 if not os.path.isfile(fr):
                     fr = os.path.join(projet, d_fr, n)
+                if not os.path.isfile(fr) and EXPANDED and not n.endswith((".png",)) and "_text" not in n \
+                        and "_lookup" in n:
+                    fr = os.path.join(root, n)       # (Expanded) correspondance de la vue de loin : sans texte, même fichier
+                if not os.path.isfile(fr) and EXPANDED and n.endswith("_text.dds"):
+                    fr = os.path.join(root, n)       # (Expanded) calque de texte transparent : même fichier, à traduire plus tard
                 if not os.path.isfile(fr):
                     raise SystemExit(f"affichage : pas de version française pour {rel}")
                 out.append((rel, os.path.join(root, n), fr))
@@ -806,16 +950,17 @@ def ajoute_affichage_langues(sid, key):
     call(sid, "add_packed_files", {"pack_key": key, "source_paths": [en for _, en, _ in paires],
                                    "destination_paths": dest}, 30)
     print(f"  affichage anglais dans le pack principal : {', '.join(r for r, _, _ in paires)}")
-    if not os.path.exists(PACK_FR):
+    pack_fr = pack_traduction(key)
+    if not os.path.exists(pack_fr):
         call(sid, "new_pack", {}, 31)
         lst = json.loads(text(call(sid, "list_open_packs", {}, 31)))
         neuf = [e[0] if isinstance(e, list) else e for v in lst.values() for e in v][-1]
-        call(sid, "save_pack_as", {"pack_key": neuf, "path": PACK_FR}, 31)
+        call(sid, "save_pack_as", {"pack_key": neuf, "path": pack_fr}, 31)
         cle_fr = neuf                      # un pack créé garde sa clé provisoire après « save_pack_as » (25.09, 23 h 05)
-        print(f"  pack de traduction créé : {PACK_FR}")
+        print(f"  pack de traduction créé : {pack_fr}")
     else:
-        call(sid, "open_packfiles", {"paths": [PACK_FR]}, 31)
-        cle_fr = PACK_FR
+        call(sid, "open_packfiles", {"paths": [pack_fr]}, 31)
+        cle_fr = pack_fr
     call(sid, "add_packed_files", {"pack_key": cle_fr, "source_paths": [fr for _, _, fr in paires],
                                    "destination_paths": dest}, 32)
     res = text(call(sid, "save_packfile", {"pack_key": cle_fr}, 33))
@@ -832,6 +977,64 @@ TERRAIN_REQUIS = ["full_height_map.dds", "full_logic_map.compressed_map", "lf_no
                   "global_map/texture_arrays.xml", "global_map/tile_list.bin", "environment_collection.xml"]
 TERRAIN_FACULTATIF = ["terrain_visibility_mask.dds"]
 HORS_BOB = {"lf_normal.dds"}
+
+
+def produits_eclairage():
+    """`eclairage_wh1.produire()`, et pour Expanded (03.10.2026) une collection d'éclairage GLOBAL SEUL sous sa carte : les
+    zones de la Saison (clairières, Winterheart) sont aux coordonnées de WH1 ; celles d'Expanded viendront plus tard."""
+    import eclairage_wh1
+    produits = eclairage_wh1.produire()[0]
+    if EXPANDED:
+        globale = re.search(r"global_lighting='[^']*/lighting/([^']+)'", produits["environment_collection.xml"]).group(1)
+        produits["environment_collection.xml"] = (
+            f"<ENVIRONMENT_COLLECTION serialise_version='2' global_lighting='terrain/campaigns/{MAP}/lighting/{globale}'>\n"
+            "\t<ENVIRONMENT_SPHERES/>\n\t<ENVIRONMENT_CYLINDERS>\n" + "".join(cylindres_reves()) +
+            "".join(cylindres_arden()) +
+            "\t</ENVIRONMENT_CYLINDERS>\n</ENVIRONMENT_COLLECTION>\n")
+    return produits
+
+
+# (4.10.2026, accord de Charles rapporté par la session Expanded, à essayer en jeu, erreur 251) ambiance de Slaanesh sur le
+# Bois Rêveur : cylindres qui citent TEL QUEL le fichier de CA `Weather/campaign/chaos/slaanesh.environment`
+# (`04-projets\saison-expanded\outils\eclairage_reves.py`). Éteinte tant que le démarrage de référence d'Expanded n'a pas
+# chargé (une variable de moins dans la recherche du plantage) : SAISON_ECLAIRAGE_REVES=1 pour l'allumer.
+ECLAIRAGE_REVES = os.environ.get("SAISON_ECLAIRAGE_REVES") == "1"
+_CACHE_REVES = []
+
+
+def cylindres_reves():
+    """Les lignes <CYLINDER/> du Bois Rêveur (calculées une fois par construction : la collection écrite et celle que l'on
+    contrôle sont les mêmes)."""
+    if not (EXPANDED and ECLAIRAGE_REVES):
+        return []
+    if not _CACHE_REVES:
+        sys.path.insert(0, os.path.join(PROJET, "outils"))
+        import eclairage_reves
+        _CACHE_REVES.extend(l + "\n" for l in eclairage_reves.lignes_cylindres().splitlines())
+    return _CACHE_REVES
+
+
+# (5.10.2026, demande de Charles rapportée par la session Expanded : « ajoute l'ambiance de l'Ardenne à l'essai » ; à
+# juger en jeu, erreur 251) forêt d'Arden : cylindres qui citent TEL QUEL `Weather/campaign/combi/woodelf.environment` de
+# CA (`04-projets\saison-expanded\outils\eclairage_arden.py`). Éteinte par défaut : SAISON_ECLAIRAGE_ARDEN=1 pour l'allumer.
+ECLAIRAGE_ARDEN = os.environ.get("SAISON_ECLAIRAGE_ARDEN") == "1"
+FICHIER_ARDEN = "Weather/campaign/combi/woodelf.environment"
+_CACHE_ARDEN = []
+
+
+def cylindres_arden():
+    """Les lignes <CYLINDER/> de la forêt d'Arden (calculées une fois par construction, comme `cylindres_reves`)."""
+    if not (EXPANDED and ECLAIRAGE_ARDEN):
+        return []
+    if not _CACHE_ARDEN:
+        sys.path.insert(0, os.path.join(PROJET, "outils"))
+        import eclairage_arden
+        if eclairage_arden.FICHIER_CA != FICHIER_ARDEN:
+            raise SystemExit(f"eclairage_arden cite {eclairage_arden.FICHIER_CA}, build_pack attend {FICHIER_ARDEN}")
+        _CACHE_ARDEN.extend(l + "\n" for l in eclairage_arden.lignes_cylindres().splitlines())
+        if not _CACHE_ARDEN:
+            raise SystemExit("SAISON_ECLAIRAGE_ARDEN=1 mais eclairage_arden ne rend aucun cylindre")
+    return _CACHE_ARDEN
 
 
 def ajoute_terrain(sid, key):
@@ -851,7 +1054,7 @@ def ajoute_terrain(sid, key):
     # Réécrite à chaque fois dès que BOB ne l'écrit pas (zones du projet désactivées) : l'essai du 23.09.2026 à 02 h 53
     # a gardé des cylindres retirés depuis parce que l'ancienne condition ne l'écrivait que si elle manquait.
     if not eclairage_wh1.ZONES_ACTIVES:
-        produits = eclairage_wh1.produire()[0]
+        produits = produits_eclairage()
         with open(collection, "w", encoding="utf-8", newline="\r\n") as f:
             f.write(produits["environment_collection.xml"])
         # (24.09.2026, correctif proposé par la session du rendu pour les clairières, chaîne 12) les fichiers d'éclairage
@@ -862,7 +1065,7 @@ def ajoute_terrain(sid, key):
             if chemin.startswith("lighting/"):
                 with open(os.path.join(cible, *chemin.split("/")), "w", encoding="utf-8", newline="\r\n") as f:
                     f.write(texte)
-        cyl = eclairage_wh1.cylindres_attendus()
+        cyl = [] if EXPANDED else eclairage_wh1.cylindres_attendus()
         print(f"  environment_collection.xml et {sum(c.startswith('lighting/') for c in produits)} fichiers d'éclairage "
               "écrits (" + (f"zones en cylindres : {', '.join(cyl)}" if cyl else "éclairage global seul, zones désactivées")
               + ")")
@@ -887,7 +1090,7 @@ def ajoute_terrain(sid, key):
     # Depuis le 23.09.2026 (erreur 114), le mélange est réécrit vers les groupes de CA les plus proches et la liste reste
     # celle de BOB (`textures_sol_wh1.CHEMINS_WH1 = False`) : la preuve est la marque posée après la réécriture.
     import textures_sol_wh1
-    sol_wh1 = os.path.join(ATELIER, "04-projets", "saison-des-revelations", "textures-sol-wh1")
+    sol_wh1 = dossier_projet("textures-sol-wh1")
     with open(os.path.join(cible, "global_map", "texture_arrays.xml"), encoding="utf-8") as f:
         cite_wh1 = "terrain/textures/campaign/wh1/" in f.read()
     if textures_sol_wh1.CHEMINS_WH1:
@@ -913,13 +1116,26 @@ def ajoute_terrain(sid, key):
                          "(calque `eclairage_wh1` du projet, compilé par BOB)")
     # (24.09.2026) cylindres attendus : `eclairage_wh1.cylindres_attendus()` (les quatre clairières, les 7 zones de WH1 ou
     # aucun, erreur 109) ; chaque fichier cité présent et identique à celui d'`eclairage_wh1.produire()`
-    attendus = eclairage_wh1.cylindres_attendus()
+    attendus = [] if EXPANDED else eclairage_wh1.cylindres_attendus()
     cites = re.findall(r"<CYLINDER [^>]*\blighting='terrain/campaigns/[^/]+/lighting/([^']+)'", texte_coll)
     if cites != attendus:
         raise SystemExit(f"environment_collection.xml : cylindres {cites} au lieu de {attendus} (erreur 109)")
     if not eclairage_wh1.ZONES_ACTIVES and "<SPHERE " in texte_coll:
         raise SystemExit("environment_collection.xml : des sphères d'éclairage alors qu'elles sont retirées (erreur 109)")
-    produits_env = eclairage_wh1.produire()[0]
+    if EXPANDED:
+        # cylindres du Bois Rêveur : fichier d'éclairage de CA, cité tel quel (absent de lighting/ : il est dans ses packs)
+        n_reves = texte_coll.count("lighting='Weather/campaign/chaos/slaanesh.environment'")
+        if n_reves != len(cylindres_reves()):
+            raise SystemExit(f"environment_collection.xml : {n_reves} cylindres du Bois Rêveur au lieu de "
+                             f"{len(cylindres_reves())}")
+        # cylindres de la forêt d'Arden : woodelf.environment de CA, cité tel quel (5.10.2026)
+        n_arden = texte_coll.count(f"lighting='{FICHIER_ARDEN}'")
+        if n_arden != len(cylindres_arden()):
+            raise SystemExit(f"environment_collection.xml : {n_arden} cylindres de l'Arden au lieu de "
+                             f"{len(cylindres_arden())}")
+    if f"global_lighting='terrain/campaigns/{MAP}/lighting/" not in texte_coll:
+        raise SystemExit(f"environment_collection.xml : l'éclairage global n'est pas sous terrain/campaigns/{MAP}/lighting/")
+    produits_env = produits_eclairage()
     for f_env in cites:
         chemin_env = os.path.join(cible, "lighting", f_env)
         if not os.path.exists(chemin_env):

@@ -93,7 +93,9 @@ if Worldroots then
 		"wh2_dlc16_dilemma_wef_encounter_athel_loren_bretonnians", 224, 146, "wh_main_brt_bretonnia_qb1",
 		"wh_main_sc_brt_bretonnia", true);
 	rencontre("saison_argwylon_nains", 12, "wh_dlc05_argwylon_waterfall_palace",
-		"wh2_dlc16_dilemma_wef_encounter_athel_loren_dwarfs", 272, 209, "wh_main_dwf_dwarfs_qb1",
+		-- (272, 210) et non (272, 209), case invalide pour le moteur (passe de test du 03.10.2026, constat O-1 :
+		-- find_valid_spawn_location rend -1, -1 ; « Marker Manager … invalid coordinate » chez Orion et Durthu)
+		"wh2_dlc16_dilemma_wef_encounter_athel_loren_dwarfs", 272, 210, "wh_main_dwf_dwarfs_qb1",
 		"wh_main_sc_dwf_dwarfs", false);
 	rencontre("saison_talsyn_esprits", 12, "wh_dlc05_talsyn_yn_ecryl_koiran",
 		"wh2_dlc16_dilemma_wef_encounter_athel_loren_tree_spirits", 283, 83, "wh_dlc05_wef_wood_elves_qb2",

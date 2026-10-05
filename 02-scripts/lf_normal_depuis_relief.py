@@ -42,7 +42,7 @@ PROJET = os.path.join(KIT, "raw_data", "terrain", "campaigns", CARTE)
 COMPILE = os.path.join(KIT, "working_data", "terrain", "campaigns", CARTE)
 IE = os.path.join(KIT, "raw_data", "terrain", "campaigns", "wh3_main_combi_map_1")
 SAUVEGARDES = os.path.join(ATELIER, "05-journal", "terrain-backups")
-LARGEUR_MONDE, LARGEUR_IE = 266.53, 961.3
+LARGEUR_MONDE, LARGEUR_IE = carte_config.LARGEUR_MONDE, 961.3     # 03.10.2026 : 266,53 Saison, 373,142 Expanded
 K_RETENU = 2.35               # ajusté sur les Empires (--etalonner, 24.09.2026 : écart quadratique 11,6 sur 255)
 # (25.09.2026, 02 h 35, session du rendu : stries grises des montagnes vues de loin) le relief de WH1 est rainuré (maillages
 # de montagnes posés sur un relief bruité) ; ses normales brutes ont un contraste fin (écart à la moyenne locale sur 2 u, sur
@@ -141,6 +141,23 @@ def construire(k, modele):
     return modele[:128] + data
 
 
+def modele_neuf(H, L):
+    """(03.10.2026, carte neuve : BOB n'écrit pas de lf_normal.dds de campagne) un « fichier en place » fabriqué : l'en-tête
+    du lf_normal de la Saison (drapeaux, DXT5, caps), hauteur, largeur, taille linéaire (L × H en DXT5) et nombre de niveaux
+    (jusqu'à 1 × 1, comme la Saison : 3524 × 3200 -> 12) remplacés, données à zéro de la bonne longueur."""
+    import math
+    gabarit = os.path.join(KIT, "working_data", "terrain", "campaigns", "wh_dlc05_wood_elves_map_1", "lf_normal.dds")
+    t = bytearray(open(gabarit, "rb").read()[:128])
+    mips = int(math.floor(math.log2(max(H, L)))) + 1
+    struct.pack_into("<III", t, 12, H, L, L * H)
+    struct.pack_into("<I", t, 28, mips)
+    total, h, l = 0, H, L
+    for _ in range(mips):
+        total += max(1, (l + 3) // 4) * max(1, (h + 3) // 4) * 16
+        h, l = max(1, h // 2), max(1, l // 2)
+    return bytes(t) + bytes(total)
+
+
 def controle(b, titre):
     im = Image.open(io.BytesIO(b))
     im.load()
@@ -167,8 +184,14 @@ def main():
         return 0
     k = a.k if a.k is not None else K_RETENU
     chemin = os.path.join(COMPILE, "lf_normal.dds")
-    ancien = open(chemin, "rb").read()
-    controle(ancien, "en place (WH1)")
+    if os.path.exists(chemin):
+        ancien = open(chemin, "rb").read()
+        controle(ancien, "en place (WH1)")
+    else:
+        # carte neuve (Expanded) : pas de fichier en place ; tailles = celles du relief du projet
+        hp, lp = relief(PROJET).shape
+        ancien = modele_neuf(hp, lp)
+        print(f"pas de lf_normal en place : en-tête fabriqué sur celui de la Saison, {lp} × {hp}")
     neuf = construire(k, ancien)
     n = controle(neuf, f"recalculée (k = {k})")
     apercu = os.path.join(os.environ.get("TEMP", ATELIER), "lf_normal_neuve_apercu.png")
@@ -181,7 +204,8 @@ def main():
         return 0
     os.makedirs(SAUVEGARDES, exist_ok=True)
     stamp = time.strftime("%Y%m%d-%H%M%S")
-    shutil.copy2(chemin, os.path.join(SAUVEGARDES, f"lf_normal-avant-{stamp}.dds"))
+    if os.path.exists(chemin):
+        shutil.copy2(chemin, os.path.join(SAUVEGARDES, f"lf_normal-avant-{stamp}.dds"))
     with open(chemin, "wb") as f:
         f.write(neuf)
     print(f"écrit : {chemin} ; ancienne : lf_normal-avant-{stamp}.dds")
